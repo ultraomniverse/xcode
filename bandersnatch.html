@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bandersnatch · reproductor interactivo</title>
+<link rel="preconnect" href="https://archive.org">
+<link rel="dns-prefetch" href="//archive.org">
+<link rel="preconnect" href="https://mohetios.github.io" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ctext x='8' y='12' font-size='11' fill='%23fff' text-anchor='middle' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
+<!--
+  Reproductor del corte completo de 5:12:14 (1080p) con ramificación real.
+  Video: si existe "bandersnatch.mp4" junto a este archivo se usa ese (carga instantánea);
+         si no, se transmite desde Internet Archive (el <video> NO lleva crossorigin).
+  Subtítulos: es.vtt de esta carpeta; si falta, URL remota.
+  Servir con un servidor que soporte Range (p. ej. "npx http-server -p 8000").
+  OJO: "python -m http.server" NO soporta Range y rompe los saltos en archivos locales.
+-->
+<style>
+  :root{
+    --bg:#0a0a0c; --panel:#121216; --panel2:#17171d; --bd:#26262f;
+    --fg:#e9e9ec; --mut:#8b8b96;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--fg);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    display:flex;flex-direction:column;overflow:hidden}
+  header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
+  header h1{margin:0;font-size:13px;font-weight:500;letter-spacing:.06em}
+  header .tag{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid var(--bd);padding:2px 7px;border-radius:99px}
+  header .sp{flex:1}
+  header button{background:transparent;border:1px solid var(--bd);color:var(--mut);
+    font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer}
+  header button:hover{color:var(--fg);border-color:#3a3a46}
+
+  main{flex:1;display:flex;min-height:0}
+  #stagewrap{flex:1;display:flex;flex-direction:column;min-width:0;padding:12px;gap:8px}
+  #stage{position:relative;flex:1;min-height:0;background:#000;border:1px solid var(--bd);
+    border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  #stage video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+  #stage:fullscreen{border-radius:0;border:0}
+  #stage video.sb{position:absolute;inset:0;visibility:hidden;pointer-events:none}
+
+  .gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;background:#000;text-align:center;padding:28px;z-index:3}
+  .gate h2{margin:0;font-size:19px;font-weight:500;letter-spacing:.1em}
+  .gate p{margin:0;max-width:470px;font-size:12px;color:var(--mut);line-height:1.6}
+  .gate button{padding:10px 26px;border-radius:99px;border:0;background:#fff;color:#000;
+    font-size:13px;font-weight:500;cursor:pointer}
+  .gate .err{color:#ff9d9d}
+
+  .ov{position:absolute;left:0;right:0;bottom:0;height:30%;background:rgba(0,0,0,.9);
+    display:none;flex-direction:column;justify-content:flex-end;padding-bottom:14px;z-index:2}
+  .ov.on{display:flex}
+  .ov .q{font-size:10px;letter-spacing:.22em;color:#9a9aa4;text-align:center;margin-bottom:10px}
+  .opts{display:flex;gap:14px;justify-content:center;padding:0 26px}
+  .opt{flex:1;max-width:300px;padding:12px 14px;border:1px solid rgba(255,255,255,.32);
+    border-radius:7px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;
+    letter-spacing:.06em;cursor:pointer;text-align:center;transition:.12s}
+  .opt:hover,.opt.def{border-color:#fff;background:rgba(255,255,255,.17)}
+  .timer{height:3px;background:rgba(255,255,255,.18);margin:13px 26px 0;border-radius:2px;overflow:hidden}
+  .timer i{display:block;height:100%;width:100%;background:#fff}
+
+  .pad{position:absolute;left:0;right:0;bottom:0;padding:16px;background:rgba(0,0,0,.9);
+    display:none;flex-direction:column;align-items:center;gap:8px;z-index:2}
+  .pad.on{display:flex}
+  .pad .disp{letter-spacing:.55em;font-size:19px;color:#fff;font-variant-numeric:tabular-nums}
+  .pad .keys{display:flex;gap:7px}
+  .pad .keys button{width:36px;height:36px;border-radius:7px;border:1px solid rgba(255,255,255,.34);
+    background:rgba(255,255,255,.06);color:#fff;font-size:14px;cursor:pointer}
+  .pad .keys button:hover{background:rgba(255,255,255,.2)}
+
+  .end{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+    gap:11px;background:rgba(0,0,0,.94);text-align:center;padding:24px;z-index:3}
+  .end.on{display:flex}
+  .end h2{margin:0;font-size:16px;font-weight:500}
+  .end p{margin:0;font-size:11px;color:var(--mut);max-width:340px}
+  .end button{padding:9px 20px;border-radius:99px;border:0;background:#fff;color:#000;font-size:12px;cursor:pointer}
+
+  .ctl{display:flex;align-items:center;gap:7px}
+  .ctl button{width:34px;height:31px;border-radius:6px;border:1px solid var(--bd);
+    background:var(--panel2);color:var(--fg);cursor:pointer;font-size:13px;line-height:1}
+  .ctl button:hover{border-color:#3a3a46}
+  .ctl button.on{background:#fff;color:#000;border-color:#fff}
+  .ctl .t{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums;min-width:104px}
+  .ctl input[type=range]{flex:1;accent-color:#fff}
+
+  aside{width:340px;border-left:1px solid var(--bd);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  aside .sec{border-bottom:1px solid var(--bd);padding:10px 12px}
+  aside .sec h3{margin:0 0 7px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:500}
+  .row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut)}
+  .row label{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--fg)}
+  .row input{accent-color:#fff}
+  #map{flex:1;min-height:0;overflow:auto;padding:8px}
+  #map svg{display:block}
+  #log{max-height:34%;overflow:auto;padding:8px 12px;font-size:11px}
+  .ent{padding:6px 0;border-bottom:1px dashed #22222a;color:var(--mut)}
+  .ent b{color:var(--fg);font-weight:500}
+  .ent .t{font-variant-numeric:tabular-nums;color:#5f5f6b;margin-right:5px}
+  .ent button{background:none;border:0;color:#7a7a88;font-size:10px;cursor:pointer;padding:2px 0;text-decoration:underline}
+  .ent button:hover{color:#fff}
+  .empty{color:#55555f;font-size:11px;padding:8px 0}
+  footer{padding:6px 16px;border-top:1px solid var(--bd);background:var(--panel);
+    font-size:10px;color:var(--mut);display:flex;gap:14px}
+  kbd{border:1px solid var(--bd);border-radius:4px;padding:0 4px;font-size:10px;color:#a5a5b0}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BLACK MIRROR: BANDERSNATCH</h1>
+  <span class="tag">1080p</span>
+  <span class="tag">es-LATAM</span>
+  <span class="tag">ramificación real</span>
+  <span class="sp"></span>
+  <button id="btnReset">Reiniciar historia</button>
+  <button id="btnClear">Borrar registro</button>
+</header>
+
+<main>
+  <div id="stagewrap">
+    <div id="stage">
+      <video id="v" preload="auto" playsinline>
+        <track id="sub" kind="subtitles" srclang="es" label="Español (LATAM)">
+      </video>
+
+      <div class="gate" id="gate">
+        <h2>BANDERSNATCH</h2>
+        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Cada elección salta al segmento que le corresponde. El archivo se transmite por rangos: el primer arranque y algunos saltos pueden tardar unos segundos.</p>
+        <button id="btnStart">Empezar</button>
+        <p id="gmsg" style="font-size:11px"></p>
+      </div>
+
+      <div class="ov" id="ov">
+        <div class="q" id="q">ELIGE</div>
+        <div class="opts" id="opts"></div>
+        <div class="timer"><i id="tbar"></i></div>
+      </div>
+
+      <div class="pad" id="pad">
+        <div class="disp" id="disp">-----</div>
+        <div class="keys" id="keys"></div>
+      </div>
+
+      <div class="end" id="end">
+        <h2 id="endT">Créditos</h2>
+        <p id="endP">Camino completado.</p>
+        <button id="btnAgain">Volver a empezar</button>
+      </div>
+    </div>
+
+    <div class="ctl">
+      <button id="btnPlay" title="Reproducir / pausa (espacio)">▶</button>
+      <button id="btnBack" title="Retroceder 10 s (←)">↺</button>
+      <button id="btnFwd" title="Avanzar 10 s (→)">↻</button>
+      <span class="t" id="time">0:00 / 0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1">
+      <button id="btnSub" class="on" title="Subtítulos (c)">CC</button>
+      <button id="btnFs" title="Pantalla completa (f)">⛶</button>
+    </div>
+  </div>
+
+  <aside>
+    <div class="sec">
+      <h3>Ajustes</h3>
+      <div class="row">
+        <label><input type="checkbox" id="noTimer"> Modo sin temporizador</label>
+      </div>
+      <div class="row" style="margin-top:5px">
+        <label><input type="checkbox" id="showSub" checked> Subtítulos en español</label>
+      </div>
+    </div>
+    <div class="sec" style="padding-bottom:6px">
+      <h3>Mapa del árbol</h3>
+      <div class="row">Las ramas grises son las que no tomaste.</div>
+    </div>
+    <div id="map"><div class="empty">Aún no hay decisiones.</div></div>
+    <div class="sec" style="border-bottom:0;border-top:1px solid var(--bd);padding-bottom:4px">
+      <h3>Registro</h3>
+    </div>
+    <div id="log"><div class="empty">Sin decisiones registradas.</div></div>
+  </aside>
+</main>
+
+<footer>
+  <span><kbd>espacio</kbd> pausa</span>
+  <span><kbd>←</kbd><kbd>→</kbd> ±10 s</span>
+  <span><kbd>c</kbd> subtítulos</span>
+  <span><kbd>f</kbd> pantalla completa</span>
+  <span id="status"></span>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ===================== FUENTES ===================== */
+const VIDEO_URL = "https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
+const VIDEO_LOCAL = "bandersnatch.mp4";
+const SUB_LOCAL = "es.vtt";
+const SUB_REMOTE = "https://mohetios.github.io/BandersnatchInteractive/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
+
+/* ===================== DATOS ===================== */
+const RAW = `
+1A|0|153520|1E|134800|153520|SUGAR PUFFS>1E~FROSTIES>1D
+1E|153520|207240|1H|189560|207240|THOMPSON TWINS>1H~NOW 2>1G
+1H|207240|481360|8A|463640|481360|ACEPTAR>8AChoice~RECHAZAR>1Qnw-1Qtt
+8A|481360|571320|1HA|-|-
+1HA|571320|711240|1Qtt|693560|711240|ACEPTAR>8AChoice~RECHAZAR>1Q_rewatch
+1Qtt|711240|1028600|2B|1010880|1028600|SÍ>2BChoice~NO>2GA
+2B|1028600|1225200|1R|1207520|1225200|PHAEDRA>1R~THE BERMUDA TRIANGLE>1S
+1R|1225200|1415040|3B|1397360|1415040|ARROJAR TÉ AL ORDENADOR>3B~GRITARLE A PAPÁ>3C
+3B|1415040|1425320|1HA|-|-
+3C|1486960|1509080|3J|-|-
+3J|1509080|1577120|3R|1559400|1577120|VISITAR A LA DRA. HAYNES>VisitHaynesChoice~SEGUIR A COLIN>FollowColinChoice
+3R|1577120|1645800|3U|1628080|1645800|MORDERSE LAS UÑAS>3U~TIRAR DEL LÓBULO>3T
+3U|1645800|1698160|3X|-|-
+3X|1698160|1738880|8B|1721200|1738880|TOMARLAS>8B~TIRARLAS>FlushThemChoice3X
+8B|1738880|1803000|1HA|-|-
+SS15|1803000|1834640|3Xxa|1803000|1834640|SEGUIR A COLIN>R4~VOLVER>3Xxa_3Xxc
+3Xxa|1834640|1864640|3Vfs|1846920|1864640|TOMARLAS>8B~TIRARLAS>FlushThemChoice3X
+3Vfs|1864640|2109600|3Y|2091920|2109600|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Y|2109600|2129120|1HA|-|-
+SS17|2129120|2160760|3Vx|2129120|2160760|SEGUIR A COLIN>R4~VOLVER>3Vx
+3Vx|2160760|2193720|3Z|2176040|2193720|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Z|2193720|2247960|3AH|2230280|2247960|TOMAR LA FOTO FAMILIAR>FamilyPhotoChoice~TOMAR EL LIBRO>BookChoice
+3AH|2247960|2401400|4C2|2383720|2401400|ARROJAR TÉ AL ORDENADOR>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+4C2|2401400|2444600|7A|2426920|2444600|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+7A|2444600|2474800|7B|2457120|2474800|CONTARLE MÁS>7B~INTENTAR EXPLICARLE>7B
+7B|2474800|2499440|7C|2481760|2499440|CONTARLE MÁS>7C~CORTAR LA CONVERSACIÓN>7D
+7C|2499440|2513520|7D|-|-
+7D|2513520|2659280|7L|2641600|2659280|SALTAR POR LA VENTANA>7L~PELEAR CON ELLA>7H
+7L|2659280|2719040|SS51|-|-
+SS51|2719040|2750640|R4|2719040|2750640|SEGUIR A COLIN>R4~SALIR A LOS CRÉDITOS>0cr2
+R4|2750640|2776800|3M|-|-
+3M|2776800|2983840|3N|2966160|2983840|SÍ>3N~NO>3P
+3N|2983840|3253520|8L|3231800|3253520|STEFAN>8L~COLIN>3Q
+8L|3253520|3327800|1HA|-|-
+SS20|3327800|3359440|3Nx|3327800|3359440|VISITAR A LA DRA. HAYNES>R5~VOLVER>3Nx
+3Nx|3359440|3390680|8L|3372960|3390680|STEFAN>8L~COLIN>3Q
+3Q|3390680|3449200|3S|-|-
+3S|3449200|3468360|ZHw6|-|-
+ZHw6|3468360|3551360|3AC2|3533680|3551360|TOMAR LA FOTO FAMILIAR>FamilyPhotoChoice~TOMAR EL LIBRO>BookChoice
+3AC2|3551360|3632880|5A|3615160|3632880|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+5A|3632880|3684720|5H|3667040|3684720|MATAR A PAPÁ>5H~ECHARSE ATRÁS>5G
+5H|3684720|3702080|5V|-|-
+5V|3702080|3747640|5QA|3729960|3747640|ENTERRAR EL CUERPO>5V-0~DESCUARTIZAR EL CUERPO>5V-1
+5QA|3747640|3795400|5UA|3777720|3795400|SÍ>5UA~NO>5TA
+5UA|3795400|3831280|5AD|-|-
+5AD|3831280|3903920|5AF|3886240|3903920|NI IDEA>5AF~SALTÓ>5AE
+5AF|3903920|3982440|8Q|-|-
+8Q|3982440|4084840|SS52|-|-
+SS52|4084840|4116440|Z7c|4084840|4116440|¿DESCUARTIZAR O ENTERRAR?>chopBuryRecap~SALIR A LOS CRÉDITOS>0cr2
+Z7c|4116440|4155360|5VA|-|-
+5VA|4155360|4182080|5Mp|4164400|4182080|ENTERRAR EL CUERPO>5V-0~DESCUARTIZAR EL CUERPO>5V-1
+5Mp|4182080|4339880|8K|-|-
+8K|4339880|4465720|S37A|4448040|4465720|ARROJAR TÉ AL ORDENADOR>pearlThrowTea~DESTRUIR EL ORDENADOR>pearlDestroyComputer
+S37A|4465720|4525960|R2|4471000|4525960|PEDIRLE EL CONEJO A PAPÁ>R2~SALIR A LOS CRÉDITOS>0cr1
+R2|4525960|4559640|3AD3|-|-
+3AD3|4559640|4678120|8J|4660440|4678120|JUGUETE>8J~PAC>PACStudyChoice
+8J|4678120|4791120|8JA|4773440|4791120|SÍ>8JA~NO>8J-1
+8JA|4791120|4869520|SS57|-|-
+SS57|4869520|4901120|R6|4869520|4901120|'PROGRAM & CONTROL'>R6~SALIR A LOS CRÉDITOS>0cr2
+R6|4901120|4949480|3AF1|-|-
+3AF1|4949480|5179360|6A|5156400|5179360|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+6A|5179360|5309200|6D|5275680|5309200|#CODE
+6C|5309200|5397160|8D|-|-
+8D|5397160|5442480|0cr3|-|-
+1D|5442480|5496880|1H|5479200|5496880|THOMPSON TWINS>1H~NOW 2>1G
+1G|5496880|5773000|8A|5755320|5773000|ACEPTAR>8AChoice~RECHAZAR>1Qnw-1Qtt
+1GA|5773000|5913600|1Qnw|5895920|5913600|ACEPTAR>8AChoice~RECHAZAR>1Q_rewatch
+1Qnw|5913600|6230960|2B|6213240|6230960|SÍ>2BChoice~NO>2GA
+3Xcd|6230960|6271680|3Wff|6254000|6271680|TIRARLAS>ThrowThemChoice~VACIARLAS>FlushThemChoice3X
+3Wff|6271680|6544400|3Y|6526720|6544400|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3AB|6544400|6699080|4C2|6681400|6699080|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+7H|6699080|6732000|7K|6714320|6732000|GOLPE DE KÁRATE A PAPÁ>7K~PATADA EN LOS HUEVOS>7J
+7K|6732000|6747400|SS56|-|-
+SS56|6747400|6779000|0cr2|6747400|6779000|PEDIRLE EL CONEJO A PAPÁ>SS56-0~SALIR A LOS CRÉDITOS>0cr2
+8Aa|6779000|6799680|SS10|-|-
+SS10|6799680|6831280|1PA|6799680|6831280|VOLVER>1PA
+1PA|6831280|6869400|1Qnw|6851720|6869400|ACEPTAR>8AChoice~RECHAZAR>1Q_rewatch
+1QA|6869400|6906800|3C|6889120|6906800|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+1GB|6906800|7023400|1Qnw|7005720|7023400|ACEPTAR>8AChoice~RECHAZAR>1Q_rewatch
+1QB|7023400|7045920|3J|-|-
+3L|7045920|7072480|3M|7054800|7072480|VISITAR A LA DRA. HAYNES>VisitHaynesChoice~SEGUIR A COLIN>FollowColinChoice
+ZP|7072480|7104240|3Z|7086560|7104240|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+ZJ|7104240|7138480|3AD|7120800|7138480|TOMAR LA FOTO FAMILIAR>FamilyPhotoChoice~TOMAR EL LIBRO>BookChoice
+3AD|7138480|7256960|3AK|7239280|7256960|JFD>JFDChoice~PAX>PAXChoice
+3AK|7256960|7310880|4C2|7293200|7310880|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+4C1|7310880|7354080|6A|7336400|7354080|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+ZMC|7354080|7370200|6B|-|-
+6B|7370200|7432720|6D|7415040|7432720|#CODE
+6D|7432720|7505400|8D|-|-
+8Da|7505400|7550720|SS50|-|-
+2Bt1|7550720|7725080|3C|7707400|7725080|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+2Bp2|7725080|7894920|3L|-|-
+2GA|7894920|7926000|2B|7908320|7926000|SÍ>2BChoice~NO>2GChoice
+2Bp1|7926000|8100360|3C|8082680|8100360|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+2Bt2|8100360|8270200|3L|-|-
+3LA|8270200|8280160|3S|-|-
+3Vff|8280160|8525120|3Y|8507440|8525120|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Vbf|8525120|8767400|3Y|8749720|8767400|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Vbs|8767400|9009680|3Y|8992000|9009680|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Wbf|9009680|9279200|3Y|9261520|9279200|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Wbs|9279200|9548720|3Y|9531040|9548720|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Wfs|9548720|9821440|3Y|9803760|9821440|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3AC|9821440|9908480|4C2|9890800|9908480|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+ZK1|9908480|9944600|8J|9926880|9944600|JUGUETE>8J~PAX>PAXChoice
+3AL|9944600|9999840|4C2|9982120|9999840|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+ZK2|9999840|10035960|3AL|10018240|10035960|PAX>PAXChoice~PAC>PACStudyChoice
+3AD1|10035960|10154440|8J|10136760|10154440|JUGUETE>8J~PAX>PAXChoice
+3AC1|10154440|10235960|6A|10218240|10235960|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AB1|10235960|10385120|6A|10367440|10385120|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AB2|10385120|10534280|7A|10516600|10534280|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+3AJ1|10534280|10636080|6A|10618400|10636080|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AJ2|10636080|10737880|7A|10720200|10737880|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+3AH2|10737880|10885800|7A|10868120|10885800|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+ZMB|10885800|10908120|5VA|-|-
+3VB|10908120|10987040|3AD|10969320|10987040|FOTO FAMILIAR>FamilyPhotoChoice~LIBRO>BookChoice
+3AJ|10987040|11094360|4C2|11076680|11094360|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+4D1|11094360|11136560|6A|11118880|11136560|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AH1|11136560|11284480|6A|11266800|11284480|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+ZK|11284480|11320600|3AK|11302880|11320600|JFD>JFDChoice~PAX>PAXChoice
+3AK2|11320600|11369000|7A|11351320|11369000|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+ZH|11369000|11434160|3Z|11416440|11434160|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+2Gp1|11434160|11482920|3C|11465240|11482920|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+2Gt1|11482920|11531680|3C|11514000|11531680|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+2Gp2|11531680|11575920|3L|-|-
+2Gt2|11575920|11620160|3L|-|-
+2G|11620160|11691600|1R|11673920|11691600|PHAEDRA>1R~BERMUDA>1S
+1S|11691600|11879880|3C|11862200|11879880|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+3AL1|11879880|11929600|6A|11911920|11929600|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AK1|11929600|11978000|6A|11960320|11978000|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+3AF2|11978000|12207880|7A|12190200|12207880|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+3AL2|12207880|12257600|7A|12239920|12257600|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+4D2|12257600|12299800|5A|12282120|12299800|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+3AF|12299800|12535200|4C2|12517480|12535200|ARROJAR TÉ>ThrowTeaChoice~DESTRUIR EL ORDENADOR>DestroyComputerChoice
+3Xac|12535200|12569840|3Vbs|12552160|12569840|TIRARLAS>ThrowThemChoice~VACIARLAS>FlushThemChoice3X
+3VA|12569840|12638520|3Z|12620800|12638520|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+3Xa|12638520|12669040|3Vbs|12651360|12669040|TOMARLAS>8B~TIRARLAS>FlushThemChoice3X
+ZQ|12669040|12723240|3AD|12705560|12723240|FOTO FAMILIAR>FamilyPhotoChoice~LIBRO>BookChoice
+3AD2|12723240|12841720|3AL|12824040|12841720|PAX>PAXChoice~PAC>PACStudyChoice
+ZG|12841720|12898280|8L|12880560|12898280|STEFAN>8L~COLIN>3Q
+1HB|12898280|13014200|1Qnw|12996520|13014200|ACEPTAR>8AChoice~RECHAZAR>1Q_rewatch
+8JB1|13014200|13046160|6A|13028480|13046160|P.A.C.S.>LettersPACSChoice~GLIFO 'OSO POLAR'>WhiteBearChoice
+8JB2|13046160|13078120|7A|13060440|13078120|EL LOGO 'N' DE NETFLIX>7A~EL GLIFO 'OSO POLAR'>WhiteBearChoice
+5Mpc|13078120|13225360|8K|-|-
+5Mtc|13225360|13372600|8K|-|-
+5Mt|13372600|13529760|8K|-|-
+5Q|13529760|13579720|5U|13562040|13579720|SÍ>5U~NO>5T
+5U|13579720|13609320|5AD|-|-
+5R|13609320|13647320|5AD|-|-
+5RA|13647320|13691600|5AD|-|-
+5S|13691600|13719280|5AD|-|-
+5SA|13719280|13760360|5AD|-|-
+5TA|13760360|13801520|5AD|-|-
+5AG2|13801520|13880680|5AH|13863000|13880680|DEJARLO IR>5AH~MATARLO>5AJ
+5AH|13880680|13928480|8M|-|-
+8M|13928480|14030840|SS53|-|-
+5AC|14030840|14123240|8V|-|-
+8V|14123240|14217320|SS53|-|-
+5AC2|14217320|14267760|8V|-|-
+8Va|14267760|14361840|SS53|-|-
+R2cd|14361840|14410800|3AD|-|-
+ZK3|14410800|14446920|8J|14429200|14446920|JUGUETE>8J~PAC>PACStudyChoice
+5AD2|14446920|14489560|5AF|14471880|14489560|NI IDEA>5AF~SALTÓ>5AE
+5AE|14489560|14593960|8Q|-|-
+8Qa|14593960|14696360|SS53|-|-
+5AG|14696360|14805520|5AH|14787840|14805520|DEJARLO IR>5AH~MATARLO>5AJ
+5AJ|14805520|14862000|8S|-|-
+8S|14862000|14947800|SS53|-|-
+8Sa|14947800|15033600|SS53|-|-
+3P|15033600|15308000|8L|15286320|15308000|STEFAN>8L~COLIN>3Q
+8Ma|15308000|15410360|SS53|-|-
+7J|15410360|15427080|SS50|-|-
+3T|15427080|15480040|3X|-|-
+5G|15480040|15497360|1HA|-|-
+5T|15497360|15538120|5AD|-|-
+ZB|15538120|15584480|2B|15566800|15584480|SÍ>2BChoice~NO>2GA
+Z1|15584480|15632840|3C|15615160|15632840|ARROJAR TÉ>3B~GRITARLE A PAPÁ>3C
+Z2|15632840|15658680|3J|-|-
+Z3|15658680|15685000|3X|-|-
+Z3cd|15685000|15715120|3X|-|-
+Z4|15715120|15752760|3Y|15735040|15752760|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+Z4cd|15752760|15799800|3Y|15782120|15799800|DESTRUIR EL ORDENADOR>3Y~GOLPEAR EL ESCRITORIO>3Z
+ZD|15799800|15858920|3AD|15841200|15858920|FOTO FAMILIAR>FamilyPhotoChoice~LIBRO>BookChoice
+ZE|15858920|15920040|3AD|15902360|15920040|FOTO FAMILIAR>FamilyPhotoChoice~LIBRO>BookChoice
+SS1|15920040|15951680|R3|15920040|15951680|HABLAR DE MAMÁ>R3~SEGUIR A COLIN>R4
+SS2|15951680|15983280|R1|15951680|15983280|TOMAR LA FOTO>R1~¿QUIÉN ANDA AHÍ?>WhoThereChoice
+R1|15983280|16016160|3AJ|-|-
+SS3|16016160|16047760|R2|16016160|16047760|PEDIRLE EL CONEJO A PAPÁ>R2~¿QUIÉN ANDA AHÍ?>WhoThereChoice
+SS4|16047760|16079360|R4|16047760|16079360|SEGUIR A COLIN>R4~¿QUIÉN ANDA AHÍ?>WhoThereChoice
+SS5|16079360|16110960|Z62b|16079360|16110960|¿QUIÉN ANDA AHÍ?>WhoThereChoice
+SS6|16110960|16142560|R3|16110960|16142560|HABLAR DE MAMÁ>R3~MATAR A PAPÁ>5H
+R3|16142560|16172720|2B|-|-
+SS7|16172720|16204320|5H|16172720|16204320|TOMAR LA FOTO>R1~MATAR A PAPÁ>5H
+SS8|16204320|16235920|5H|16204320|16235920|PEDIR EL CONEJO>R2~MATAR A PAPÁ>5H
+SS9|16235920|16267520|5H|16235920|16267520|SEGUIR A COLIN>R4~MATAR A PAPÁ>5H
+SS11|16267520|16299160|3Ax|16267520|16299160|¿TRABAJAR EN TUCKERSOFT?>SS11-0~VOLVER>3Ax
+SS12|16299160|16330840|3Ax|16299160|16330840|HABLAR DE MAMÁ>R3~VOLVER>3Ax
+SS14|16330840|16362480|3Xxa|16330840|16362480|HABLAR DE MAMÁ>R3~VOLVER>3Xxa_3Xxc
+3Xxc|16362480|16393320|3Vbs|16375640|16393320|TIRARLAS>8B~VACIARLAS>FlushThemChoice3X
+SS16|16393320|16424960|3Vx|16393320|16424960|HABLAR DE MAMÁ>R3~VOLVER>3Vx
+SS18|16424960|16456600|3Vx|16424960|16456600|VOLVER>3Vx
+SS19|16456600|16488240|3Nx|16456600|16488240|HABLAR DE MAMÁ>R3~VOLVER>3Nx
+R5|16488240|16522800|3R|-|-
+SS21|16522800|16554400|5H|16522800|16554400|'PROGRAM & CONTROL'>R6~MATAR A PAPÁ>5H
+SS22|16554400|16586000|5H|16554400|16586000|¿QUIÉN ANDA AHÍ?>WhoThereChoice~MATAR A PAPÁ>5H
+SS50|16586000|16617600|0cr2|16586000|16617600|HABLAR DE MAMÁ>SS50-0~SALIR A LOS CRÉDITOS>0cr2
+R3cd|16617600|16659200|2B|-|-
+R4cd|16659200|16697400|3M|-|-
+SS53|16697400|16729000|0cr2|16697400|16729000|¿DESCUARTIZAR O ENTERRAR?>chopBuryRecap~SALIR A LOS CRÉDITOS>0cr2
+SS54|16729000|16760600|0cr2|16729000|16760600|¿QUIÉN ANDA AHÍ?>WhoThereChoice-SS54~SALIR A LOS CRÉDITOS>0cr2
+SS55|16760600|16792200|0cr2|16760600|16792200|TOMAR LA FOTO>SS55-0~SALIR A LOS CRÉDITOS>0cr2
+R1cd|16792200|16839200|3AJ|-|-
+S44B|16839200|16899760|0cr1|16839200|16899760|HABLAR DE MAMÁ>R3~SALIR A LOS CRÉDITOS>0cr1
+S34B|16899760|16960360|0cr1|16899760|16960360|SEGUIR A COLIN>R4~SALIR A LOS CRÉDITOS>0cr1
+S35B|16960360|17020920|0cr1|16960360|17020920|¿QUIÉN ANDA AHÍ?>WhoThereChoice~SALIR A LOS CRÉDITOS>0cr1
+S59B|17020920|17081480|0cr1|17020920|17081480|¿DESCUARTIZAR O ENTERRAR?>chopBuryRecap~SALIR A LOS CRÉDITOS>0cr1
+S36B|17081480|17142040|0cr1|17081480|17142040|TOMAR LA FOTO>R1~SALIR A LOS CRÉDITOS>0cr1
+S37B|17142040|17202600|0cr1|17142040|17202600|PEDIR EL CONEJO>R2~SALIR A LOS CRÉDITOS>0cr1
+S38B|17202600|17263160|0cr1|17202600|17263160|'PROGRAM & CONTROL'>R6~SALIR A LOS CRÉDITOS>0cr1
+S38A|17263160|17323400|0cr1|17263160|17323400|'PROGRAM & CONTROL'>R6~SALIR A LOS CRÉDITOS>0cr1
+S44A|17323400|17383640|0cr1|17323400|17383640|HABLAR DE MAMÁ>R3~SALIR A LOS CRÉDITOS>0cr1
+S34A|17383640|17443880|0cr1|17383640|17443880|SEGUIR A COLIN>R4~SALIR A LOS CRÉDITOS>0cr1
+S59A|17443880|17504120|0cr1|17443880|17504120|¿DESCUARTIZAR O ENTERRAR?>chopBuryRecap~SALIR A LOS CRÉDITOS>0cr1
+S35A|17504120|17564360|0cr1|17504120|17564360|¿QUIÉN ANDA AHÍ?>WhoThereChoice~SALIR A LOS CRÉDITOS>0cr1
+S36A|17564360|17624600|0cr1|17564360|17624600|TOMAR LA FOTO>R1~SALIR A LOS CRÉDITOS>0cr1
+Z62a|17624600|17670000|7A|17652320|17670000|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z62b|17670000|17711600|7A|17693920|17711600|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z62c|17711600|17768520|7A|17750840|17768520|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z62d|17768520|17820320|7A|17797360|17820320|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z62e|17820320|17868840|7A|17845840|17868840|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z62f|17868840|17913600|7A|17895880|17913600|LOGO 'N'>7A~OSO POLAR>WhiteBearChoice
+Z61a|17913600|17959000|6A|17941320|17959000|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z61b|17959000|18000600|6A|17982920|18000600|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z61c|18000600|18057520|6A|18039840|18057520|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z61d|18057520|18109320|6A|18091640|18109320|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z61e|18109320|18157840|6A|18140120|18157840|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z61f|18157840|18202600|6A|18184880|18202600|P.A.C.S.>LettersPACSChoice~OSO POLAR>WhiteBearChoice
+Z7a|18202600|18229000|5V|-|-
+Z7b|18229000|18252000|5V|-|-
+Z7d|18252000|18288600|5V|-|-
+Z7e|18288600|18320240|5V|-|-
+Z7f|18320240|18348240|5V|-|-
+8KB|18348240|18353800|0Cr4|-|-
+8KA|18353800|18359040|0Cr4|-|-
+0cr3|18359040|18515280|IDNT|-|-
+0Cr4|18515280|18595160|IDNT|-|-
+0cr1|18595160|18646200|IDNT|-|-
+0cr2|18646200|18724240|IDNT|-|-
+IDNT|18724240|0|IDNT|-|-
+`;
+
+const GRAW = `
+8AChoice|8A~8Aa
+1Qnw-1Qtt|1Qtt~1Qnw
+1Q_rewatch|1QB~1Qtt?1Qtt_rewatch~1Qnw?1Qnw_rewatch~1QA
+1QB|@ZJ?ZJ_s1QB~@3L?3L_s1QB~3J
+2BChoice|2B~2Bp1~2Bp2~2Bt1~2Bt2
+R3cd|@2BChoice
+R3|@2BChoice
+2GChoice|2G~2Gp1~2Gp2~2Gt1~2Gt2
+FlushThemChoice3X|3Vff~3Vfs~3Wff~3Wfs~ZHw6~3VB~ZH~3VA
+ThrowThemChoice|3Vbf~3Vbs~3Wbf~3Wbs~ZHw6~3VB~ZH~3VA
+VisitHaynesChoice|ZP~ZQ~3Xa~3Xac~3S~3R
+FollowColinChoice|ZG~3M
+3LA|@VisitHaynesChoice
+WhoThereChoice|Z61e~Z61a~Z61f~Z61b~Z62e~Z62a~Z62f~Z62b
+WhoThereChoice-SS54|Z61a?Z61a_sSS54~Z61b?Z61b_sSS54~Z61c?Z61c_sSS54~Z61d?Z61d_sSS54~Z62a?Z62a_sSS54~Z62b?Z62b_sSS54~Z62c?Z62c_sSS54~Z62d?Z62d_sSS54~@WhoThereChoice
+SS55-0|R1cd~R1
+FamilyPhotoChoice|3AB~3AB1~3AB2~3AC~3AC1~3AC2~3AJ~3AJ1~3AJ2~3AH~3AH1~3AH2
+FamilyPhotoChoice_R1|3AB?3AB_R1~3AB1?3AB1_R1~3AB2?3AB2_R1~3AC?3AC_R1~3AC1?3AC1_R1~3AC2?3AC2_R1~3AJ?3AJ_R1~3AJ1?3AJ1_R1~3AJ2?3AJ2_R1~3AH?3AH_R1~3AH1?3AH1_R1~3AH2?3AH2_R1
+R1|@FamilyPhotoChoice_R1
+R1cd|@FamilyPhotoChoice_R1
+BookChoice|ZK3~ZK1~ZK2~ZK~3AD3~3AD1~3AD2~3AD
+R2|@BookChoice
+R2cd|@BookChoice
+3B|@splitScreens
+8B|@splitScreens
+3C|ZJ~3J~3L~3LA
+3Q|3S?3S_s3Q~3R
+3S|3X~3Xcd~3Vff~3Vbf~3Vfs~3Vbs~3Wff~3Wbf~3Wfs~3Wbs~ZHw6~3VB~ZH~3VA
+3U|3X~3Xcd
+3T|3X~3Xcd
+3Y|@splitScreens
+8L|@splitScreens
+5G|@splitScreens
+6C|8D~8Da
+6D|8D~8Da
+8JA|@endingSplitScreens
+8D|@endingSplitScreens
+8Da|@endingSplitScreens
+5AH|8M~8Ma
+5AE|8Q~8Qa
+5AF|8Q~8Qa
+5AC|8V~8Va
+5AC2|8V~8Va
+5AJ|8S~8Sa
+8KA|0Cr4?0Cr4_from7~0cr3?0cr3_from7
+8KB|0Cr4?0Cr4_from7~0cr3?0cr3_from7
+8M|@endingSplitScreens
+8Ma|@endingSplitScreens
+8Q|@endingSplitScreens
+8Qa|@endingSplitScreens
+8V|@endingSplitScreens
+8Va|@endingSplitScreens
+8S|@endingSplitScreens
+8Sa|@endingSplitScreens
+2B2G_p2t2|3L~3LA
+2Bp2|@2B2G_p2t2
+2Bt2|@2B2G_p2t2
+2Gp2|@2B2G_p2t2
+2Gt2|@2B2G_p2t2
+Z2|3VA?3VA_respawn~ZH?ZH_respawn~ZJ?ZJ_sZ2~3J?3J_sZ2~3L?3L_sZ2~3LA?3LA_sZ2
+8A|@respawnOptions
+LettersPACSChoice|ZMC~6A
+WhiteBearChoice|ZMB~5A
+ThrowTeaChoice|4C2~4C1
+DestroyComputerChoice|4D2~4D1
+8J-1|8JB2~8JB1
+R5|@VisitHaynesChoice
+PACStudyChoice|3AF~3AF1~3AF2
+R6|@PACStudyChoice
+PAXChoice|3AL~3AL1~3AL2
+JFDChoice|3AK~3AK1~3AK2
+3Xxa_3Xxc|3Xxa~3Xxc
+5V_5VA|5V~5VA
+5H|@5V_5VA
+Z7a|@5V_5VA
+Z7b|@5V_5VA
+Z7c|@5V_5VA
+Z7d|@5V_5VA
+Z7e|@5V_5VA
+Z7f|@5V_5VA
+bodyBurial_kitty|5AD2?5AD2_kitty~5AD?5AD_kitty
+bodyBurial_colin|5AG?5AG_colin~5AG2?5AG2_colin
+bodyBurial_tucker|5AC?5AC_tucker~5AC2?5AC2_tucker
+5T|@bodyBurial_tucker
+5TA|@bodyBurial_kitty
+5U|@bodyBurial_colin
+5UA|@bodyBurial_kitty
+5R|@bodyBurial_colin
+5RA|@bodyBurial_kitty
+5S|@bodyBurial_tucker
+5SA|@bodyBurial_kitty
+chopBuryRecap|Z7a~Z7b~Z7e~Z7f~Z7c~Z7d
+5V-0|5SA~5S~5RA~5R~5QA~5Q
+5V-1|5Mpc~5Mtc~5Mt~5Mp
+SS11-0|1GB~1GA~1HA~1HB
+SS50-0|R3cd~R3
+SS51-0|R4cd~R4
+SS56-0|R2cd~R2
+respawnOptions|1GA?1GA_respawn~1GB?1GB_respawn~1HA?1HA_respawn~1HB?1HB_respawn~ZB?ZB_respawn~Z1?Z1_respawn~Z2?Z2_respawn~Z3cd?Z3cd_respawn~Z3?Z3_respawn~Z4cd?Z4cd_respawn~Z4?Z4_respawn~ZE?ZE_respawn~ZD?ZD_respawn
+Z3_all|3X~3Xcd~3Vff~3Vbf~3Vfs~3Vbs~3Wff~3Wbf~3Wfs~3Wbs~ZHw6~3VB~ZH~3VA
+Z3|@Z3_all
+Z3cd|@Z3_all
+pearlThrowTea|8KA~S59A~S44A~S34A~S35A~S36A~S37A~S38A
+pearlDestroyComputer|8KB~S59B~S44B~S34B~S35B~S36B~S37B~S38B
+splitScreens|SS12~SS11~SS13~SS14~SS15~SS16~SS17~SS18~SS19~SS20~SS1~SS6~SS2~SS7~SS3~SS8~SS9~SS4~SS22~SS21~SS5~@respawnOptions
+endingSplitScreens|SS53~SS52~SS50~SS51~SS54~SS55~SS56~SS57
+seenAllEndingsFrom7|@endingSplitScreens
+7J|@seenAllEndingsFrom7
+7K|@seenAllEndingsFrom7
+7L|@seenAllEndingsFrom7
+`;
+
+const PRAW = `
+8A|!8a
+8Aa|8a
+1Qtt|tt
+1Qnw|!tt
+1QB|3j
+1Qtt_rewatch|!3j&(!2b|!w1)&tt
+1Qnw_rewatch|!3j&(!2b|!w1)&!tt
+1QA|!3j&2b&w1
+2B|!cs
+2Bp1|cs&td&!3j
+2Bp2|cs&td&3j
+2Bt1|cs&!td&!3j
+2Bt2|cs&!td&3j
+2G|!cs
+2Gp1|cs&td&!3j
+2Gp2|cs&td&3j
+2Gt1|cs&!td&!3j
+2Gt2|cs&!td&3j
+ZJ_s1QB|3l&(cj|sj)&tud
+3L_s1QB|3j
+ZJ|(cj|sj)&tud
+3J|!3j
+3L|3j&!(lsd&vh)
+3LA|3j&lsd&vh
+R1|!(bup&cd)
+R1cd|bup&cd
+Z61a_sSS54|bup&!pr&s3af&!(cd&vs=k)&2b
+Z61b_sSS54|bup&!pr&s3af&!(cd&vs=k)&!2b
+Z61c_sSS54|bup&!pr&s3af&cd&vs=k&2b
+Z61d_sSS54|bup&!pr&s3af&cd&vs=k&!2b
+Z62a_sSS54|bup&!(!pr&s3af)&!(cd&vs=k)&2b
+Z62b_sSS54|bup&!(!pr&s3af)&!(cd&vs=k)&!2b
+Z62c_sSS54|bup&!(!pr&s3af)&cd&vs=k&2b
+Z62d_sSS54|bup&!(!pr&s3af)&cd&vs=k&!2b
+Z61e|!pr&s3af&2b&cd
+Z61a|!pr&s3af&2b&!cd
+Z61f|!pr&s3af&!2b&cd
+Z61b|!pr&s3af&!2b&!cd
+Z62e|!(!pr&s3af)&2b&cd
+Z62a|!(!pr&s3af)&2b&!cd
+Z62f|!(!pr&s3af)&!2b&cd
+Z62b|!(!pr&s3af)&!2b&!cd
+3AF|!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AF1|(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr
+3AF2|(3ab|3ac|3aj|3ah|3ak|3al|3af)&pr
+3AL|!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AL1|(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AL2|(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+3AK|!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AK1|(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AK2|(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+3AB|!(cm|ty)&!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AB1|!(cm|ty)&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AB2|!(cm|ty)&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+3AC|(cm|ty)&!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AC1|(cm|ty)&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AC2|(cm|ty)&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+3AJ|!(cm|ty)&!3aj&!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AJ1|!(cm|ty)&!3aj&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AJ2|!(cm|ty)&!3aj&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+3AH|!(cm|ty)&!3ah&!(3ab|3ac|3aj|3ah|3ak|3al|3af)
+3AH1|!(cm|ty)&!3ah&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!pr&s3af
+3AH2|!(cm|ty)&!3ah&(3ab|3ac|3aj|3ah|3ak|3al|3af)&!(!pr&s3af)
+ZK|3ad&!cm&!8j&!ty&!pr&2b&lsd
+ZK1|3ad&!(!pr&2b&lsd)
+ZK2|3ad&!cm&!8j&!ty&!pr&2b&lsd
+ZK3|3ad&cm&!8j&!ty&!pr&2b&lsd
+3AD|!3ad&!(cm&!ty)&!(!pr&2b&lsd)
+3AD1|!3ad&cm&!ty&!(!pr&2b&lsd)
+3AD2|!3ad&!(cm&!ty)&!pr&2b&lsd
+3AD3|!3ad&cm&!ty&!pr&2b&lsd
+3S_s3Q|vh
+3VA_respawn|3l&lsd&tud&!3z&!cd
+ZH_respawn|3l&lsd&tud&!3z&cd
+ZJ_sZ2|3l&lsd&tud&3z
+3J_sZ2|!(3l&lsd&tud)&!3j
+3L_sZ2|!(3l&lsd&tud)&3j&!(lsd&vh)
+3LA_sZ2|!(3l&lsd&tud)&3j&lsd&vh
+5V|!5v
+5VA|5v
+8D|!8d
+8Da|8d
+8M|!8m
+8Ma|8m
+8Q|!8q
+8Qa|8q
+8S|!8s
+8Sa|8s
+8V|!8v
+8Va|8v
+ZP|vh&3s&tud&!3z
+ZQ|vh&3s&tud&3z
+3Xa|vh&3s&!tud&!cd
+3Xac|vh&3s&!tud&cd
+3S|vh&!3s
+3R|!vh
+ZG|lsd
+3M|!lsd
+ZMB|5h
+ZMC|pr
+4C2|!(!pr&s3af)
+4C1|!pr&s3af
+4D2|!(!pr&s3af)
+4D1|!pr&s3af
+8JB2|!(!pr&s3af)
+8JB1|!pr&s3af
+3Xxa|!cd
+3Xxc|cd
+5AD_kitty|!(5ac|5ag|5ad)
+5AD2_kitty|(5ac|5ag|5ad)
+5AG_colin|!(5ac|5ag|5ad)
+5AG2_colin|(5ac|5ag|5ad)
+5AC_tucker|!(5ac|5ag|5ad)
+5AC2_tucker|(5ac|5ag|5ad)
+Z7a|!cd&2b
+Z7b|!cd&!2b
+Z7e|cd&!(vs=k)&2b
+Z7f|cd&!(vs=k)&!2b
+Z7c|cd&vs=k&2b
+Z7d|cd&vs=k&!2b
+5QA|cd
+5Q|!cd
+5SA|!(pc=t)&cd
+5S|!(pc=t)
+5RA|pc=o
+5R|pc=t
+5Mpc|cd&td
+5Mtc|cd&!td
+5Mt|!cd&!td
+5Mp|!cd&td
+1GB|!tt&cd
+1GA|!tt&!cd
+1HA|tt&!cd
+1HB|tt&cd
+R2|!(bup&cd)
+R2cd|bup&cd
+R3|!(bup&cd)
+R3cd|bup&cd
+R4|!(bup&cd)
+R4cd|bup&cd
+1GA_respawn|!w1&!tt&!cd
+1GB_respawn|!w1&!tt&cd
+1HA_respawn|!w1&tt&!cd
+1HB_respawn|!w1&tt&cd
+ZB_respawn|w1&!2b
+Z1_respawn|w1&2b&!3j
+Z2_respawn|w1&2b&3j&(!lsd|!vh)
+Z3cd_respawn|w1&2b&3j&lsd&vh&!tud&cd
+Z3_respawn|w1&2b&3j&lsd&vh&!tud&!cd
+Z4cd_respawn|w1&2b&3j&lsd&vh&tud&!3z&cd
+Z4_respawn|w1&2b&3j&lsd&vh&tud&!3z&!cd
+ZE_respawn|w1&2b&3j&lsd&vh&tud&3z&cd
+ZD_respawn|w1&2b&3j&lsd&vh&tud&3z&!cd
+3X|!(ps=b|ps=f)&!cd
+3Xcd|!(ps=b|ps=f)&cd
+3Vff|!tud&!cd&!sp&ps=f
+3Vbf|!tud&!cd&!sp&ps=b
+3Vfs|!tud&!cd&sp&ps=f
+3Vbs|!tud&!cd&sp&ps=b
+3Wff|ps=f&!tud&cd&!sp
+3Wbf|ps=b&!tud&cd&!sp
+3Wfs|!tud&cd&sp&ps=f
+3Wbs|!tud&cd&sp&ps=b
+ZHw6|(ps=b|ps=f)&tud&3z&cd
+3VB|(ps=b|ps=f)&tud&3z&!cd
+ZH|(ps=b|ps=f)&tud&!3z&cd
+3VA|(ps=b|ps=f)&tud&!3z&!cd
+SS12|pt&!2b
+SS11|pt&2b&!8a
+SS13|pt&2b&8a
+SS14|!pt&ps=t&!2b
+SS15|!pt&ps=t&2b
+SS16|!pt&!(ps=t)&sc&!2b
+SS17|!pt&!(ps=t)&sc&2b&!lsd
+SS18|!pt&!(ps=t)&sc&2b&lsd
+SS19|!pt&!(ps=t)&!sc&sj2&!2b
+SS20|!pt&!(ps=t)&!sc&sj2&2b
+SS1|!pt&!(ps=t)&!sc&!sj2&!2b&!bo
+SS6|!pt&!(ps=t)&!sc&!sj2&!2b&bo
+SS2|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&lsd)&!cm&!bo
+SS7|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&lsd)&!cm&bo
+SS3|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&lsd)&cm&!bo
+SS8|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&lsd)&cm&bo
+SS9|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&!lsd)&bo
+SS4|!pt&!(ps=t)&!sc&!sj2&2b&(!ty&!lsd)&!bo
+SS22|!pt&!(ps=t)&!sc&!sj2&2b&bo&(pr|s3af)
+SS21|!pt&!(ps=t)&!sc&!sj2&2b&bo&!(pr|s3af)
+SS5|!pt&!(ps=t)&!sc&!sj2&2b&!bo&pr
+SS53|!np&!pp&!tp&kd&!be
+SS52|!np&!pp&!tp&kd&be&!pe
+SS50|!np&!pp&!tp&kd&be&pe&!2b
+SS51|!np&!pp&!tp&kd&be&pe&2b&!lsd
+SS54|!np&!pp&!tp&kd&be&pe&2b&lsd&!(nf&wb)
+SS55|!np&!pp&!tp&kd&be&pe&2b&lsd&(nf&wb)&!ty&!cm
+SS56|!np&!pp&!tp&kd&be&pe&2b&lsd&(nf&wb)&!ty&cm
+SS57|!np&!pp&!tp&kd&be&pe&2b&lsd&(nf&wb)&ty&!(pr|s3af)
+S59A|!be
+S44A|be&!2b
+S34A|be&2b&!lsd
+S35A|be&2b&lsd&!ne
+S36A|be&2b&lsd&ne&!cm
+S37A|be&2b&lsd&ne&cm&!ty
+S38A|be&2b&lsd&ne&cm&ty&!(pr|s3af)
+S59B|!be
+S44B|be&!2b
+S34B|be&2b&!lsd
+S35B|be&2b&lsd&!ne
+S36B|be&2b&lsd&ne&!cm
+S37B|be&2b&lsd&ne&cm&!ty
+S38B|be&2b&lsd&ne&cm&ty&!(pr|s3af)
+8KA|ne&be&pae&pe&te
+8KB|ne&be&pae&pe&te
+3Q|!(cj&cd)
+`;
+
+const ERAW = `
+1E|sp=1;tt=1
+1D|sp=0
+1H|tt=1
+1G|tt=0
+8A|8a=1
+8Aa|8a=1
+1Qtt|w1=1
+1Qnw|w1=1
+1R|td=1
+1S|td=0
+2B|2b=1
+3B|cs=1;pt=1
+3C|cs=1
+3J|3j=1
+3R|vh=1
+3L|3l=1;scs=1
+3M|lsd=1
+3Z|3z=1
+3Y|sc=1
+3Q|cj=1;cd=1
+3S|3s=1
+3AB|cm=1;3ab=1
+3AC|cm=1;3ac=1
+3AJ|cm=1;3aj=1
+3AH|cm=1;3ah=1
+3AK|cm=1;3ak=1
+3AL|cm=1;3al=1
+3AF|cm=1;3af=1
+3AD|3ad=1
+5A|wb=1
+5V|5v=1
+5H|kd=1;5h=1
+5G|bo=1
+5AD|5ad=1
+5AG|5ag=1
+5AC|5ac=1;be=1
+5AF|bup=1;be=1
+5AE|bup=1;be=1
+5AH|bup=1;be=1
+5AJ|bup=1;be=1
+6A|pr=1
+6C|pp=1;pae=1;6c=1
+6D|pp=1;pae=1
+8D|8d=1
+8Da|8d=1
+8M|8m=1
+8Q|8q=1
+8S|8s=1
+8V|8v=1
+8K|pe=1
+7A|nf=1
+7D|np=1;ne=1
+7H|np=1;ne=1
+3X|ps=t
+3Xcd|ps=t
+3Xa|ps=t
+3Xac|ps=t
+3Vbf|tud=1;ps=b
+3Vbs|tud=1;ps=b
+3Vff|tud=1;ps=f
+3Vfs|tud=1;ps=f
+3Wbf|tud=1;ps=b
+3Wbs|tud=1;ps=b
+3Wff|tud=1;ps=f
+3Wfs|tud=1;ps=f
+ZH|tud=1;ps=b
+ZHw6|tud=1;ps=b
+3VA|tud=1;ps=b
+3VB|tud=1;ps=b
+ZMC|pr=1
+ZMB|5h=1
+Z62a|cd=0
+Z62b|cd=0
+Z62c|cd=0
+Z62d|cd=0
+Z62e|cd=0
+Z62f|cd=0
+Z61a|cd=1
+Z61b|cd=1
+Z61c|cd=1
+Z61d|cd=1
+Z61e|cd=1
+Z61f|cd=1
+R1|cd=1
+R2|cd=1
+R3|cd=1
+R4|cd=1
+R1cd|cd=1
+R2cd|cd=1
+R3cd|cd=1
+R4cd|cd=1
+Z2|3z=1
+8J|ty=1;te=1;3ad=1
+8J-1|snt=1
+5T|vs=t
+5U|vs=c
+8KA|te=1
+`;
+
+/* ===================== LÓGICA (sin DOM) ===================== */
+/*LOGIC-START*/
+const SEG={},CH={},GRP={},PREC={},EFF={};
+
+function parseChoices(str){
+  return str.split("~").map(x=>{
+    const i=x.indexOf(">");
+    return i<0?null:{t:x.slice(0,i).trim(),g:x.slice(i+1).trim()};
+  }).filter(Boolean);
+}
+RAW.trim().split("\n").forEach(l=>{
+  const p=l.split("|"); const id=(p[0]||"").trim(); if(!id) return;
+  const s={s:+p[1],e:+p[2],d:(p[3]||"").trim()};
+  if(p[4]&&p[4].trim()!=="-"){s.ws=+p[4];s.we=+p[5];}
+  const c=(p[6]||"").trim();
+  if(c==="#CODE") s.pad=true;            /* teclado numérico, no es una elección */
+  else if(c){const o=parseChoices(c); if(o.length) CH[id]=o;}
+  SEG[id]=s;
+});
+GRAW.trim().split("\n").forEach(l=>{
+  const p=l.split("|"); const n=(p[0]||"").trim(); if(!n) return;
+  GRP[n]=(p[1]||"").split("~").map(x=>{
+    const i=x.indexOf("?"); const raw=(i<0?x:x.slice(0,i)).trim();
+    return i<0?{s:raw}:{s:raw,c:x.slice(i+1).trim()};
+  });
+});
+/* ojo: las condiciones usan "|" como OR, así que solo se parte en el primer "|" */
+PRAW.trim().split("\n").forEach(l=>{const i=l.indexOf("|");if(i>0)PREC[l.slice(0,i).trim()]=l.slice(i+1).trim();});
+ERAW.trim().split("\n").forEach(l=>{const p=l.split("|");if(p[0])EFF[p[0].trim()]=(p[1]||"").split(";");});
+
+/* "3Ax" es destino de SS11/SS12 ("VOLVER") y no existe en los datos: se repite la elección té/gritar. */
+if(!SEG["3Ax"]&&!GRP["3Ax"]) GRP["3Ax"]=[{s:"2BChoice"}];
+
+const KEYS=["sp","tt","td","cs","w1","2b","3j","pt","cd","cj","sj","tud","lsd","vh","3l","3s","3z","ps","wb","kd","bo","5v","pc","sc","ty","cm","pr","3ad","s3af","nf","np","ne","pp","tp","bup","be","pe","pae","te","snt","8j","8d","8m","8q","8s","8v","vs","scs","3ab","3ac","3aj","3ah","3ak","3al","3af","5h","5ac","5ag","5ad","6c","8a","sj2"];
+let st={};
+function resetState(){st={};KEYS.forEach(k=>st[k]=false);st.ps="n";st.pc="n";st.vs="n";}
+function cloneState(){return JSON.parse(JSON.stringify(st));}
+
+/* evaluador de precondiciones: ! & | ( ) y k=valor */
+function ev(expr){
+  if(!expr) return true;
+  let i=0;
+  const skip=()=>{while(expr[i]===" ")i++;};
+  function or(){let v=and();skip();while(expr[i]==="|"){i++;const r=and();v=v||r;skip();}return v;}
+  function and(){let v=un();skip();while(expr[i]==="&"){i++;const r=un();v=v&&r;skip();}return v;}
+  function un(){skip();if(expr[i]==="!"){i++;return !un();}if(expr[i]==="("){i++;const v=or();skip();if(expr[i]===")")i++;return v;}return atom();}
+  function atom(){skip();let s="";while(i<expr.length&&/[A-Za-z0-9_]/.test(expr[i])){s+=expr[i];i++;}
+    if(!s)return true;
+    if(expr[i]==="="){i++;let v="";while(i<expr.length&&/[A-Za-z0-9_]/.test(expr[i])){v+=expr[i];i++;}return st[s]===v;}
+    return !!st[s];}
+  try{return !!or();}catch(e){return true;}
+}
+
+/*
+  Semántica de los datos:
+  - Un id que es SEGMENTO y además GRUPO (3B, R1, 5H, 8A...) se reproduce como segmento;
+    el grupo del mismo nombre decide a dónde ir cuando ese segmento termina.
+  - Un id que solo es grupo (8AChoice, FamilyPhotoChoice...) se expande según precondiciones.
+*/
+function pick(group,depth){
+  if(depth>14) return null;
+  for(const e of group){
+    const at=e.s[0]==="@", name=at?e.s.slice(1):e.s;
+    const expr=(e.c&&PREC[e.c]!==undefined)?PREC[e.c]:PREC[name];
+    if(!ev(expr)) continue;
+    let r=null;
+    if(at) r=GRP[name]?pick(GRP[name],depth+1):(SEG[name]?name:null);
+    else   r=SEG[name]?name:(GRP[name]?pick(GRP[name],depth+1):null);
+    if(r) return r;
+  }
+  return null;
+}
+function resolveTarget(name){
+  if(!name) return null;
+  if(SEG[name]) return name;
+  if(GRP[name]) return pick(GRP[name],0);
+  return null;
+}
+function nextOf(id){
+  const s=SEG[id]; if(!s) return null;
+  if(GRP[id]){const r=pick(GRP[id],0); if(r) return r;}
+  return resolveTarget(s.d);
+}
+function applyKV(list){
+  for(const kv of list){
+    const i=kv.indexOf("="); if(i<0) continue;
+    const k=kv.slice(0,i), val=kv.slice(i+1);
+    st[k]=val==="1"?true:val==="0"?false:val;   /* "0" es falso (antes quedaba como texto "0" = verdadero) */
+  }
+}
+function applyEff(id){const e=EFF[id]; if(e) applyKV(e);}
+/* Efecto de la propia elección: los grupos exigen ps=f / ps=b antes de resolverse. */
+const GEFF={FlushThemChoice3X:["ps=f"],ThrowThemChoice:["ps=b"]};
+function applyChoiceEff(g){const e=GEFF[g]; if(e) applyKV(e);}
+/*LOGIC-END*/
+
+/* ===================== DOM ===================== */
+const $=id=>document.getElementById(id);
+let v=$("v");
+const stage=$("stage"),ov=$("ov"),optsEl=$("opts"),tbar=$("tbar"),timeEl=$("time"),seek=$("seek"),
+  endBox=$("end"),gate=$("gate"),gmsg=$("gmsg"),statusEl=$("status"),pad=$("pad"),disp=$("disp"),
+  mapEl=$("map"),logEl=$("log"),btnPlay=$("btnPlay"),keysEl=$("keys"),showSubEl=$("showSub"),btnStart=$("btnStart");
+
+let cur=null,shown=false,noTimer=false,held=false,seq=0,pend=null,code="",log=[],
+    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[];
+
+const fmt=t=>{t=Math.max(0,Math.floor(t||0));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
+  return h?h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"):m+":"+String(s).padStart(2,"0");};
+const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const store={
+  get(){try{return JSON.parse(localStorage.getItem("bsn_log"));}catch(e){return null;}},
+  set(a){try{localStorage.setItem("bsn_log",JSON.stringify(a));}catch(e){}}
+};
+
+function hideOv(){ov.classList.remove("on");pad.classList.remove("on");shown=false;held=false;pend=null;}
+
+/* ---------- fuentes de video: local primero (instantáneo), remoto como respaldo ---------- */
+const SRCS=[VIDEO_LOCAL,VIDEO_URL];
+let srcIdx=0,subUrl=SUB_REMOTE;
+function loadSrc(i){srcIdx=i;v.src=SRCS[i];v.load();}
+
+/* ---------- subtítulos ---------- */
+function applySubMode(el){
+  const t=el.textTracks&&el.textTracks[0];
+  if(t) t.mode=showSubEl.checked?"showing":"hidden";
+}
+function applySubAll(){stage.querySelectorAll("video").forEach(applySubMode);}
+
+/* ---------- relevos: videos auxiliares que precargan los posibles saltos ---------- */
+const standbys=[],pool=[];
+function makeVideo(){
+  const el=document.createElement("video");
+  el.className="sb";el.preload="auto";el.muted=true;el.setAttribute("playsinline","");
+  const tr=document.createElement("track");
+  tr.kind="subtitles";tr.srclang="es";tr.label="Español (LATAM)";tr.src=subUrl;
+  el.appendChild(tr);
+  stage.insertBefore(el,v.nextSibling);
+  bind(el);applySubMode(el);
+  return el;
+}
+function recycle(el){
+  el._want=null;el.pause();el.removeAttribute("src");el.load();
+  el.classList.add("sb");el.muted=true;
+  if(pool.length<2) pool.push(el); else el.remove();
+}
+function releaseStandbys(){while(standbys.length) recycle(standbys.pop().el);}
+function candidates(id){
+  const s=SEG[id],out=[],seen=new Set();
+  const add=r=>{if(!r||seen.has(r)||!SEG[r])return;seen.add(r);if(SEG[r].s!==s.e)out.push({id:r,t:SEG[r].s/1000});};
+  if(CH[id]) CH[id].forEach(o=>add(resolveTarget(o.g)));
+  if(s.pad){add(resolveTarget("6C"));add(resolveTarget("6D"));}
+  add(nextOf(id));
+  return out;
+}
+function prepare(){
+  if(!cur) return;
+  cands.slice(0,2).forEach(c=>{
+    if(standbys.some(x=>x.tid===c.id)) return;
+    const el=pool.pop()||makeVideo();
+    el._want=c.t;
+    el.muted=true;
+    el.src=SRCS[srcIdx]+"#t="+c.t.toFixed(3);
+    standbys.push({el,tid:c.id});
+  });
+}
+function swapTo(sb,t){
+  const i=standbys.indexOf(sb);if(i>=0)standbys.splice(i,1);
+  const nu=sb.el,old=v;
+  nu._want=null;nu.muted=false;nu.volume=old.volume;
+  old.pause();old.muted=true;
+  v=nu;btnPlay.textContent="❚❚";
+  nu.play().then(()=>{
+    if(v!==nu) return;
+    nu.classList.remove("sb");old.classList.add("sb");recycle(old);
+  }).catch(()=>{
+    if(v!==nu) return;                      /* el navegador rechazó el relevo: volver al video anterior */
+    v=old;nu.pause();nu.muted=true;recycle(nu);
+    old.muted=false;try{old.currentTime=t;}catch(e){}
+    old.play().catch(()=>{});
+  });
+}
+
+/* ---------- registro / mapa ---------- */
+function pushLog(segId,chosen,opts){
+  log.push({seg:segId,chosen:chosen,opts:opts,state:cloneState(),at:Date.now()});
+  store.set(log);renderLog();renderMap();
+}
+function renderLog(){
+  if(!log.length){logEl.innerHTML='<div class="empty">Sin decisiones registradas.</div>';return;}
+  logEl.innerHTML="";
+  for(let i=log.length-1;i>=0;i--){
+    const e=log[i];
+    const d=document.createElement("div");d.className="ent";
+    const hora=new Date(e.at).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+    let html='<span class="t">'+hora+'</span> · segmento '+esc(e.seg);
+    e.opts.forEach(o=>{
+      html+=(o===e.chosen)?'<br><b>→ '+esc(o)+'</b>':'<br><span style="opacity:.45">· '+esc(o)+'</span>';
+    });
+    d.innerHTML=html;
+    const b=document.createElement("button");b.textContent="volver a este punto";
+    b.onclick=()=>rewindTo(i);
+    d.appendChild(b);logEl.appendChild(d);
+  }
+}
+function renderMap(){
+  if(!log.length){mapEl.innerHTML='<div class="empty">Aún no hay decisiones.</div>';return;}
+  const CW=132,RH=32,maxOpts=Math.max(...log.map(e=>e.opts.length));
+  const W=30+log.length*CW,H=46+maxOpts*RH;
+  let s='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">';
+  log.forEach((e,i)=>{
+    const x=20+i*CW,y=16;
+    s+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff"/>';
+    s+='<text x="'+x+'" y="'+(y+16)+'" fill="#6a6a76" font-size="8" text-anchor="middle">'+esc(e.seg)+'</text>';
+    e.opts.forEach((o,k)=>{
+      const oy=56+k*RH,taken=o===e.chosen;
+      s+='<line x1="'+x+'" y1="'+(y+5)+'" x2="'+(x+18)+'" y2="'+(oy-4)+'" stroke="'+(taken?"#fff":"#3a3a46")+'" stroke-width="1"/>';
+      s+='<circle cx="'+(x+18)+'" cy="'+(oy-4)+'" r="3" fill="'+(taken?"#fff":"#2a2a33")+'" stroke="#3a3a46"/>';
+      s+='<text x="'+(x+25)+'" y="'+oy+'" fill="'+(taken?"#e9e9ec":"#5f5f6b")+'" font-size="9">'+esc(String(o).slice(0,17))+'</text>';
+    });
+  });
+  mapEl.innerHTML=s+"</svg>";
+  mapEl.scrollLeft=mapEl.scrollWidth;
+}
+function rewindTo(idx){
+  const e=log[idx];if(!e) return;
+  log=log.slice(0,idx);store.set(log);renderLog();renderMap();
+  st=JSON.parse(JSON.stringify(e.state));
+  gate.style.display="none";endBox.classList.remove("on");started=true;
+  play(e.seg,true);
+}
+
+/* ---------- reproducción ---------- */
+function finish(){
+  cur=null;hideOv();releaseStandbys();v.pause();
+  endBox.classList.add("on");statusEl.textContent="fin";
+}
+function play(id,fromWindow){
+  if(id==="IDNT"||!SEG[id]){finish();return;}
+  const s=SEG[id];
+  cur=id;applyEff(id);hideOv();
+  cands=candidates(id);prepAt=(s.ws||s.e||0)-12000;prepDone=!cands.length;
+  const t=((fromWindow&&s.ws)?s.ws:s.s)/1000;
+  const far=Math.abs(v.currentTime-t)>0.4;          /* tramo contiguo: no se salta, se sigue reproduciendo */
+  const sb=(far&&!fromWindow)?standbys.find(x=>x.tid===id):null;
+  if(sb) swapTo(sb,t);
+  else{
+    if(far){try{v.currentTime=t;}catch(err){}}
+    v.play().catch(()=>{});
+  }
+  releaseStandbys();
+  statusEl.textContent="segmento "+id;
+}
+function advance(target){
+  if(!cur) return;
+  let r=target?resolveTarget(target):null;
+  if(!r) r=nextOf(cur);
+  if(!r){finish();return;}
+  play(r);
+}
+
+function showChoices(id){
+  const c=CH[id];
+  shown=true;held=false;const my=++seq;
+  optsEl.innerHTML="";
+  const defIdx=Math.min(1,c.length-1);
+  const take=k=>{
+    if(!pend||pend.my!==my) return;
+    const o=c[k];
+    hideOv();
+    pushLog(id,o.t,c.map(x=>x.t));
+    applyChoiceEff(o.g);
+    advance(o.g);
+  };
+  c.forEach((o,k)=>{
+    const b=document.createElement("button");
+    b.className="opt"+(k===defIdx?" def":"");
+    b.textContent=o.t;
+    b.onclick=ev2=>{ev2.stopPropagation();take(k);};
+    optsEl.appendChild(b);
+  });
+  pend={my,auto:()=>take(defIdx)};
+  ov.classList.add("on");
+  tbar.style.transition="none";tbar.style.width="100%";
+}
+
+function showPad(){
+  shown=true;held=false;code="";disp.textContent="-----";pad.classList.add("on");
+  const my=++seq;
+  keysEl.innerHTML="";
+  const done=target=>{
+    if(!pend||pend.my!==my) return;
+    hideOv();advance(target);
+  };
+  pend={my,auto:()=>done("6D")};
+  [1,2,3,4,5,6,7,8,9,0].forEach(k=>{
+    const b=document.createElement("button");b.textContent=k;
+    b.onclick=e=>{
+      e.stopPropagation();
+      if(!pend||pend.my!==my||code.length>=5) return;
+      code+=k;disp.textContent=code.padEnd(5,"-");
+      if(code.length===5){
+        const typed=code;
+        setTimeout(()=>{
+          if(!pend||pend.my!==my) return;
+          pushLog(cur,typed,["20541"]);
+          done(typed==="20541"?"6C":"6D");
+        },420);
+      }
+    };
+    keysEl.appendChild(b);
+  });
+}
+
+function uiTime(s,ms){
+  const a=s.s,b=s.e||ms,len=Math.max(1,b-a),p=Math.min(Math.max(ms-a,0),len);
+  timeEl.textContent=fmt(p/1000)+" / "+fmt(len/1000);
+  if(!dragging) seek.value=Math.round(p/len*1000);
+}
+function tick(){
+  if(!cur) return;
+  const s=SEG[cur];if(!s) return;
+  const ms=v.currentTime*1000;
+  uiTime(s,ms);
+  if(!prepDone&&ms>=prepAt){prepDone=true;prepare();}
+  if(!shown&&s.ws&&ms>=s.ws&&ms<s.we-60){
+    if(s.pad) showPad(); else if(CH[cur]) showChoices(cur);
+  }
+  if(shown){
+    if(ms<s.ws-350){hideOv();return;}
+    if(pend){
+      const left=s.we-ms;
+      tbar.style.width=Math.max(0,Math.min(100,left/(s.we-s.ws)*100))+"%";
+      if(noTimer){
+        if(left<=60){held=true;if(!v.paused)v.pause();}   /* espera la elección */
+      }else if(left<=60){pend.auto();return;}            /* temporizador agotado: opción por defecto */
+    }
+    if(held){if(!v.paused)v.pause();return;}
+  }
+  const end=s.e||((v.duration||0)*1000-200);
+  if(ms>=end-45) advance();
+}
+
+/* ---------- eventos del video (válidos para el principal y los relevos) ---------- */
+function bind(el){
+  el.addEventListener("play",()=>{if(el===v)btnPlay.textContent="❚❚";});
+  el.addEventListener("pause",()=>{if(el===v)btnPlay.textContent="▶";});
+  el.addEventListener("timeupdate",()=>{if(el===v)tick();});
+  el.addEventListener("waiting",()=>{if(el===v&&cur)statusEl.textContent="cargando…";});
+  el.addEventListener("playing",()=>{if(el===v&&cur)statusEl.textContent="segmento "+cur;});
+  el.addEventListener("ended",()=>{if(el===v&&cur)finish();});
+  el.addEventListener("loadedmetadata",()=>{
+    if(el._want!=null&&Math.abs(el.currentTime-el._want)>0.5){try{el.currentTime=el._want;}catch(e){}}
+  });
+  el.addEventListener("error",()=>{
+    if(el!==v){
+      const i=standbys.findIndex(x=>x.el===el);
+      if(i>=0){standbys.splice(i,1);el.remove();}
+      return;
+    }
+    if(srcIdx<SRCS.length-1){                      /* no hay archivo local: usar el remoto */
+      const t=v.currentTime||0;
+      loadSrc(srcIdx+1);
+      v.addEventListener("loadedmetadata",()=>{
+        if(t>0){try{v.currentTime=t;}catch(e){}}
+        if(started&&cur) v.play().catch(()=>{});
+      },{once:true});
+      return;
+    }
+    failed=true;
+    gate.style.display="flex";
+    btnStart.textContent="Reintentar";
+    gmsg.className="err";
+    gmsg.textContent="Fallo al cargar el video ("+(v.error?v.error.code:"?")+"). Revisa la conexión, desactiva bloqueadores y reintenta.";
+  });
+}
+bind(v);
+
+/* ---------- arranque ---------- */
+function startStory(){
+  if(failed){failed=false;loadSrc(0);}
+  gate.style.display="none";gmsg.className="";gmsg.textContent="";btnStart.textContent="Empezar";
+  endBox.classList.remove("on");hideOv();releaseStandbys();
+  resetState();log=[];store.set(log);renderLog();renderMap();
+  started=true;
+  play("1A");
+}
+btnStart.onclick=startStory;
+$("btnAgain").onclick=startStory;
+$("btnReset").onclick=startStory;
+$("btnClear").onclick=()=>{log=[];store.set(log);renderLog();renderMap();};
+$("noTimer").onchange=e=>{
+  noTimer=e.target.checked;
+  if(!noTimer&&held){held=false;if(cur)v.play().catch(()=>{});}   /* con temporizador: seguir y resolver por defecto */
+};
+showSubEl.onchange=()=>{applySubAll();$("btnSub").classList.toggle("on",showSubEl.checked);};
+
+/* ---------- controles (acotados al segmento actual) ---------- */
+function seekMs(ms){
+  const s=cur&&SEG[cur];if(!s) return;
+  const hi=(s.e||ms)-300;
+  v.currentTime=Math.min(Math.max(ms,s.s),Math.max(s.s,hi))/1000;
+  tick();
+}
+function toggle(){if(held) return;v.paused?v.play().catch(()=>{}):v.pause();}
+btnPlay.onclick=toggle;
+$("btnBack").onclick=()=>seekMs(v.currentTime*1000-10000);
+$("btnFwd").onclick=()=>seekMs(v.currentTime*1000+10000);
+seek.addEventListener("pointerdown",()=>{dragging=true;});
+seek.addEventListener("pointerup",()=>{dragging=false;});
+seek.addEventListener("change",()=>{dragging=false;});
+seek.addEventListener("input",()=>{
+  const s=cur&&SEG[cur];if(!s||!s.e) return;
+  seekMs(s.s+seek.value/1000*(s.e-s.s));
+});
+$("btnSub").onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange();};
+$("btnFs").onclick=()=>{
+  if(document.fullscreenElement) document.exitFullscreen();
+  else if(stage.requestFullscreen) stage.requestFullscreen().catch(()=>{});
+  else if(stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
+};
+document.addEventListener("keydown",e=>{
+  const tg=e.target.tagName;
+  if(tg==="INPUT") return;
+  if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();toggle();}   /* en un botón, el espacio ya lo activa */
+  else if(e.key==="ArrowLeft") seekMs(v.currentTime*1000-10000);
+  else if(e.key==="ArrowRight") seekMs(v.currentTime*1000+10000);
+  else if(e.key==="c"||e.key==="C") $("btnSub").click();
+  else if(e.key==="f"||e.key==="F") $("btnFs").click();
+});
+
+/* sin temporizador: si algo reanuda el video mientras se espera la elección, se vuelve a pausar */
+setInterval(tick,250);
+(function loop(){tick();requestAnimationFrame(loop);})();
+document.addEventListener("visibilitychange",tick);
+
+/* ---------- inicio de carga: el video se pide al abrir la página, no al pulsar Empezar ---------- */
+loadSrc(0);
+(async()=>{
+  try{const r=await fetch(SUB_LOCAL,{method:"HEAD",cache:"no-store"});if(r.ok)subUrl=SUB_LOCAL;}catch(e){}
+  const tr=$("sub");tr.src=subUrl;applySubMode(v);
+})();
+
+const saved=store.get();
+if(Array.isArray(saved)){log=saved;renderLog();renderMap();}
+resetState();
+gmsg.textContent="Listo. Pulsa Empezar.";
+})();
+</script>
+</body>
+</html>
