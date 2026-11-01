@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bandersnatch · reproductor interactivo</title>
 <link rel="preconnect" href="https://archive.org">
 <link rel="dns-prefetch" href="//archive.org">
@@ -10,11 +10,11 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ctext x='8' y='12' font-size='11' fill='%23fff' text-anchor='middle' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
 <!--
   Reproductor del corte completo de 5:12:14 (1080p) con ramificación real.
-  Video: si existe "bandersnatch.mp4" junto a este archivo se usa ese (carga instantánea);
-         si no, se transmite desde Internet Archive (el <video> NO lleva crossorigin).
+  Pensado para TV / BrowserHere: se usa SIEMPRE el <video> de la página (sin controls nativos),
+  y las decisiones se manejan con D-pad + OK del control remoto, Enter del PC, o toque en móvil/tablet.
+  Video: si existe "bandersnatch.mp4" junto a este archivo se usa ese; si no, se transmite desde Internet Archive.
   Subtítulos: es.vtt de esta carpeta; si falta, URL remota.
   Servir con un servidor que soporte Range (p. ej. "npx http-server -p 8000").
-  OJO: "python -m http.server" NO soporta Range y rompe los saltos en archivos locales.
 -->
 <style>
   :root{
@@ -26,6 +26,7 @@
   body{background:var(--bg);color:var(--fg);
     font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     display:flex;flex-direction:column;overflow:hidden}
+  button,.opt,.pad .keys button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
   header h1{margin:0;font-size:13px;font-weight:500;letter-spacing:.06em}
   header .tag{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;
@@ -34,11 +35,12 @@
   header button{background:transparent;border:1px solid var(--bd);color:var(--mut);
     font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer}
   header button:hover{color:var(--fg);border-color:#3a3a46}
+  #btnPanel{display:none}
 
   main{flex:1;display:flex;min-height:0}
   #stagewrap{flex:1;display:flex;flex-direction:column;min-width:0;padding:12px;gap:8px}
   #stage{position:relative;flex:1;min-height:0;background:#000;border:1px solid var(--bd);
-    border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;outline:none}
   #stage video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
   #stage:fullscreen{border-radius:0;border:0}
   #stage video.sb{position:absolute;inset:0;visibility:hidden;pointer-events:none}
@@ -67,7 +69,7 @@
     display:none;flex-direction:column;align-items:center;gap:8px;z-index:2}
   .pad.on{display:flex}
   .pad .disp{letter-spacing:.55em;font-size:19px;color:#fff;font-variant-numeric:tabular-nums}
-  .pad .keys{display:flex;gap:7px}
+  .pad .keys{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:340px}
   .pad .keys button{width:36px;height:36px;border-radius:7px;border:1px solid rgba(255,255,255,.34);
     background:rgba(255,255,255,.06);color:#fff;font-size:14px;cursor:pointer}
   .pad .keys button:hover{background:rgba(255,255,255,.2)}
@@ -103,8 +105,61 @@
   .ent button:hover{color:#fff}
   .empty{color:#55555f;font-size:11px;padding:8px 0}
   footer{padding:6px 16px;border-top:1px solid var(--bd);background:var(--panel);
-    font-size:10px;color:var(--mut);display:flex;gap:14px}
+    font-size:10px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
   kbd{border:1px solid var(--bd);border-radius:4px;padding:0 4px;font-size:10px;color:#a5a5b0}
+
+  /* ===== foco de control remoto: siempre visible, nunca depende de :hover ===== */
+  .opt:focus,
+  .pad .keys button:focus,
+  .gate button:focus,
+  .end button:focus,
+  .ctl button:focus,
+  header button:focus,
+  .row label:focus-within{
+    outline:none;
+    border-color:#fff;
+    background:rgba(255,255,255,.22);
+    color:#fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,.92), 0 0 26px rgba(255,255,255,.42);
+  }
+  .ctl button:focus,header button:focus{
+    background:#fff;color:#000;
+  }
+  .opt:focus{transform:scale(1.03)}
+
+  /* ===== MODO TV ===== */
+  body.tv main{position:relative}
+  body.tv aside{display:none}
+  body.tv aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,44vw);z-index:30;
+    box-shadow:-12px 0 34px rgba(0,0,0,.75)}
+  body.tv #btnPanel{display:inline-block}
+  body.tv footer{display:none}
+  body.tv #stagewrap{padding:6px;gap:6px}
+  body.tv #stage{border:0;border-radius:0}
+  body.tv header{padding:12px 22px}
+  body.tv header h1{font-size:16px}
+  body.tv header button{font-size:14px;padding:8px 14px}
+  body.tv .ov{height:42%;background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.82) 62%,rgba(0,0,0,.1) 100%);
+    padding-bottom:26px}
+  body.tv .ov .q{font-size:15px;letter-spacing:.34em;margin-bottom:18px}
+  body.tv .opts{gap:26px;padding:0 60px}
+  body.tv .opt{font-size:20px;letter-spacing:.09em;padding:22px 26px;border-width:2px;
+    border-radius:12px;max-width:460px;background:rgba(255,255,255,.08)}
+  body.tv .opt:hover,body.tv .opt.def{border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.2)}
+  body.tv .timer{height:7px;margin:22px 60px 0;border-radius:4px}
+  body.tv .pad{padding:26px}
+  body.tv .pad .disp{font-size:36px;letter-spacing:.7em}
+  body.tv .pad .keys{gap:12px;max-width:none}
+  body.tv .pad .keys button{width:66px;height:66px;font-size:26px;border-width:2px;border-radius:12px}
+  body.tv .ctl{padding:0 4px}
+  body.tv .ctl button{width:52px;height:46px;font-size:18px}
+  body.tv .ctl .t{font-size:14px;min-width:130px}
+  body.tv .gate h2{font-size:34px;letter-spacing:.18em}
+  body.tv .gate p{font-size:15px;max-width:640px}
+  body.tv .gate button{font-size:17px;padding:14px 40px}
+  body.tv .end h2{font-size:24px}
+  body.tv .end p{font-size:14px;max-width:460px}
+  body.tv .end button{font-size:16px;padding:13px 30px}
 </style>
 </head>
 <body>
@@ -115,20 +170,21 @@
   <span class="tag">es-LATAM</span>
   <span class="tag">ramificación real</span>
   <span class="sp"></span>
+  <button id="btnPanel">Panel</button>
   <button id="btnReset">Reiniciar historia</button>
   <button id="btnClear">Borrar registro</button>
 </header>
 
 <main>
   <div id="stagewrap">
-    <div id="stage">
-      <video id="v" preload="auto" playsinline>
+    <div id="stage" tabindex="-1">
+      <video id="v" preload="auto" playsinline webkit-playsinline x5-playsinline disablepictureinpicture="false">
         <track id="sub" kind="subtitles" srclang="es" label="Español (LATAM)">
       </video>
 
       <div class="gate" id="gate">
         <h2>BANDERSNATCH</h2>
-        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Cada elección salta al segmento que le corresponde. El archivo se transmite por rangos: el primer arranque y algunos saltos pueden tardar unos segundos.</p>
+        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Muévete con las flechas y confirma con OK o Enter. En móvil y tablet, toca directamente.</p>
         <button id="btnStart">Empezar</button>
         <p id="gmsg" style="font-size:11px"></p>
       </div>
@@ -162,10 +218,13 @@
     </div>
   </div>
 
-  <aside>
+  <aside id="aside">
     <div class="sec">
       <h3>Ajustes</h3>
       <div class="row">
+        <label><input type="checkbox" id="tvMode"> Modo TV (letras grandes)</label>
+      </div>
+      <div class="row" style="margin-top:5px">
         <label><input type="checkbox" id="noTimer"> Modo sin temporizador</label>
       </div>
       <div class="row" style="margin-top:5px">
@@ -185,8 +244,9 @@
 </main>
 
 <footer>
+  <span><kbd>←</kbd><kbd>→</kbd> mover opción / ±10 s</span>
+  <span><kbd>Enter</kbd> o <kbd>OK</kbd> confirmar</span>
   <span><kbd>espacio</kbd> pausa</span>
-  <span><kbd>←</kbd><kbd>→</kbd> ±10 s</span>
   <span><kbd>c</kbd> subtítulos</span>
   <span><kbd>f</kbd> pantalla completa</span>
   <span id="status"></span>
@@ -898,7 +958,7 @@ RAW.trim().split("\n").forEach(l=>{
   const s={s:+p[1],e:+p[2],d:(p[3]||"").trim()};
   if(p[4]&&p[4].trim()!=="-"){s.ws=+p[4];s.we=+p[5];}
   const c=(p[6]||"").trim();
-  if(c==="#CODE") s.pad=true;            /* teclado numérico, no es una elección */
+  if(c==="#CODE") s.pad=true;
   else if(c){const o=parseChoices(c); if(o.length) CH[id]=o;}
   SEG[id]=s;
 });
@@ -909,11 +969,9 @@ GRAW.trim().split("\n").forEach(l=>{
     return i<0?{s:raw}:{s:raw,c:x.slice(i+1).trim()};
   });
 });
-/* ojo: las condiciones usan "|" como OR, así que solo se parte en el primer "|" */
 PRAW.trim().split("\n").forEach(l=>{const i=l.indexOf("|");if(i>0)PREC[l.slice(0,i).trim()]=l.slice(i+1).trim();});
 ERAW.trim().split("\n").forEach(l=>{const p=l.split("|");if(p[0])EFF[p[0].trim()]=(p[1]||"").split(";");});
 
-/* "3Ax" es destino de SS11/SS12 ("VOLVER") y no existe en los datos: se repite la elección té/gritar. */
 if(!SEG["3Ax"]&&!GRP["3Ax"]) GRP["3Ax"]=[{s:"2BChoice"}];
 
 const KEYS=["sp","tt","td","cs","w1","2b","3j","pt","cd","cj","sj","tud","lsd","vh","3l","3s","3z","ps","wb","kd","bo","5v","pc","sc","ty","cm","pr","3ad","s3af","nf","np","ne","pp","tp","bup","be","pe","pae","te","snt","8j","8d","8m","8q","8s","8v","vs","scs","3ab","3ac","3aj","3ah","3ak","3al","3af","5h","5ac","5ag","5ad","6c","8a","sj2"];
@@ -921,7 +979,6 @@ let st={};
 function resetState(){st={};KEYS.forEach(k=>st[k]=false);st.ps="n";st.pc="n";st.vs="n";}
 function cloneState(){return JSON.parse(JSON.stringify(st));}
 
-/* evaluador de precondiciones: ! & | ( ) y k=valor */
 function ev(expr){
   if(!expr) return true;
   let i=0;
@@ -936,12 +993,6 @@ function ev(expr){
   try{return !!or();}catch(e){return true;}
 }
 
-/*
-  Semántica de los datos:
-  - Un id que es SEGMENTO y además GRUPO (3B, R1, 5H, 8A...) se reproduce como segmento;
-    el grupo del mismo nombre decide a dónde ir cuando ese segmento termina.
-  - Un id que solo es grupo (8AChoice, FamilyPhotoChoice...) se expande según precondiciones.
-*/
 function pick(group,depth){
   if(depth>14) return null;
   for(const e of group){
@@ -970,11 +1021,10 @@ function applyKV(list){
   for(const kv of list){
     const i=kv.indexOf("="); if(i<0) continue;
     const k=kv.slice(0,i), val=kv.slice(i+1);
-    st[k]=val==="1"?true:val==="0"?false:val;   /* "0" es falso (antes quedaba como texto "0" = verdadero) */
+    st[k]=val==="1"?true:val==="0"?false:val;
   }
 }
 function applyEff(id){const e=EFF[id]; if(e) applyKV(e);}
-/* Efecto de la propia elección: los grupos exigen ps=f / ps=b antes de resolverse. */
 const GEFF={FlushThemChoice3X:["ps=f"],ThrowThemChoice:["ps=b"]};
 function applyChoiceEff(g){const e=GEFF[g]; if(e) applyKV(e);}
 /*LOGIC-END*/
@@ -984,10 +1034,11 @@ const $=id=>document.getElementById(id);
 let v=$("v");
 const stage=$("stage"),ov=$("ov"),optsEl=$("opts"),tbar=$("tbar"),timeEl=$("time"),seek=$("seek"),
   endBox=$("end"),gate=$("gate"),gmsg=$("gmsg"),statusEl=$("status"),pad=$("pad"),disp=$("disp"),
-  mapEl=$("map"),logEl=$("log"),btnPlay=$("btnPlay"),keysEl=$("keys"),showSubEl=$("showSub"),btnStart=$("btnStart");
+  mapEl=$("map"),logEl=$("log"),btnPlay=$("btnPlay"),keysEl=$("keys"),showSubEl=$("showSub"),
+  btnStart=$("btnStart"),aside=$("aside"),tvEl=$("tvMode");
 
 let cur=null,shown=false,noTimer=false,held=false,seq=0,pend=null,code="",log=[],
-    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[];
+    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[],ovKey=null;
 
 const fmt=t=>{t=Math.max(0,Math.floor(t||0));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
   return h?h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"):m+":"+String(s).padStart(2,"0");};
@@ -997,9 +1048,15 @@ const store={
   set(a){try{localStorage.setItem("bsn_log",JSON.stringify(a));}catch(e){}}
 };
 
-function hideOv(){ov.classList.remove("on");pad.classList.remove("on");shown=false;held=false;pend=null;}
+function hideOv(){
+  ov.classList.remove("on");pad.classList.remove("on");
+  shown=false;held=false;pend=null;ovKey=null;
+  const a=document.activeElement;
+  if(a&&a!==document.body&&a.blur) a.blur();
+  if(stage.focus) try{stage.focus({preventScroll:true});}catch(e){}
+}
 
-/* ---------- fuentes de video: local primero (instantáneo), remoto como respaldo ---------- */
+/* ---------- fuentes de video ---------- */
 const SRCS=[VIDEO_LOCAL,VIDEO_URL];
 let srcIdx=0,subUrl=SUB_REMOTE;
 function loadSrc(i){srcIdx=i;v.src=SRCS[i];v.load();}
@@ -1011,11 +1068,12 @@ function applySubMode(el){
 }
 function applySubAll(){stage.querySelectorAll("video").forEach(applySubMode);}
 
-/* ---------- relevos: videos auxiliares que precargan los posibles saltos ---------- */
+/* ---------- relevos ---------- */
 const standbys=[],pool=[];
 function makeVideo(){
   const el=document.createElement("video");
-  el.className="sb";el.preload="auto";el.muted=true;el.setAttribute("playsinline","");
+  el.className="sb";el.preload="auto";el.muted=true;
+  el.setAttribute("playsinline","");el.setAttribute("webkit-playsinline","");
   const tr=document.createElement("track");
   tr.kind="subtitles";tr.srclang="es";tr.label="Español (LATAM)";tr.src=subUrl;
   el.appendChild(tr);
@@ -1042,8 +1100,7 @@ function prepare(){
   cands.slice(0,2).forEach(c=>{
     if(standbys.some(x=>x.tid===c.id)) return;
     const el=pool.pop()||makeVideo();
-    el._want=c.t;
-    el.muted=true;
+    el._want=c.t;el.muted=true;
     el.src=SRCS[srcIdx]+"#t="+c.t.toFixed(3);
     standbys.push({el,tid:c.id});
   });
@@ -1058,7 +1115,7 @@ function swapTo(sb,t){
     if(v!==nu) return;
     nu.classList.remove("sb");old.classList.add("sb");recycle(old);
   }).catch(()=>{
-    if(v!==nu) return;                      /* el navegador rechazó el relevo: volver al video anterior */
+    if(v!==nu) return;
     v=old;nu.pause();nu.muted=true;recycle(nu);
     old.muted=false;try{old.currentTime=t;}catch(e){}
     old.play().catch(()=>{});
@@ -1118,6 +1175,7 @@ function rewindTo(idx){
 function finish(){
   cur=null;hideOv();releaseStandbys();v.pause();
   endBox.classList.add("on");statusEl.textContent="fin";
+  try{$("btnAgain").focus({preventScroll:true});}catch(e){}
 }
 function play(id,fromWindow){
   if(id==="IDNT"||!SEG[id]){finish();return;}
@@ -1125,7 +1183,7 @@ function play(id,fromWindow){
   cur=id;applyEff(id);hideOv();
   cands=candidates(id);prepAt=(s.ws||s.e||0)-12000;prepDone=!cands.length;
   const t=((fromWindow&&s.ws)?s.ws:s.s)/1000;
-  const far=Math.abs(v.currentTime-t)>0.4;          /* tramo contiguo: no se salta, se sigue reproduciendo */
+  const far=Math.abs(v.currentTime-t)>0.4;
   const sb=(far&&!fromWindow)?standbys.find(x=>x.tid===id):null;
   if(sb) swapTo(sb,t);
   else{
@@ -1143,6 +1201,18 @@ function advance(target){
   play(r);
 }
 
+/* ---------- utilidades de navegación por D-pad ---------- */
+function moveIn(container,dir){
+  const items=[...container.querySelectorAll("button")];
+  if(!items.length) return;
+  const i=items.indexOf(document.activeElement);
+  let n;
+  if(i<0) n=(dir>0)?0:items.length-1;
+  else n=(i+dir+items.length)%items.length;
+  try{items[n].focus({preventScroll:true});}catch(e){items[n].focus();}
+}
+
+/* ---------- decisiones ---------- */
 function showChoices(id){
   const c=CH[id];
   shown=true;held=false;const my=++seq;
@@ -1158,14 +1228,25 @@ function showChoices(id){
   };
   c.forEach((o,k)=>{
     const b=document.createElement("button");
+    b.type="button";
     b.className="opt"+(k===defIdx?" def":"");
     b.textContent=o.t;
     b.onclick=ev2=>{ev2.stopPropagation();take(k);};
     optsEl.appendChild(b);
   });
   pend={my,auto:()=>take(defIdx)};
+  ovKey=e=>{
+    if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();e.stopPropagation();moveIn(optsEl,-1);}
+    else if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();e.stopPropagation();moveIn(optsEl,1);}
+    else if(isOK(e)){e.preventDefault();e.stopPropagation();
+      const items=[...optsEl.children],i=items.indexOf(document.activeElement);
+      take(i>=0?i:defIdx);}
+    else if(isBack(e)){e.preventDefault();e.stopPropagation();}
+  };
   ov.classList.add("on");
   tbar.style.transition="none";tbar.style.width="100%";
+  const items=[...optsEl.children];
+  try{items[defIdx].focus({preventScroll:true});}catch(e){items[defIdx].focus();}
 }
 
 function showPad(){
@@ -1177,25 +1258,60 @@ function showPad(){
     hideOv();advance(target);
   };
   pend={my,auto:()=>done("6D")};
+  const press=k=>{
+    if(!pend||pend.my!==my||code.length>=5) return;
+    code+=k;disp.textContent=code.padEnd(5,"-");
+    if(code.length===5){
+      const typed=code;
+      setTimeout(()=>{
+        if(!pend||pend.my!==my) return;
+        pushLog(cur,typed,["20541"]);
+        done(typed==="20541"?"6C":"6D");
+      },420);
+    }
+  };
   [1,2,3,4,5,6,7,8,9,0].forEach(k=>{
-    const b=document.createElement("button");b.textContent=k;
-    b.onclick=e=>{
-      e.stopPropagation();
-      if(!pend||pend.my!==my||code.length>=5) return;
-      code+=k;disp.textContent=code.padEnd(5,"-");
-      if(code.length===5){
-        const typed=code;
-        setTimeout(()=>{
-          if(!pend||pend.my!==my) return;
-          pushLog(cur,typed,["20541"]);
-          done(typed==="20541"?"6C":"6D");
-        },420);
-      }
-    };
+    const b=document.createElement("button");
+    b.type="button";b.textContent=k;
+    b.onclick=e=>{e.stopPropagation();press(k);};
     keysEl.appendChild(b);
   });
+  const cells=[...keysEl.children];
+  const nav=(dx,dy)=>{
+    const i=cells.indexOf(document.activeElement);
+    if(i<0){cells[0].focus();return;}
+    const rows=Math.ceil(cells.length/3);
+    let r=Math.floor(i/3)+dy, c=(i%3)+dx;
+    if(c<0)c=2; if(c>2)c=0;
+    if(r<0)r=0; if(r>rows-1)r=rows-1;
+    let n=r*3+c; if(n>cells.length-1)n=cells.length-1;
+    try{cells[n].focus({preventScroll:true});}catch(e){cells[n].focus();}
+  };
+  ovKey=e=>{
+    if(e.key==="ArrowLeft"){e.preventDefault();e.stopPropagation();nav(-1,0);}
+    else if(e.key==="ArrowRight"){e.preventDefault();e.stopPropagation();nav(1,0);}
+    else if(e.key==="ArrowUp"){e.preventDefault();e.stopPropagation();nav(0,-1);}
+    else if(e.key==="ArrowDown"){e.preventDefault();e.stopPropagation();nav(0,1);}
+    else if(/^[0-9]$/.test(e.key)){e.preventDefault();e.stopPropagation();press(e.key);}
+    else if(isOK(e)){e.preventDefault();e.stopPropagation();
+      const t=document.activeElement;if(t&&t.parentElement===keysEl)t.click();}
+    else if(isBack(e)){e.preventDefault();e.stopPropagation();
+      if(code.length){code=code.slice(0,-1);disp.textContent=code.padEnd(5,"-");}}
+  };
+  try{cells[4].focus({preventScroll:true});}catch(e){cells[0].focus();}
 }
 
+/* ---------- teclas de control remoto ---------- */
+function isOK(e){
+  return e.key==="Enter"||e.key===" "||e.key==="Select"||e.key==="Accept"||
+         e.keyCode===13||e.keyCode===32||e.keyCode===23;
+}
+function isBack(e){
+  return e.key==="GoBack"||e.key==="Backspace"||e.key==="Escape"||
+         e.keyCode===8||e.keyCode===27||e.keyCode===461;
+}
+
+/* ---------- barra de tiempo ---------- */
 function uiTime(s,ms){
   const a=s.s,b=s.e||ms,len=Math.max(1,b-a),p=Math.min(Math.max(ms-a,0),len);
   timeEl.textContent=fmt(p/1000)+" / "+fmt(len/1000);
@@ -1216,8 +1332,8 @@ function tick(){
       const left=s.we-ms;
       tbar.style.width=Math.max(0,Math.min(100,left/(s.we-s.ws)*100))+"%";
       if(noTimer){
-        if(left<=60){held=true;if(!v.paused)v.pause();}   /* espera la elección */
-      }else if(left<=60){pend.auto();return;}            /* temporizador agotado: opción por defecto */
+        if(left<=60){held=true;if(!v.paused)v.pause();}
+      }else if(left<=60){pend.auto();return;}
     }
     if(held){if(!v.paused)v.pause();return;}
   }
@@ -1225,7 +1341,7 @@ function tick(){
   if(ms>=end-45) advance();
 }
 
-/* ---------- eventos del video (válidos para el principal y los relevos) ---------- */
+/* ---------- eventos del video ---------- */
 function bind(el){
   el.addEventListener("play",()=>{if(el===v)btnPlay.textContent="❚❚";});
   el.addEventListener("pause",()=>{if(el===v)btnPlay.textContent="▶";});
@@ -1242,7 +1358,7 @@ function bind(el){
       if(i>=0){standbys.splice(i,1);el.remove();}
       return;
     }
-    if(srcIdx<SRCS.length-1){                      /* no hay archivo local: usar el remoto */
+    if(srcIdx<SRCS.length-1){
       const t=v.currentTime||0;
       loadSrc(srcIdx+1);
       v.addEventListener("loadedmetadata",()=>{
@@ -1256,6 +1372,7 @@ function bind(el){
     btnStart.textContent="Reintentar";
     gmsg.className="err";
     gmsg.textContent="Fallo al cargar el video ("+(v.error?v.error.code:"?")+"). Revisa la conexión, desactiva bloqueadores y reintenta.";
+    try{btnStart.focus({preventScroll:true});}catch(e){}
   });
 }
 bind(v);
@@ -1275,11 +1392,17 @@ $("btnReset").onclick=startStory;
 $("btnClear").onclick=()=>{log=[];store.set(log);renderLog();renderMap();};
 $("noTimer").onchange=e=>{
   noTimer=e.target.checked;
-  if(!noTimer&&held){held=false;if(cur)v.play().catch(()=>{});}   /* con temporizador: seguir y resolver por defecto */
+  if(!noTimer&&held){held=false;if(cur)v.play().catch(()=>{});}
 };
 showSubEl.onchange=()=>{applySubAll();$("btnSub").classList.toggle("on",showSubEl.checked);};
 
-/* ---------- controles (acotados al segmento actual) ---------- */
+/* ---------- modo TV ---------- */
+function setTV(on){document.body.classList.toggle("tv",on);tvEl.checked=on;
+  if(!on) aside.classList.remove("show");}
+tvEl.onchange=()=>setTV(tvEl.checked);
+$("btnPanel").onclick=()=>aside.classList.toggle("show");
+
+/* ---------- controles ---------- */
 function seekMs(ms){
   const s=cur&&SEG[cur];if(!s) return;
   const hi=(s.e||ms)-300;
@@ -1303,22 +1426,32 @@ $("btnFs").onclick=()=>{
   else if(stage.requestFullscreen) stage.requestFullscreen().catch(()=>{});
   else if(stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
 };
+
+/* ---------- teclado / control remoto ---------- */
 document.addEventListener("keydown",e=>{
+  /* 1) overlay abierto: el D-pad manda sobre el overlay, no sobre el video */
+  if(shown&&ovKey){ovKey(e);return;}
   const tg=e.target.tagName;
-  if(tg==="INPUT") return;
-  if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();toggle();}   /* en un botón, el espacio ya lo activa */
-  else if(e.key==="ArrowLeft") seekMs(v.currentTime*1000-10000);
-  else if(e.key==="ArrowRight") seekMs(v.currentTime*1000+10000);
+  if(tg==="INPUT"||tg==="TEXTAREA") return;
+  if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();toggle();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();seekMs(v.currentTime*1000-10000);}
+  else if(e.key==="ArrowRight"){e.preventDefault();seekMs(v.currentTime*1000+10000);}
+  else if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();}
   else if(e.key==="c"||e.key==="C") $("btnSub").click();
   else if(e.key==="f"||e.key==="F") $("btnFs").click();
-});
+  else if(isOK(e)){
+    /* OK sobre la pantalla de inicio o de fin equivale a pulsar el botón */
+    if(gate.style.display!=="none"&&gate.style.display!==""){e.preventDefault();btnStart.click();}
+    else if(endBox.classList.contains("on")){e.preventDefault();$("btnAgain").click();}
+  }
+},true);
 
 /* sin temporizador: si algo reanuda el video mientras se espera la elección, se vuelve a pausar */
 setInterval(tick,250);
 (function loop(){tick();requestAnimationFrame(loop);})();
 document.addEventListener("visibilitychange",tick);
 
-/* ---------- inicio de carga: el video se pide al abrir la página, no al pulsar Empezar ---------- */
+/* ---------- inicio de carga ---------- */
 loadSrc(0);
 (async()=>{
   try{const r=await fetch(SUB_LOCAL,{method:"HEAD",cache:"no-store"});if(r.ok)subUrl=SUB_LOCAL;}catch(e){}
@@ -1328,7 +1461,15 @@ loadSrc(0);
 const saved=store.get();
 if(Array.isArray(saved)){log=saved;renderLog();renderMap();}
 resetState();
-gmsg.textContent="Listo. Pulsa Empezar.";
+
+/* detección inicial: pantalla grande sin puntero fino -> modo TV y foco en Empezar */
+(function init(){
+  const coarse=matchMedia("(pointer: coarse)").matches;
+  const big=Math.min(window.innerWidth,window.innerHeight)>=540&&!coarse;
+  setTV(big);
+  gmsg.textContent="Listo. Pulsa Empezar.";
+  try{btnStart.focus({preventScroll:true});}catch(e){}
+})();
 })();
 </script>
 </body>
