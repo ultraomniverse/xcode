@@ -166,6 +166,27 @@
   body.pseudo .ctl:focus-within,body.pseudo .ctl:hover{opacity:1;pointer-events:auto}
   body.pseudo .ctl button{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
   body.pseudo .ctl .t{color:#cfcfd6}
+
+  /* ===== v2: estilo Netflix, responsive y control táctil ===== */
+  @supports(height:100dvh){html,body{height:100dvh}}
+  .ov{background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.6) 60%,transparent 100%)}
+  .ov.on{animation:fadeUp .25s ease-out}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .opt{background:rgba(25,25,25,.82);border-radius:4px;font-weight:600}
+  .ctl{flex-wrap:wrap}
+  .ctl input[type=range]{flex:1 1 140px;min-width:120px}
+  body.pseudo.showctl .ctl,body.pseudo .ctl:focus-within{opacity:1;pointer-events:auto}
+  body.pseudo.deciding .ctl{display:none}
+  @media (max-width:900px){
+    main{position:relative}
+    aside{display:none}
+    aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,92vw);z-index:60;box-shadow:-12px 0 34px rgba(0,0,0,.75)}
+    #btnPanel{display:inline-block}
+    footer{display:none}
+    header .tag{display:none}
+    #stagewrap{padding:6px}
+    .opts{gap:8px;padding:0 10px}.opt{padding:12px 8px;font-size:11px}
+  }
 </style>
 </head>
 <body>
@@ -1017,7 +1038,10 @@ function pick(group,depth){
 }
 function resolveTarget(name){
   if(!name) return null;
-  if(SEG[name]) return name;
+  if(SEG[name]){
+    if(PREC[name]!==undefined&&!ev(PREC[name])&&SEG[name+"cd"]&&ev(PREC[name+"cd"])) return name+"cd";
+    return name;
+  }
   if(GRP[name]) return pick(GRP[name],0);
   return null;
 }
@@ -1059,7 +1083,7 @@ const store={
 };
 
 function hideOv(){
-  ov.classList.remove("on");pad.classList.remove("on");
+  ov.classList.remove("on");pad.classList.remove("on");document.body.classList.remove("deciding");
   shown=false;held=false;pend=null;ovKey=null;
   optsEl.innerHTML="";keysEl.innerHTML="";
   const a=document.activeElement;
@@ -1108,10 +1132,10 @@ function candidates(id){
 }
 function prepare(){
   if(!cur) return;
-  cands.slice(0,2).forEach(c=>{
+  cands.slice(0,2).forEach((c,ci)=>{
     if(standbys.some(x=>x.tid===c.id)) return;
     const el=pool.pop()||makeVideo();
-    el._want=c.t;el.muted=true;
+    el._want=c.t;el.muted=true;el.preload=ci===0?"auto":"metadata";
     el.src=SRCS[srcIdx]+"#t="+c.t.toFixed(3);
     standbys.push({el,tid:c.id});
   });
@@ -1231,7 +1255,7 @@ function showChoices(id){
   const c=CH[id];
   shown=true;held=false;const my=++seq;
   optsEl.innerHTML="";
-  let act=Math.min(1,c.length-1);
+  let act=0;{const dt=resolveTarget(SEG[id].d),k0=c.findIndex(o=>resolveTarget(o.g)===dt);if(k0>=0)act=k0;}
   const setAct=k=>{
     act=Math.max(0,Math.min(c.length-1,k));
     markAct(optsEl,act);
@@ -1258,16 +1282,16 @@ function showChoices(id){
     else if(okKey(e)){e.preventDefault();lastKey=Date.now();take(act);}
     else if(backKey(e)){e.preventDefault();}
   };
-  ov.classList.add("on");
+  ov.classList.add("on");document.body.classList.add("deciding");
   tbar.style.transition="none";tbar.style.width="100%";
   setAct(act);
 }
 
 function showPad(){
-  shown=true;held=false;code="";disp.textContent="-----";pad.classList.add("on");
+  shown=true;held=false;code="";disp.textContent="-----";pad.classList.add("on");document.body.classList.add("deciding");
   const my=++seq;
   keysEl.innerHTML="";
-  let act=4;
+  let act=4,lock=false;
   const done=target=>{
     if(!pend||pend.my!==my) return;
     hideOv();advance(target);
@@ -1277,10 +1301,10 @@ function showPad(){
     if(!pend||pend.my!==my||code.length>=5) return;
     code+=k;disp.textContent=code.padEnd(5,"-");
     if(code.length===5){
-      const typed=code;
+      lock=true;const typed=code;
       setTimeout(()=>{
         if(!pend||pend.my!==my) return;
-        pushLog(cur,typed,["20541"]);
+        pushLog(cur,typed,typed==="20541"?["20541"]:["20541",typed]);
         done(typed==="20541"?"6C":"6D");
       },420);
     }
@@ -1309,7 +1333,7 @@ function showPad(){
     else if(okKey(e)){e.preventDefault();lastKey=Date.now();
       const b=keysEl.children[act];if(b)press(b.textContent);}
     else if(backKey(e)){e.preventDefault();lastKey=Date.now();
-      if(code.length){code=code.slice(0,-1);disp.textContent=code.padEnd(5,"-");}}
+      if(code.length&&!lock){code=code.slice(0,-1);disp.textContent=code.padEnd(5,"-");}}
   };
   markAct(keysEl,act);
 }
@@ -1317,7 +1341,7 @@ function showPad(){
 /* ---------- barra de tiempo ---------- */
 function uiTime(s,ms){
   const a=s.s,b=s.e||ms,len=Math.max(1,b-a),p=Math.min(Math.max(ms-a,0),len);
-  timeEl.textContent=fmt(p/1000)+" / "+fmt(len/1000);
+  {const tx=fmt(p/1000)+" / "+fmt(len/1000);if(timeEl._tx!==tx){timeEl._tx=tx;timeEl.textContent=tx;}}
   if(!dragging) seek.value=Math.round(p/len*1000);
 }
 function tick(){
@@ -1415,7 +1439,7 @@ function setPseudo(on){
 $("btnFs").onclick=()=>{
   if(sysFsEl.checked){
     if(document.fullscreenElement) document.exitFullscreen();
-    else if(stage.requestFullscreen) stage.requestFullscreen().catch(()=>{});
+    else{const fe=$("stagewrap"),rq=fe.requestFullscreen||fe.webkitRequestFullscreen;if(rq){const p=rq.call(fe);if(p&&p.catch)p.catch(()=>{});}}
     return;
   }
   setPseudo(!pseudo);
@@ -1426,12 +1450,12 @@ sysFsEl.onchange=()=>{
 
 /* ---------- controles ---------- */
 function seekMs(ms){
-  const s=cur&&SEG[cur];if(!s) return;
-  const hi=(s.e||ms)-300;
+  const s=cur&&SEG[cur];if(!s||shown) return;
+  let hi=(s.e||ms)-300;if(s.ws) hi=Math.min(hi,s.ws+400);
   v.currentTime=Math.min(Math.max(ms,s.s),Math.max(s.s,hi))/1000;
   tick();
 }
-function toggle(){if(held) return;v.paused?v.play().catch(()=>{}):v.pause();}
+function toggle(){if(held||!cur) return;v.paused?v.play().catch(()=>{}):v.pause();}
 btnPlay.onclick=toggle;
 $("btnBack").onclick=()=>seekMs(v.currentTime*1000-10000);
 $("btnFwd").onclick=()=>seekMs(v.currentTime*1000+10000);
@@ -1446,8 +1470,26 @@ $("btnSub").onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange
 
 /* ---------- teclado / control remoto ---------- */
 /* se captura en window para adelantarse al cursor virtual de BrowseHere */
+let ctlT=0;
+function revealCtl(){
+  if(!pseudo||shown) return;
+  document.body.classList.add("showctl");clearTimeout(ctlT);
+  ctlT=setTimeout(()=>{const a=document.activeElement;
+    if(!(a&&a.closest&&a.closest(".ctl"))) document.body.classList.remove("showctl");},3500);
+}
+["pointermove","pointerdown","touchstart"].forEach(n=>window.addEventListener(n,revealCtl,{passive:true}));
 window.addEventListener("keydown",e=>{
   if(shown&&ovKey){ovKey(e);return;}
+  revealCtl();
+  const ae=document.activeElement,inCtl=!!(ae&&ae.closest&&ae.closest(".ctl"));
+  if(backKey(e)&&pseudo){e.preventDefault();setPseudo(false);return;}
+  if(started&&!endBox.classList.contains("on")){
+    if(inCtl&&ae.tagName==="BUTTON"&&(e.key==="ArrowLeft"||e.key==="ArrowRight")){
+      e.preventDefault();const bs=[...document.querySelectorAll(".ctl button")],i=bs.indexOf(ae);
+      bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowRight"?1:-1)))].focus();return;}
+    if(inCtl&&e.key==="ArrowUp"){e.preventDefault();ae.blur();try{stage.focus({preventScroll:true});}catch(x){}return;}
+    if(!inCtl&&e.key==="ArrowDown"){e.preventDefault();revealCtl();btnPlay.focus();return;}
+  }
   const tg=e.target.tagName;
   if(tg==="INPUT"||tg==="TEXTAREA") return;
   if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();toggle();}
@@ -1457,15 +1499,19 @@ window.addEventListener("keydown",e=>{
   else if(e.key==="c"||e.key==="C") $("btnSub").click();
   else if(e.key==="f"||e.key==="F") $("btnFs").click();
   else if(okKey(e)){
-    if(gate.style.display!=="none"&&gate.style.display!==""){e.preventDefault();btnStart.click();}
+    if(gate.style.display!=="none"){e.preventDefault();btnStart.click();}
     else if(endBox.classList.contains("on")){e.preventDefault();$("btnAgain").click();}
   }
 },true);
 
 /* sin temporizador: si algo reanuda el video mientras se espera la elección, se vuelve a pausar */
 setInterval(tick,250);
-(function loop(){tick();requestAnimationFrame(loop);})();
-document.addEventListener("visibilitychange",tick);
+(function loop(){if(cur&&!v.paused)tick();requestAnimationFrame(loop);})();
+let autoP=false;
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){if(cur&&!v.paused){autoP=true;v.pause();}}
+  else if(autoP){autoP=false;if(cur&&!held) v.play().catch(()=>{});}
+});
 
 /* ---------- inicio de carga ---------- */
 loadSrc(0);
@@ -1475,7 +1521,7 @@ loadSrc(0);
 })();
 
 const saved=store.get();
-if(Array.isArray(saved)){log=saved;renderLog();renderMap();}
+if(Array.isArray(saved)){log=saved.filter(e=>e&&e.seg&&Array.isArray(e.opts)&&e.state);renderLog();renderMap();}
 resetState();
 
 /* arranque: pantalla grande sin puntero fino -> modo TV; foco en Empezar para que OK arranque */
