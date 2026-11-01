@@ -9,9 +9,16 @@
 <link rel="preconnect" href="https://mohetios.github.io" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ctext x='8' y='12' font-size='11' fill='%23fff' text-anchor='middle' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
 <!--
-  Reproductor del corte completo de 5:12:14 (1080p) con ramificación real.
-  Pensado para TV / BrowserHere: se usa SIEMPRE el <video> de la página (sin controls nativos),
-  y las decisiones se manejan con D-pad + OK del control remoto, Enter del PC, o toque en móvil/tablet.
+  Reproductor del corte completo de 5:12:14 (1080p) con ramificación real. Optimizado para BrowseHere / Android TV.
+
+  POR QUÉ ASÍ:
+  - BrowseHere inyecta un cursor virtual (flechas mueven el puntero, OK hace clic) y su propio reproductor
+    cuando el video entra en pantalla completa real. Por eso aquí NO se usa requestFullscreen:
+    la "pantalla completa" es CSS (body.pseudo) y el <video> de la página nunca se entrega al reproductor nativo.
+  - Las opciones se resaltan al pasar el puntero Y con las flechas; OK/Enter confirma lo resaltado.
+    Un bloqueo de 220 ms tras cada tecla evita que el puntero pise la selección hecha con el D-pad.
+  - En móvil y tablet todo es táctil normal.
+
   Video: si existe "bandersnatch.mp4" junto a este archivo se usa ese; si no, se transmite desde Internet Archive.
   Subtítulos: es.vtt de esta carpeta; si falta, URL remota.
   Servir con un servidor que soporte Range (p. ej. "npx http-server -p 8000").
@@ -20,9 +27,10 @@
   :root{
     --bg:#0a0a0c; --panel:#121216; --panel2:#17171d; --bd:#26262f;
     --fg:#e9e9ec; --mut:#8b8b96;
+    --top:2147482000;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%}
+  html,body{margin:0;height:100%;background:#000}
   body{background:var(--bg);color:var(--fg);
     font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     display:flex;flex-direction:column;overflow:hidden}
@@ -42,40 +50,38 @@
   #stage{position:relative;flex:1;min-height:0;background:#000;border:1px solid var(--bd);
     border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;outline:none}
   #stage video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
-  #stage:fullscreen{border-radius:0;border:0}
   #stage video.sb{position:absolute;inset:0;visibility:hidden;pointer-events:none}
 
   .gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:14px;background:#000;text-align:center;padding:28px;z-index:3}
+    gap:14px;background:#000;text-align:center;padding:28px;z-index:40}
   .gate h2{margin:0;font-size:19px;font-weight:500;letter-spacing:.1em}
   .gate p{margin:0;max-width:470px;font-size:12px;color:var(--mut);line-height:1.6}
   .gate button{padding:10px 26px;border-radius:99px;border:0;background:#fff;color:#000;
     font-size:13px;font-weight:500;cursor:pointer}
   .gate .err{color:#ff9d9d}
 
-  .ov{position:absolute;left:0;right:0;bottom:0;height:30%;background:rgba(0,0,0,.9);
-    display:none;flex-direction:column;justify-content:flex-end;padding-bottom:14px;z-index:2}
+  .ov{position:absolute;left:0;right:0;bottom:0;min-height:34%;background:rgba(0,0,0,.92);
+    display:none;flex-direction:column;justify-content:flex-end;padding-bottom:16px;z-index:30}
   .ov.on{display:flex}
-  .ov .q{font-size:10px;letter-spacing:.22em;color:#9a9aa4;text-align:center;margin-bottom:10px}
+  .ov .q{font-size:10px;letter-spacing:.22em;color:#9a9aa4;text-align:center;margin-bottom:4px}
+  .ov .hint{font-size:9px;letter-spacing:.12em;color:#5d5d68;text-align:center;margin-bottom:10px}
   .opts{display:flex;gap:14px;justify-content:center;padding:0 26px}
-  .opt{flex:1;max-width:300px;padding:12px 14px;border:1px solid rgba(255,255,255,.32);
-    border-radius:7px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;
-    letter-spacing:.06em;cursor:pointer;text-align:center;transition:.12s}
-  .opt:hover,.opt.def{border-color:#fff;background:rgba(255,255,255,.17)}
+  .opt{flex:1;max-width:320px;padding:14px 16px;border:1px solid rgba(255,255,255,.32);
+    border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;
+    letter-spacing:.06em;cursor:pointer;text-align:center;transition:background .1s,border-color .1s,box-shadow .1s}
   .timer{height:3px;background:rgba(255,255,255,.18);margin:13px 26px 0;border-radius:2px;overflow:hidden}
   .timer i{display:block;height:100%;width:100%;background:#fff}
 
-  .pad{position:absolute;left:0;right:0;bottom:0;padding:16px;background:rgba(0,0,0,.9);
-    display:none;flex-direction:column;align-items:center;gap:8px;z-index:2}
+  .pad{position:absolute;left:0;right:0;bottom:0;padding:16px;background:rgba(0,0,0,.92);
+    display:none;flex-direction:column;align-items:center;gap:8px;z-index:30}
   .pad.on{display:flex}
   .pad .disp{letter-spacing:.55em;font-size:19px;color:#fff;font-variant-numeric:tabular-nums}
   .pad .keys{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:340px}
-  .pad .keys button{width:36px;height:36px;border-radius:7px;border:1px solid rgba(255,255,255,.34);
-    background:rgba(255,255,255,.06);color:#fff;font-size:14px;cursor:pointer}
-  .pad .keys button:hover{background:rgba(255,255,255,.2)}
+  .pad .keys button{width:40px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.34);
+    background:rgba(255,255,255,.06);color:#fff;font-size:15px;cursor:pointer;transition:background .1s}
 
   .end{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
-    gap:11px;background:rgba(0,0,0,.94);text-align:center;padding:24px;z-index:3}
+    gap:11px;background:rgba(0,0,0,.94);text-align:center;padding:24px;z-index:40}
   .end.on{display:flex}
   .end h2{margin:0;font-size:16px;font-weight:500}
   .end p{margin:0;font-size:11px;color:var(--mut);max-width:340px}
@@ -102,35 +108,25 @@
   .ent b{color:var(--fg);font-weight:500}
   .ent .t{font-variant-numeric:tabular-nums;color:#5f5f6b;margin-right:5px}
   .ent button{background:none;border:0;color:#7a7a88;font-size:10px;cursor:pointer;padding:2px 0;text-decoration:underline}
-  .ent button:hover{color:#fff}
   .empty{color:#55555f;font-size:11px;padding:8px 0}
   footer{padding:6px 16px;border-top:1px solid var(--bd);background:var(--panel);
     font-size:10px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
   kbd{border:1px solid var(--bd);border-radius:4px;padding:0 4px;font-size:10px;color:#a5a5b0}
 
-  /* ===== foco de control remoto: siempre visible, nunca depende de :hover ===== */
-  .opt:focus,
-  .pad .keys button:focus,
-  .gate button:focus,
-  .end button:focus,
-  .ctl button:focus,
-  header button:focus,
-  .row label:focus-within{
-    outline:none;
-    border-color:#fff;
-    background:rgba(255,255,255,.22);
-    color:#fff;
-    box-shadow:0 0 0 3px rgba(255,255,255,.92), 0 0 26px rgba(255,255,255,.42);
-  }
-  .ctl button:focus,header button:focus{
-    background:#fff;color:#000;
-  }
-  .opt:focus{transform:scale(1.03)}
+  /* ===== resaltado activo: sirve para puntero virtual, flechas y foco ===== */
+  .opt.act,.opt:focus,
+  .pad .keys button.act,.pad .keys button:focus,
+  .gate button:focus,.end button:focus,.ctl button:focus,header button:focus,.row label:focus-within{
+    outline:none;border-color:#fff;color:#fff;
+    background:rgba(255,255,255,.24);
+    box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 30px rgba(255,255,255,.45)}
+  .ctl button:focus,header button:focus{background:#fff;color:#000}
+  .opt.act{transform:scale(1.03)}
 
   /* ===== MODO TV ===== */
   body.tv main{position:relative}
   body.tv aside{display:none}
-  body.tv aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,44vw);z-index:30;
+  body.tv aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,44vw);z-index:60;
     box-shadow:-12px 0 34px rgba(0,0,0,.75)}
   body.tv #btnPanel{display:inline-block}
   body.tv footer{display:none}
@@ -139,27 +135,37 @@
   body.tv header{padding:12px 22px}
   body.tv header h1{font-size:16px}
   body.tv header button{font-size:14px;padding:8px 14px}
-  body.tv .ov{height:42%;background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.82) 62%,rgba(0,0,0,.1) 100%);
-    padding-bottom:26px}
-  body.tv .ov .q{font-size:15px;letter-spacing:.34em;margin-bottom:18px}
+  body.tv .ov{min-height:44%;background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.85) 58%,rgba(0,0,0,.15) 100%);
+    padding-bottom:28px}
+  body.tv .ov .q{font-size:15px;letter-spacing:.34em}
+  body.tv .ov .hint{font-size:12px;margin-bottom:18px}
   body.tv .opts{gap:26px;padding:0 60px}
-  body.tv .opt{font-size:20px;letter-spacing:.09em;padding:22px 26px;border-width:2px;
-    border-radius:12px;max-width:460px;background:rgba(255,255,255,.08)}
-  body.tv .opt:hover,body.tv .opt.def{border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.2)}
+  body.tv .opt{font-size:21px;letter-spacing:.09em;padding:26px 26px;border-width:2px;
+    border-radius:14px;max-width:480px;background:rgba(255,255,255,.09)}
   body.tv .timer{height:7px;margin:22px 60px 0;border-radius:4px}
   body.tv .pad{padding:26px}
-  body.tv .pad .disp{font-size:36px;letter-spacing:.7em}
-  body.tv .pad .keys{gap:12px;max-width:none}
-  body.tv .pad .keys button{width:66px;height:66px;font-size:26px;border-width:2px;border-radius:12px}
-  body.tv .ctl{padding:0 4px}
+  body.tv .pad .disp{font-size:38px;letter-spacing:.7em}
+  body.tv .pad .keys{gap:14px;max-width:none}
+  body.tv .pad .keys button{width:78px;height:78px;font-size:28px;border-width:2px;border-radius:14px}
   body.tv .ctl button{width:52px;height:46px;font-size:18px}
   body.tv .ctl .t{font-size:14px;min-width:130px}
-  body.tv .gate h2{font-size:34px;letter-spacing:.18em}
-  body.tv .gate p{font-size:15px;max-width:640px}
-  body.tv .gate button{font-size:17px;padding:14px 40px}
+  body.tv .gate h2{font-size:36px;letter-spacing:.18em}
+  body.tv .gate p{font-size:15px;max-width:660px}
+  body.tv .gate button{font-size:17px;padding:14px 42px}
   body.tv .end h2{font-size:24px}
   body.tv .end p{font-size:14px;max-width:460px}
   body.tv .end button{font-size:16px;padding:13px 30px}
+
+  /* ===== PANTALLA COMPLETA FALSA: sin requestFullscreen, el reproductor de BrowseHere no se activa ===== */
+  body.pseudo header,body.pseudo footer,body.pseudo aside{display:none}
+  body.pseudo #stagewrap{padding:0;gap:0}
+  body.pseudo #stage{position:fixed;inset:0;z-index:var(--top);border:0;border-radius:0}
+  body.pseudo .ctl{position:fixed;left:0;right:0;bottom:0;z-index:calc(var(--top) + 2);
+    padding:8px 16px;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.35) 70%,transparent);
+    opacity:0;transition:opacity .18s;pointer-events:none}
+  body.pseudo .ctl:focus-within,body.pseudo .ctl:hover{opacity:1;pointer-events:auto}
+  body.pseudo .ctl button{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+  body.pseudo .ctl .t{color:#cfcfd6}
 </style>
 </head>
 <body>
@@ -178,19 +184,20 @@
 <main>
   <div id="stagewrap">
     <div id="stage" tabindex="-1">
-      <video id="v" preload="auto" playsinline webkit-playsinline x5-playsinline disablepictureinpicture="false">
+      <video id="v" preload="auto" playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page">
         <track id="sub" kind="subtitles" srclang="es" label="Español (LATAM)">
       </video>
 
       <div class="gate" id="gate">
         <h2>BANDERSNATCH</h2>
-        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Muévete con las flechas y confirma con OK o Enter. En móvil y tablet, toca directamente.</p>
+        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Mueve el puntero con las flechas y confirma con OK. En móvil y tablet, toca directamente.</p>
         <button id="btnStart">Empezar</button>
         <p id="gmsg" style="font-size:11px"></p>
       </div>
 
       <div class="ov" id="ov">
         <div class="q" id="q">ELIGE</div>
+        <div class="hint">Puntero o flechas para moverte · OK para confirmar</div>
         <div class="opts" id="opts"></div>
         <div class="timer"><i id="tbar"></i></div>
       </div>
@@ -209,12 +216,12 @@
 
     <div class="ctl">
       <button id="btnPlay" title="Reproducir / pausa (espacio)">▶</button>
-      <button id="btnBack" title="Retroceder 10 s (←)">↺</button>
-      <button id="btnFwd" title="Avanzar 10 s (→)">↻</button>
+      <button id="btnBack" title="Retroceder 10 s">↺</button>
+      <button id="btnFwd" title="Avanzar 10 s">↻</button>
       <span class="t" id="time">0:00 / 0:00</span>
       <input id="seek" type="range" min="0" max="1000" value="0" step="1">
       <button id="btnSub" class="on" title="Subtítulos (c)">CC</button>
-      <button id="btnFs" title="Pantalla completa (f)">⛶</button>
+      <button id="btnFs" title="Pantalla grande (f)">⛶</button>
     </div>
   </div>
 
@@ -230,6 +237,9 @@
       <div class="row" style="margin-top:5px">
         <label><input type="checkbox" id="showSub" checked> Subtítulos en español</label>
       </div>
+      <div class="row" style="margin-top:5px">
+        <label><input type="checkbox" id="sysFs"> Pantalla completa del sistema</label>
+      </div>
     </div>
     <div class="sec" style="padding-bottom:6px">
       <h3>Mapa del árbol</h3>
@@ -244,11 +254,10 @@
 </main>
 
 <footer>
-  <span><kbd>←</kbd><kbd>→</kbd> mover opción / ±10 s</span>
-  <span><kbd>Enter</kbd> o <kbd>OK</kbd> confirmar</span>
+  <span><kbd>flechas</kbd> mover puntero / opción</span>
+  <span><kbd>OK</kbd> / <kbd>Enter</kbd> confirmar</span>
   <span><kbd>espacio</kbd> pausa</span>
-  <span><kbd>c</kbd> subtítulos</span>
-  <span><kbd>f</kbd> pantalla completa</span>
+  <span><kbd>f</kbd> pantalla grande</span>
   <span id="status"></span>
 </footer>
 
@@ -1035,10 +1044,11 @@ let v=$("v");
 const stage=$("stage"),ov=$("ov"),optsEl=$("opts"),tbar=$("tbar"),timeEl=$("time"),seek=$("seek"),
   endBox=$("end"),gate=$("gate"),gmsg=$("gmsg"),statusEl=$("status"),pad=$("pad"),disp=$("disp"),
   mapEl=$("map"),logEl=$("log"),btnPlay=$("btnPlay"),keysEl=$("keys"),showSubEl=$("showSub"),
-  btnStart=$("btnStart"),aside=$("aside"),tvEl=$("tvMode");
+  btnStart=$("btnStart"),aside=$("aside"),tvEl=$("tvMode"),sysFsEl=$("sysFs");
 
 let cur=null,shown=false,noTimer=false,held=false,seq=0,pend=null,code="",log=[],
-    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[],ovKey=null;
+    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[],
+    ovKey=null,lastKey=0,pseudo=false;
 
 const fmt=t=>{t=Math.max(0,Math.floor(t||0));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
   return h?h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"):m+":"+String(s).padStart(2,"0");};
@@ -1051,9 +1061,10 @@ const store={
 function hideOv(){
   ov.classList.remove("on");pad.classList.remove("on");
   shown=false;held=false;pend=null;ovKey=null;
+  optsEl.innerHTML="";keysEl.innerHTML="";
   const a=document.activeElement;
   if(a&&a!==document.body&&a.blur) a.blur();
-  if(stage.focus) try{stage.focus({preventScroll:true});}catch(e){}
+  try{stage.focus({preventScroll:true});}catch(e){}
 }
 
 /* ---------- fuentes de video ---------- */
@@ -1201,26 +1212,33 @@ function advance(target){
   play(r);
 }
 
-/* ---------- utilidades de navegación por D-pad ---------- */
-function moveIn(container,dir){
-  const items=[...container.querySelectorAll("button")];
-  if(!items.length) return;
-  const i=items.indexOf(document.activeElement);
-  let n;
-  if(i<0) n=(dir>0)?0:items.length-1;
-  else n=(i+dir+items.length)%items.length;
-  try{items[n].focus({preventScroll:true});}catch(e){items[n].focus();}
+/* ---------- resaltado activo (compatible con el cursor virtual de BrowseHere) ---------- */
+function markAct(container,idx){
+  const items=[...container.children];
+  items.forEach((b,i)=>b.classList.toggle("act",i===idx));
+  const b=items[idx];
+  if(b){try{b.focus({preventScroll:true});}catch(e){b.focus();}}
 }
+/* un teclado real y el cursor virtual conviven: tras una tecla, el puntero no manda 220 ms */
+const keyLocked=()=>Date.now()-lastKey<220;
+const okKey=e=>e.key==="Enter"||e.key===" "||e.key==="Select"||e.key==="Accept"||
+                e.keyCode===13||e.keyCode===32||e.keyCode===23;
+const backKey=e=>e.key==="GoBack"||e.key==="Backspace"||e.key==="Escape"||
+                 e.keyCode===8||e.keyCode===27||e.keyCode===461;
 
 /* ---------- decisiones ---------- */
 function showChoices(id){
   const c=CH[id];
   shown=true;held=false;const my=++seq;
   optsEl.innerHTML="";
-  const defIdx=Math.min(1,c.length-1);
+  let act=Math.min(1,c.length-1);
+  const setAct=k=>{
+    act=Math.max(0,Math.min(c.length-1,k));
+    markAct(optsEl,act);
+  };
   const take=k=>{
     if(!pend||pend.my!==my) return;
-    const o=c[k];
+    const o=c[k]; if(!o) return;
     hideOv();
     pushLog(id,o.t,c.map(x=>x.t));
     applyChoiceEff(o.g);
@@ -1228,31 +1246,28 @@ function showChoices(id){
   };
   c.forEach((o,k)=>{
     const b=document.createElement("button");
-    b.type="button";
-    b.className="opt"+(k===defIdx?" def":"");
-    b.textContent=o.t;
+    b.type="button";b.className="opt";b.textContent=o.t;
+    b.addEventListener("mouseenter",()=>{if(!keyLocked()){act=k;markAct(optsEl,k);}});
     b.onclick=ev2=>{ev2.stopPropagation();take(k);};
     optsEl.appendChild(b);
   });
-  pend={my,auto:()=>take(defIdx)};
+  pend={my,auto:()=>take(act)};
   ovKey=e=>{
-    if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();e.stopPropagation();moveIn(optsEl,-1);}
-    else if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();e.stopPropagation();moveIn(optsEl,1);}
-    else if(isOK(e)){e.preventDefault();e.stopPropagation();
-      const items=[...optsEl.children],i=items.indexOf(document.activeElement);
-      take(i>=0?i:defIdx);}
-    else if(isBack(e)){e.preventDefault();e.stopPropagation();}
+    if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();lastKey=Date.now();setAct(act-1);}
+    else if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();lastKey=Date.now();setAct(act+1);}
+    else if(okKey(e)){e.preventDefault();lastKey=Date.now();take(act);}
+    else if(backKey(e)){e.preventDefault();}
   };
   ov.classList.add("on");
   tbar.style.transition="none";tbar.style.width="100%";
-  const items=[...optsEl.children];
-  try{items[defIdx].focus({preventScroll:true});}catch(e){items[defIdx].focus();}
+  setAct(act);
 }
 
 function showPad(){
   shown=true;held=false;code="";disp.textContent="-----";pad.classList.add("on");
   const my=++seq;
   keysEl.innerHTML="";
+  let act=4;
   const done=target=>{
     if(!pend||pend.my!==my) return;
     hideOv();advance(target);
@@ -1273,42 +1288,30 @@ function showPad(){
   [1,2,3,4,5,6,7,8,9,0].forEach(k=>{
     const b=document.createElement("button");
     b.type="button";b.textContent=k;
+    b.addEventListener("mouseenter",()=>{if(!keyLocked()){act=[...keysEl.children].indexOf(b);markAct(keysEl,act);}});
     b.onclick=e=>{e.stopPropagation();press(k);};
     keysEl.appendChild(b);
   });
-  const cells=[...keysEl.children];
   const nav=(dx,dy)=>{
-    const i=cells.indexOf(document.activeElement);
-    if(i<0){cells[0].focus();return;}
-    const rows=Math.ceil(cells.length/3);
-    let r=Math.floor(i/3)+dy, c=(i%3)+dx;
+    const n=keysEl.children.length, rows=Math.ceil(n/3);
+    let r=Math.floor(act/3)+dy, c=(act%3)+dx;
     if(c<0)c=2; if(c>2)c=0;
     if(r<0)r=0; if(r>rows-1)r=rows-1;
-    let n=r*3+c; if(n>cells.length-1)n=cells.length-1;
-    try{cells[n].focus({preventScroll:true});}catch(e){cells[n].focus();}
+    let i=r*3+c; if(i>n-1)i=n-1;
+    act=i;markAct(keysEl,act);
   };
   ovKey=e=>{
-    if(e.key==="ArrowLeft"){e.preventDefault();e.stopPropagation();nav(-1,0);}
-    else if(e.key==="ArrowRight"){e.preventDefault();e.stopPropagation();nav(1,0);}
-    else if(e.key==="ArrowUp"){e.preventDefault();e.stopPropagation();nav(0,-1);}
-    else if(e.key==="ArrowDown"){e.preventDefault();e.stopPropagation();nav(0,1);}
-    else if(/^[0-9]$/.test(e.key)){e.preventDefault();e.stopPropagation();press(e.key);}
-    else if(isOK(e)){e.preventDefault();e.stopPropagation();
-      const t=document.activeElement;if(t&&t.parentElement===keysEl)t.click();}
-    else if(isBack(e)){e.preventDefault();e.stopPropagation();
+    if(e.key==="ArrowLeft"){e.preventDefault();lastKey=Date.now();nav(-1,0);}
+    else if(e.key==="ArrowRight"){e.preventDefault();lastKey=Date.now();nav(1,0);}
+    else if(e.key==="ArrowUp"){e.preventDefault();lastKey=Date.now();nav(0,-1);}
+    else if(e.key==="ArrowDown"){e.preventDefault();lastKey=Date.now();nav(0,1);}
+    else if(/^[0-9]$/.test(e.key)){e.preventDefault();lastKey=Date.now();press(e.key);}
+    else if(okKey(e)){e.preventDefault();lastKey=Date.now();
+      const b=keysEl.children[act];if(b)press(b.textContent);}
+    else if(backKey(e)){e.preventDefault();lastKey=Date.now();
       if(code.length){code=code.slice(0,-1);disp.textContent=code.padEnd(5,"-");}}
   };
-  try{cells[4].focus({preventScroll:true});}catch(e){cells[0].focus();}
-}
-
-/* ---------- teclas de control remoto ---------- */
-function isOK(e){
-  return e.key==="Enter"||e.key===" "||e.key==="Select"||e.key==="Accept"||
-         e.keyCode===13||e.keyCode===32||e.keyCode===23;
-}
-function isBack(e){
-  return e.key==="GoBack"||e.key==="Backspace"||e.key==="Escape"||
-         e.keyCode===8||e.keyCode===27||e.keyCode===461;
+  markAct(keysEl,act);
 }
 
 /* ---------- barra de tiempo ---------- */
@@ -1396,11 +1399,30 @@ $("noTimer").onchange=e=>{
 };
 showSubEl.onchange=()=>{applySubAll();$("btnSub").classList.toggle("on",showSubEl.checked);};
 
-/* ---------- modo TV ---------- */
+/* ---------- modo TV y pantalla grande falsa ---------- */
 function setTV(on){document.body.classList.toggle("tv",on);tvEl.checked=on;
   if(!on) aside.classList.remove("show");}
 tvEl.onchange=()=>setTV(tvEl.checked);
 $("btnPanel").onclick=()=>aside.classList.toggle("show");
+
+/* pantalla grande por CSS: NO se llama a requestFullscreen, así BrowseHere no abre su reproductor */
+function setPseudo(on){
+  pseudo=on;
+  document.body.classList.toggle("pseudo",on);
+  $("btnFs").classList.toggle("on",on);
+  if(on) setTV(true);
+}
+$("btnFs").onclick=()=>{
+  if(sysFsEl.checked){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else if(stage.requestFullscreen) stage.requestFullscreen().catch(()=>{});
+    return;
+  }
+  setPseudo(!pseudo);
+};
+sysFsEl.onchange=()=>{
+  if(sysFsEl.checked) setPseudo(false);
+};
 
 /* ---------- controles ---------- */
 function seekMs(ms){
@@ -1421,15 +1443,10 @@ seek.addEventListener("input",()=>{
   seekMs(s.s+seek.value/1000*(s.e-s.s));
 });
 $("btnSub").onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange();};
-$("btnFs").onclick=()=>{
-  if(document.fullscreenElement) document.exitFullscreen();
-  else if(stage.requestFullscreen) stage.requestFullscreen().catch(()=>{});
-  else if(stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
-};
 
 /* ---------- teclado / control remoto ---------- */
-document.addEventListener("keydown",e=>{
-  /* 1) overlay abierto: el D-pad manda sobre el overlay, no sobre el video */
+/* se captura en window para adelantarse al cursor virtual de BrowseHere */
+window.addEventListener("keydown",e=>{
   if(shown&&ovKey){ovKey(e);return;}
   const tg=e.target.tagName;
   if(tg==="INPUT"||tg==="TEXTAREA") return;
@@ -1439,8 +1456,7 @@ document.addEventListener("keydown",e=>{
   else if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();}
   else if(e.key==="c"||e.key==="C") $("btnSub").click();
   else if(e.key==="f"||e.key==="F") $("btnFs").click();
-  else if(isOK(e)){
-    /* OK sobre la pantalla de inicio o de fin equivale a pulsar el botón */
+  else if(okKey(e)){
     if(gate.style.display!=="none"&&gate.style.display!==""){e.preventDefault();btnStart.click();}
     else if(endBox.classList.contains("on")){e.preventDefault();$("btnAgain").click();}
   }
@@ -1462,11 +1478,10 @@ const saved=store.get();
 if(Array.isArray(saved)){log=saved;renderLog();renderMap();}
 resetState();
 
-/* detección inicial: pantalla grande sin puntero fino -> modo TV y foco en Empezar */
+/* arranque: pantalla grande sin puntero fino -> modo TV; foco en Empezar para que OK arranque */
 (function init(){
   const coarse=matchMedia("(pointer: coarse)").matches;
-  const big=Math.min(window.innerWidth,window.innerHeight)>=540&&!coarse;
-  setTV(big);
+  if(Math.min(window.innerWidth,window.innerHeight)>=540&&!coarse) setTV(true);
   gmsg.textContent="Listo. Pulsa Empezar.";
   try{btnStart.focus({preventScroll:true});}catch(e){}
 })();
