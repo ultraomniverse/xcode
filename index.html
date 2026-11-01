@@ -3,40 +3,43 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bandersnatch · reproductor interactivo</title>
+<title>XCODE · streaming by UltraOmniverse</title>
 <link rel="preconnect" href="https://archive.org">
 <link rel="dns-prefetch" href="//archive.org">
 <link rel="preconnect" href="https://mohetios.github.io" crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ctext x='8' y='12' font-size='11' fill='%23fff' text-anchor='middle' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://www.subtitlecat.com" crossorigin>
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ctext x='8' y='12' font-size='10' fill='%23fff' text-anchor='middle' font-family='sans-serif'%3EX%3C/text%3E%3C/svg%3E">
 <!--
-  Reproductor del corte completo de 5:12:14 (1080p) con ramificación real. Optimizado para BrowseHere / Android TV.
+  XCODE — plataforma de streaming de UltraOmniverse. Creada por Daniel Alejandro Gascón Castaño (Founder).
 
-  POR QUÉ ASÍ:
-  - BrowseHere inyecta un cursor virtual (flechas mueven el puntero, OK hace clic) y su propio reproductor
-    cuando el video entra en pantalla completa real. Por eso aquí NO se usa requestFullscreen:
-    la "pantalla completa" es CSS (body.pseudo) y el <video> de la página nunca se entrega al reproductor nativo.
-  - Las opciones se resaltan al pasar el puntero Y con las flechas; OK/Enter confirma lo resaltado.
-    Un bloqueo de 220 ms tras cada tecla evita que el puntero pise la selección hecha con el D-pad.
-  - En móvil y tablet todo es táctil normal.
+  Catálogo + reproductor multi-título.
+  Bandersnatch: motor de ramificación real por segmentos (corte completo 5:12:14, 1080p).
+  Sátántangó: reproducción lineal con capítulos (7:19:09, 1080p BluRay).
 
-  Video: si existe "bandersnatch.mp4" junto a este archivo se usa ese; si no, se transmite desde Internet Archive.
-  Subtítulos: es.vtt de esta carpeta; si falta, URL remota.
+  Optimizado para BrowseHere / Android TV:
+  - BrowseHere inyecta un cursor virtual (flechas mueven el puntero, OK hace clic) y su reproductor
+    cuando el video entra en pantalla completa real. Aquí NO se usa requestFullscreen: la "pantalla grande"
+    es CSS (body.pseudo) y el <video> de la página nunca se entrega al reproductor nativo.
+  - Todo responde a puntero virtual, a flechas y a toque.
+
   Servir con un servidor que soporte Range (p. ej. "npx http-server -p 8000").
+  Archivos locales opcionales: bandersnatch.mp4, satantango.mp4, es.vtt, satantango.es.vtt
 -->
 <style>
-  :root{
-    --bg:#0a0a0c; --panel:#121216; --panel2:#17171d; --bd:#26262f;
-    --fg:#e9e9ec; --mut:#8b8b96;
-    --top:2147482000;
-  }
+  :root{--bg:#0a0a0c;--panel:#121216;--panel2:#17171d;--bd:#26262f;--fg:#e9e9ec;--mut:#8b8b96;--top:2147482000}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#000}
+  @supports(height:100dvh){html,body{height:100dvh}}
   body{background:var(--bg);color:var(--fg);
     font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     display:flex;flex-direction:column;overflow:hidden}
-  button,.opt,.pad .keys button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
   header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
-  header h1{margin:0;font-size:13px;font-weight:500;letter-spacing:.06em}
+  header .logo{font-size:15px;font-weight:700;letter-spacing:.26em}
+  header .by{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f6b}
+  header h1{margin:0;font-size:12px;font-weight:500;letter-spacing:.06em;color:#cfcfd6}
   header .tag{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;
     border:1px solid var(--bd);padding:2px 7px;border-radius:99px}
   header .sp{flex:1}
@@ -44,7 +47,47 @@
     font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer}
   header button:hover{color:var(--fg);border-color:#3a3a46}
   #btnPanel{display:none}
+  body[data-film="bander"] #btnPanel{display:inline-block}
+  .only-branch{display:none!important}
+  body[data-film="bander"] .only-branch{display:flex!important}
+  body[data-film="bander"] .only-branch.inl{display:inline-block!important}
 
+  /* ================= CATÁLOGO ================= */
+  #home{flex:1;min-height:0;overflow:auto;padding:26px 30px 44px}
+  body[data-view="player"] #home{display:none}
+  #home .hero{margin:0 0 22px}
+  #home .hero .k{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#cfcfd6;margin-bottom:5px}
+  #home .hero h2{margin:0 0 5px;font-size:23px;font-weight:600;letter-spacing:-.01em}
+  #home .hero p{margin:0;font-size:12px;color:var(--mut)}
+  #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:22px;max-width:1080px}
+  .card{display:flex;flex-direction:column;gap:9px;padding:0;border:0;background:transparent;
+    color:var(--fg);cursor:pointer;text-align:left;border-radius:12px}
+  .card .poster{position:relative;width:100%;aspect-ratio:2/3;border-radius:10px;overflow:hidden;
+    border:1px solid var(--bd);background:#0d0d10;transition:transform .14s,box-shadow .14s,border-color .14s}
+  .card .poster img{display:block;width:100%;height:100%;object-fit:cover}
+  .card .poster .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:14px;font-size:13px;letter-spacing:.12em;color:#5f5f6b;text-transform:uppercase}
+  .card .badge{position:absolute;left:9px;top:9px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+    background:rgba(0,0,0,.74);border:1px solid rgba(255,255,255,.34);color:#fff;padding:3px 7px;border-radius:99px}
+  .card .meta b{display:block;font-size:14px;font-weight:500;letter-spacing:.03em}
+  .card .meta span{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+  .card:hover .poster,.card:focus .poster{transform:translateY(-4px);border-color:#fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,.92),0 18px 40px rgba(0,0,0,.6)}
+  .card:focus{outline:none}
+  .card:focus .meta b{color:#fff}
+  #home .credit{margin-top:34px;padding-top:16px;border-top:1px solid var(--bd);
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#5f5f6b;line-height:1.9}
+  #home .credit b{color:#a9a9b4;font-weight:500;letter-spacing:.2em}
+  body.tv #grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:34px}
+  body.tv #home{padding:40px 56px}
+  body.tv #home .hero h2{font-size:34px}
+  body.tv #home .hero p{font-size:15px}
+  body.tv .card .meta b{font-size:19px}
+  body.tv .card .meta span{font-size:13px}
+  body.tv #home .credit{font-size:12px}
+
+  /* ================= REPRODUCTOR ================= */
+  body[data-view="home"] main{display:none}
   main{flex:1;display:flex;min-height:0}
   #stagewrap{flex:1;display:flex;flex-direction:column;min-width:0;padding:12px;gap:8px}
   #stage{position:relative;flex:1;min-height:0;background:#000;border:1px solid var(--bd);
@@ -53,11 +96,14 @@
   #stage video.sb{position:absolute;inset:0;visibility:hidden;pointer-events:none}
 
   .gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:14px;background:#000;text-align:center;padding:28px;z-index:40}
-  .gate h2{margin:0;font-size:19px;font-weight:500;letter-spacing:.1em}
-  .gate p{margin:0;max-width:470px;font-size:12px;color:var(--mut);line-height:1.6}
+    gap:13px;background:#000;text-align:center;padding:28px;z-index:40}
+  .gate h2{margin:0;font-size:20px;font-weight:500;letter-spacing:.14em}
+  .gate .sub{margin:0;font-size:11px;letter-spacing:.18em;color:#6c6c78;text-transform:uppercase}
+  .gate p{margin:0;max-width:500px;font-size:12px;color:var(--mut);line-height:1.6}
+  .gate .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .gate button{padding:10px 26px;border-radius:99px;border:0;background:#fff;color:#000;
     font-size:13px;font-weight:500;cursor:pointer}
+  .gate button.ghost{background:transparent;color:var(--fg);border:1px solid var(--bd)}
   .gate .err{color:#ff9d9d}
 
   .ov{position:absolute;left:0;right:0;bottom:0;min-height:34%;background:rgba(0,0,0,.92);
@@ -68,7 +114,7 @@
   .opts{display:flex;gap:14px;justify-content:center;padding:0 26px}
   .opt{flex:1;max-width:320px;padding:14px 16px;border:1px solid rgba(255,255,255,.32);
     border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;
-    letter-spacing:.06em;cursor:pointer;text-align:center;transition:background .1s,border-color .1s,box-shadow .1s}
+    letter-spacing:.06em;cursor:pointer;text-align:center}
   .timer{height:3px;background:rgba(255,255,255,.18);margin:13px 26px 0;border-radius:2px;overflow:hidden}
   .timer i{display:block;height:100%;width:100%;background:#fff}
 
@@ -78,69 +124,75 @@
   .pad .disp{letter-spacing:.55em;font-size:19px;color:#fff;font-variant-numeric:tabular-nums}
   .pad .keys{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:340px}
   .pad .keys button{width:40px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.34);
-    background:rgba(255,255,255,.06);color:#fff;font-size:15px;cursor:pointer;transition:background .1s}
+    background:rgba(255,255,255,.06);color:#fff;font-size:15px;cursor:pointer}
 
   .end{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
-    gap:11px;background:rgba(0,0,0,.94);text-align:center;padding:24px;z-index:40}
+    gap:11px;background:rgba(0,0,0,.95);text-align:center;padding:24px;z-index:40}
   .end.on{display:flex}
-  .end h2{margin:0;font-size:16px;font-weight:500}
-  .end p{margin:0;font-size:11px;color:var(--mut);max-width:340px}
+  .end h2{margin:0;font-size:17px;font-weight:500;letter-spacing:.1em}
+  .end p{margin:0;font-size:11px;color:var(--mut);max-width:360px}
   .end button{padding:9px 20px;border-radius:99px;border:0;background:#fff;color:#000;font-size:12px;cursor:pointer}
 
-  .ctl{display:flex;align-items:center;gap:7px}
+  .ctl{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .ctl button{width:34px;height:31px;border-radius:6px;border:1px solid var(--bd);
     background:var(--panel2);color:var(--fg);cursor:pointer;font-size:13px;line-height:1}
   .ctl button:hover{border-color:#3a3a46}
   .ctl button.on{background:#fff;color:#000;border-color:#fff}
+  .ctl button.wide{width:auto;padding:0 10px;font-size:11px;letter-spacing:.05em}
   .ctl .t{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums;min-width:104px}
-  .ctl input[type=range]{flex:1;accent-color:#fff}
+  .ctl input[type=range]{flex:1 1 140px;min-width:120px;accent-color:#fff}
 
-  aside{width:340px;border-left:1px solid var(--bd);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  aside{width:330px;border-left:1px solid var(--bd);background:var(--panel);display:flex;flex-direction:column;min-height:0}
   aside .sec{border-bottom:1px solid var(--bd);padding:10px 12px}
   aside .sec h3{margin:0 0 7px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:500}
-  .row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut)}
+  .row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut);margin-top:5px;flex-wrap:wrap}
   .row label{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--fg)}
   .row input{accent-color:#fff}
+  .row button{background:transparent;border:1px solid var(--bd);color:var(--fg);
+    font-size:11px;padding:4px 9px;border-radius:6px;cursor:pointer}
   #map{flex:1;min-height:0;overflow:auto;padding:8px}
   #map svg{display:block}
-  #log{max-height:34%;overflow:auto;padding:8px 12px;font-size:11px}
+  #log{max-height:32%;overflow:auto;padding:8px 12px;font-size:11px}
   .ent{padding:6px 0;border-bottom:1px dashed #22222a;color:var(--mut)}
   .ent b{color:var(--fg);font-weight:500}
   .ent .t{font-variant-numeric:tabular-nums;color:#5f5f6b;margin-right:5px}
   .ent button{background:none;border:0;color:#7a7a88;font-size:10px;cursor:pointer;padding:2px 0;text-decoration:underline}
   .empty{color:#55555f;font-size:11px;padding:8px 0}
+  #chap{flex:1;min-height:0;overflow:auto;padding:6px 8px}
+  #chap button{display:flex;gap:9px;width:100%;text-align:left;align-items:baseline;
+    background:transparent;border:1px solid transparent;border-radius:6px;
+    color:#a9a9b4;font-size:12px;padding:8px 9px;cursor:pointer;margin-bottom:2px}
+  #chap button .n{font-variant-numeric:tabular-nums;color:#5f5f6b;font-size:10px;min-width:52px}
+  #chap button.act{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.4)}
+  #chap button:hover{border-color:#3a3a46;color:#fff}
   footer{padding:6px 16px;border-top:1px solid var(--bd);background:var(--panel);
     font-size:10px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
   kbd{border:1px solid var(--bd);border-radius:4px;padding:0 4px;font-size:10px;color:#a5a5b0}
 
-  /* ===== resaltado activo: sirve para puntero virtual, flechas y foco ===== */
-  .opt.act,.opt:focus,
-  .pad .keys button.act,.pad .keys button:focus,
-  .gate button:focus,.end button:focus,.ctl button:focus,header button:focus,.row label:focus-within{
-    outline:none;border-color:#fff;color:#fff;
-    background:rgba(255,255,255,.24);
-    box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 30px rgba(255,255,255,.45)}
+  .gate button:focus,.end button:focus,.ctl button:focus,header button:focus,.opt.act,.opt:focus,
+  .pad .keys button.act,.pad .keys button:focus,.row label:focus-within,#chap button:focus,.card:focus{
+    outline:none;border-color:#fff;color:#fff;background:rgba(255,255,255,.24);
+    box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.4)}
   .ctl button:focus,header button:focus{background:#fff;color:#000}
   .opt.act{transform:scale(1.03)}
+  #chap button.act:focus{background:rgba(255,255,255,.24)}
 
-  /* ===== MODO TV ===== */
   body.tv main{position:relative}
   body.tv aside{display:none}
-  body.tv aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,44vw);z-index:60;
+  body.tv aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(430px,44vw);z-index:60;
     box-shadow:-12px 0 34px rgba(0,0,0,.75)}
-  body.tv #btnPanel{display:inline-block}
   body.tv footer{display:none}
   body.tv #stagewrap{padding:6px;gap:6px}
   body.tv #stage{border:0;border-radius:0}
   body.tv header{padding:12px 22px}
-  body.tv header h1{font-size:16px}
+  body.tv header .logo{font-size:19px}
   body.tv header button{font-size:14px;padding:8px 14px}
   body.tv .ov{min-height:44%;background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.85) 58%,rgba(0,0,0,.15) 100%);
     padding-bottom:28px}
   body.tv .ov .q{font-size:15px;letter-spacing:.34em}
   body.tv .ov .hint{font-size:12px;margin-bottom:18px}
   body.tv .opts{gap:26px;padding:0 60px}
-  body.tv .opt{font-size:21px;letter-spacing:.09em;padding:26px 26px;border-width:2px;
+  body.tv .opt{font-size:21px;letter-spacing:.09em;padding:26px;border-width:2px;
     border-radius:14px;max-width:480px;background:rgba(255,255,255,.09)}
   body.tv .timer{height:7px;margin:22px 60px 0;border-radius:4px}
   body.tv .pad{padding:26px}
@@ -148,61 +200,89 @@
   body.tv .pad .keys{gap:14px;max-width:none}
   body.tv .pad .keys button{width:78px;height:78px;font-size:28px;border-width:2px;border-radius:14px}
   body.tv .ctl button{width:52px;height:46px;font-size:18px}
+  body.tv .ctl button.wide{font-size:14px;padding:0 14px}
   body.tv .ctl .t{font-size:14px;min-width:130px}
-  body.tv .gate h2{font-size:36px;letter-spacing:.18em}
+  body.tv #chap button{font-size:16px;padding:13px 12px}
+  body.tv #chap button .n{font-size:12px;min-width:62px}
+  body.tv .gate h2{font-size:38px;letter-spacing:.2em}
   body.tv .gate p{font-size:15px;max-width:660px}
   body.tv .gate button{font-size:17px;padding:14px 42px}
-  body.tv .end h2{font-size:24px}
-  body.tv .end p{font-size:14px;max-width:460px}
+  body.tv .end h2{font-size:26px}
   body.tv .end button{font-size:16px;padding:13px 30px}
 
-  /* ===== PANTALLA COMPLETA FALSA: sin requestFullscreen, el reproductor de BrowseHere no se activa ===== */
-  body.pseudo header,body.pseudo footer,body.pseudo aside{display:none}
+  /* pantalla grande por CSS: sin requestFullscreen el reproductor de BrowseHere no se activa */
+  body.pseudo header,body.pseudo footer{display:none}
   body.pseudo #stagewrap{padding:0;gap:0}
   body.pseudo #stage{position:fixed;inset:0;z-index:var(--top);border:0;border-radius:0}
   body.pseudo .ctl{position:fixed;left:0;right:0;bottom:0;z-index:calc(var(--top) + 2);
     padding:8px 16px;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.35) 70%,transparent);
     opacity:0;transition:opacity .18s;pointer-events:none}
-  
+  body.pseudo.showctl .ctl{opacity:1;pointer-events:auto}
   body.pseudo .ctl button{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
   body.pseudo .ctl .t{color:#cfcfd6}
+  body.pseudo aside{display:none}
+  body.pseudo aside.show{display:flex;position:fixed;right:0;top:0;bottom:0;width:min(430px,44vw);
+    z-index:calc(var(--top) + 3);box-shadow:-12px 0 34px rgba(0,0,0,.8)}
 
-  /* ===== v2: estilo Netflix, responsive y control táctil ===== */
-  @supports(height:100dvh){html,body{height:100dvh}}
-  .ov{background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.6) 60%,transparent 100%)}
-  .ov.on{animation:fadeUp .25s ease-out}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .opt{background:rgba(25,25,25,.82);border-radius:4px;font-weight:600}
-  .ctl{flex-wrap:wrap}
-  .ctl input[type=range]{flex:1 1 140px;min-width:120px}
-  body.pseudo.showctl .ctl{opacity:1;pointer-events:auto}
-  #spin{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;display:none;z-index:35;pointer-events:none}
+  #spin{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border:4px solid rgba(255,255,255,.25);
+    border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;display:none;z-index:35;pointer-events:none}
   #spin.on{display:block}@keyframes sp{to{transform:rotate(360deg)}}
-  body.pseudo.deciding .ctl{display:none}
+
   @media (max-width:900px){
     main{position:relative}
     aside{display:none}
-    aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(420px,92vw);z-index:60;box-shadow:-12px 0 34px rgba(0,0,0,.75)}
-    #btnPanel{display:inline-block}
+    aside.show{display:flex;position:absolute;right:0;top:0;bottom:0;width:min(430px,92vw);z-index:60;box-shadow:-12px 0 34px rgba(0,0,0,.75)}
     footer{display:none}
-    header .tag{display:none}
+    header .tag,header .by{display:none}
     #stagewrap{padding:6px}
     .opts{gap:8px;padding:0 10px}.opt{padding:12px 8px;font-size:11px}
   }
 </style>
 </head>
-<body>
+<body data-view="home" data-film="">
 
 <header>
-  <h1>BLACK MIRROR: BANDERSNATCH</h1>
-  <span class="tag">1080p</span>
-  <span class="tag">es-LATAM</span>
-  <span class="tag">ramificación real</span>
+  <span class="logo">XCODE</span>
+  <span class="by">by UltraOmniverse</span>
   <span class="sp"></span>
-  <button id="btnPanel">Panel</button>
-  <button id="btnReset">Reiniciar historia</button>
-  <button id="btnClear">Borrar registro</button>
+  <h1 id="hTitle" style="display:none"></h1>
+  <span class="sp"></span>
+  <button id="btnBack" style="display:none">‹ Catálogo</button>
+  <button id="btnPanel" class="only-branch inl">Panel</button>
+  <button id="btnReset" class="only-branch inl">Reiniciar</button>
 </header>
+
+<div id="home">
+  <div class="hero">
+    <div class="k">Catálogo</div>
+    <h2>Elige qué ver</h2>
+    <p>Flechas para moverte, OK para entrar. En móvil y tablet, toca la portada.</p>
+  </div>
+  <div id="grid">
+    <button class="card" data-film="bander">
+      <div class="poster">
+        <div class="ph">Bandersnatch</div>
+        <img src="https://upload.wikimedia.org/wikipedia/en/5/53/Black_mirror_bandersnatch_poster.jpg"
+             alt="Portada de Black Mirror: Bandersnatch" loading="lazy" onerror="this.style.display='none'">
+        <span class="badge">interactiva</span>
+      </div>
+      <div class="meta"><b>Bandersnatch</b><span>2018 · 5 h 12 min · tú decides</span></div>
+    </button>
+    <button class="card" data-film="satan">
+      <div class="poster">
+        <div class="ph">Sátántangó</div>
+        <img src="https://upload.wikimedia.org/wikipedia/en/6/69/S%C3%A1t%C3%A1ntang%C3%B3_%282019_Rerelease_Poster%29.jpeg"
+             alt="Portada de Sátántangó" loading="lazy" onerror="this.style.display='none'">
+        <span class="badge">7 h 19 min</span>
+      </div>
+      <div class="meta"><b>Sátántangó</b><span>1994 · 7 h 19 min · 12 capítulos</span></div>
+    </button>
+  </div>
+  <div class="credit">
+    <b>XCODE</b> · by UltraOmniverse<br>
+    Creada por Daniel Alejandro Gascón Castaño — Founder
+  </div>
+</div>
 
 <main>
   <div id="stagewrap">
@@ -210,18 +290,21 @@
       <video id="v" preload="auto" playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page">
         <track id="sub" kind="subtitles" srclang="es" label="Español (LATAM)">
       </video>
-
       <div id="spin"></div>
-      <div id="dbg" style="position:fixed;left:10px;top:10px;z-index:2147483647;background:rgba(0,0,0,.85);color:#0f0;font:18px monospace;padding:8px 12px;display:none;pointer-events:none"></div>
+
       <div class="gate" id="gate">
-        <h2>BANDERSNATCH</h2>
-        <p>Corte completo de 5:12:14 con todos los ramales, en 1920×1080. Mueve el puntero con las flechas y confirma con OK. En móvil y tablet, toca directamente.</p>
-        <button id="btnStart">Empezar</button>
+        <h2 id="gateT">—</h2>
+        <p class="sub" id="gateS"></p>
+        <p id="gateP"></p>
+        <div class="btns">
+          <button id="btnStart">Empezar</button>
+          <button id="btnResume" class="ghost" style="display:none">Reanudar</button>
+        </div>
         <p id="gmsg" style="font-size:11px"></p>
       </div>
 
       <div class="ov" id="ov">
-        <div class="q" id="q">ELIGE</div>
+        <div class="q">ELIGE</div>
         <div class="hint">Puntero o flechas para moverte · OK para confirmar</div>
         <div class="opts" id="opts"></div>
         <div class="timer"><i id="tbar"></i></div>
@@ -233,19 +316,20 @@
       </div>
 
       <div class="end" id="end">
-        <h2 id="endT">Créditos</h2>
-        <p id="endP">Camino completado.</p>
+        <h2 id="endT">Fin</h2>
+        <p id="endP"></p>
         <button id="btnAgain">Volver a empezar</button>
       </div>
     </div>
 
     <div class="ctl">
       <button id="btnPlay" title="Reproducir / pausa (espacio)">▶</button>
-      <button id="btnBack" title="Retroceder 10 s">↺</button>
-      <button id="btnFwd" title="Avanzar 10 s">↻</button>
+      <button id="btnB10" title="Retroceder 10 s">↺</button>
+      <button id="btnF10" title="Avanzar 10 s">↻</button>
       <span class="t" id="time">0:00 / 0:00</span>
       <input id="seek" type="range" min="0" max="1000" value="0" step="1">
       <button id="btnSub" class="on" title="Subtítulos (c)">CC</button>
+      <button id="btnChap" class="wide" title="Capítulos (l)">☰ Capítulos</button>
       <button id="btnFs" title="Pantalla grande (f)">⛶</button>
     </div>
   </div>
@@ -253,40 +337,31 @@
   <aside id="aside">
     <div class="sec">
       <h3>Ajustes</h3>
-      <div class="row">
-        <label><input type="checkbox" id="tvMode"> Modo TV (letras grandes)</label>
-      </div>
-      <div class="row" style="margin-top:5px">
-        <label><input type="checkbox" id="noTimer"> Modo sin temporizador</label>
-      </div>
-      <div class="row" style="margin-top:5px">
-        <label><input type="checkbox" id="showSub" checked> Subtítulos en español</label>
-      </div>
-      <div class="row" style="margin-top:5px">
-        <label><input type="checkbox" id="sysFs"> Pantalla completa del sistema</label>
-      </div>
-      <div class="row" style="margin-top:5px">
-        <label><input type="checkbox" id="liteMode"> Modo TV ligero (1 video de relevo)</label>
-      </div>
-      <div class="row" style="margin-top:5px">
-        <label><input type="checkbox" id="dbgMode"> Diagnóstico del puntero</label>
-      </div>
+      <div class="row"><label><input type="checkbox" id="tvMode"> Modo TV (letras grandes)</label></div>
+      <div class="row"><label><input type="checkbox" id="showSub" checked> Subtítulos en español</label></div>
+      <div class="row"><label><input type="checkbox" id="sysFs"> Pantalla completa del sistema</label></div>
+      <div class="row only-branch"><label><input type="checkbox" id="noTimer"> Modo sin temporizador</label></div>
+      <div class="row"><span>Sincronía</span>
+        <button id="subMinus">− 0.5 s</button><button id="subPlus">+ 0.5 s</button>
+        <span id="subOff" style="font-variant-numeric:tabular-nums;color:#5f5f6b">0.0 s</span></div>
+      <div class="row"><button id="btnSubFile">Cargar subtítulos (.srt / .vtt)</button>
+        <input id="subFile" type="file" accept=".srt,.vtt,text/vtt" style="display:none"></div>
+      <div class="row" id="subState" style="color:#5f5f6b">Buscando subtítulos…</div>
     </div>
-    <div class="sec" style="padding-bottom:6px">
-      <h3>Mapa del árbol</h3>
-      <div class="row">Las ramas grises son las que no tomaste.</div>
-    </div>
-    <div id="map"><div class="empty">Aún no hay decisiones.</div></div>
-    <div class="sec" style="border-bottom:0;border-top:1px solid var(--bd);padding-bottom:4px">
-      <h3>Registro</h3>
-    </div>
-    <div id="log"><div class="empty">Sin decisiones registradas.</div></div>
+    <div class="sec only-branch" style="padding-bottom:4px"><h3>Mapa del árbol</h3>
+      <div class="row">Las ramas grises son las que no tomaste.</div></div>
+    <div id="map" class="only-branch" style="display:none"><div class="empty">Aún no hay decisiones.</div></div>
+    <div class="sec only-branch" style="padding-bottom:4px"><h3>Registro</h3></div>
+    <div id="log" class="only-branch" style="display:none"><div class="empty">Sin decisiones registradas.</div></div>
+    <div class="sec" id="secChap" style="padding-bottom:4px;display:none"><h3>Capítulos</h3></div>
+    <div id="chap" style="display:none"></div>
   </aside>
 </main>
 
 <footer>
-  <span><kbd>flechas</kbd> mover puntero / opción</span>
-  <span><kbd>OK</kbd> / <kbd>Enter</kbd> confirmar</span>
+  <span><kbd>←</kbd><kbd>→</kbd> ±10 s</span>
+  <span><kbd>↑</kbd><kbd>↓</kbd> panel / controles</span>
+  <span><kbd>OK</kbd> confirmar</span>
   <span><kbd>espacio</kbd> pausa</span>
   <span><kbd>f</kbd> pantalla grande</span>
   <span id="status"></span>
@@ -297,12 +372,40 @@
 "use strict";
 
 /* ===================== FUENTES ===================== */
-const VIDEO_URL = "https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
-const VIDEO_LOCAL = "bandersnatch.mp4";
-const SUB_LOCAL = "es.vtt";
-const SUB_REMOTE = "https://mohetios.github.io/BandersnatchInteractive/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
+const BANDER_URL = "https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
+const SATAN_URL  = "https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
+const BANDER_SUB_REMOTE = ["https://mohetios.github.io/BandersnatchInteractive/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt"];
+const SATAN_SUB_REMOTE = [
+  "https://www.subtitlecat.com/subs/1324/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es-419.srt",
+  "https://www.subtitlecat.com/subs/1249/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es.srt"
+];
+const SATAN_DURATION = 26348920;
+const SATAN_CHAPTERS = [
+  {t:0,n:"Inicio"},{t:632750,n:"Noticias de su venida"},{t:8237917,n:"Intermedio"},
+  {t:8245750,n:"El trabajo de la araña I"},{t:13078125,n:"La obra de la araña II"},
+  {t:15705417,n:"Intermedio"},{t:15713208,n:"Irimias hace un discurso"},
+  {t:16551500,n:"La perspectiva, vista desde el frente"},{t:21598750,n:"La perspectiva, vista desde atrás"}
+];
+const SATAN_RAW = "FILM|0|"+SATAN_DURATION+"|IDNT|-|-\nIDNT|"+SATAN_DURATION+"|0|IDNT|-|-";
 
-/* ===================== DATOS ===================== */
+const FILMS = {
+  bander: {
+    id:"bander", title:"BLACK MIRROR: BANDERSNATCH", gate:"BANDERSNATCH",
+    sub:"2018 · 5 h 12 min · interactiva · 1080p",
+    desc:"Cada elección salta al segmento que le corresponde. Muévete con el puntero o las flechas y confirma con OK.",
+    local:"bandersnatch.mp4", remote:BANDER_URL, subLocal:"es.vtt", subRemote:BANDER_SUB_REMOTE,
+    mode:"branch", start:"1A", credits:"Bandersnatch · Black Mirror"
+  },
+  satan: {
+    id:"satan", title:"SÁTÁNTANGÓ", gate:"SÁTÁNTANGÓ",
+    sub:"Béla Tarr · 1994 · 7 h 19 min · 1080p",
+    desc:"Doce capítulos en blanco y negro sobre una aldea húngara que espera a un hombre al que creían muerto.",
+    local:"satantango.mp4", remote:SATAN_URL, subLocal:"satantango.es.vtt", subRemote:SATAN_SUB_REMOTE,
+    mode:"linear", chapters:SATAN_CHAPTERS, credits:"Sátántangó · Béla Tarr"
+  }
+};
+
+/* ===================== DATOS BANDERSNATCH ===================== */
 const RAW = `
 1A|0|153520|1E|134800|153520|SUGAR PUFFS>1E~FROSTIES>1D
 1E|153520|207240|1H|189560|207240|THOMPSON TWINS>1H~NOW 2>1G
@@ -983,46 +1086,64 @@ Z2|3z=1
 8KA|te=1
 `;
 
-/* ===================== LÓGICA (sin DOM) ===================== */
-/*LOGIC-START*/
+/* ===================== ESTADO ===================== */
+const $=id=>document.getElementById(id);
+const v=$("v"),stage=$("stage"),gate=$("gate"),gmsg=$("gmsg"),endBox=$("end"),
+      timeEl=$("time"),seek=$("seek"),statusEl=$("status"),aside=$("aside"),chapEl=$("chap"),
+      mapEl=$("map"),logEl=$("log"),optsEl=$("opts"),padEl=$("pad"),keysEl=$("keys"),dispEl=$("disp"),
+      tbar=$("tbar"),showSubEl=$("showSub"),tvEl=$("tvMode"),sysFsEl=$("sysFs"),
+      subState=$("subState"),subOffEl=$("subOff"),btnPlay=$("btnPlay"),btnFs=$("btnFs"),
+      btnSub=$("btnSub"),btnStart=$("btnStart"),hTitle=$("hTitle");
+
 const SEG={},CH={},GRP={},PREC={},EFF={};
+let st={},FILM=null,cur=null,shown=false,noTimer=false,held=false,seq=0,pend=null,code="",log=[],
+    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[],ovKey=null,lastKey=0,
+    pseudo=false,subRaw=null,subOff=0,subUrl=null,subMode="none",ctlT=0,saveT=0,curChap=-1;
 
-function parseChoices(str){
-  return str.split("~").map(x=>{
-    const i=x.indexOf(">");
-    return i<0?null:{t:x.slice(0,i).trim(),g:x.slice(i+1).trim()};
-  }).filter(Boolean);
-}
-RAW.trim().split("\n").forEach(l=>{
-  const p=l.split("|"); const id=(p[0]||"").trim(); if(!id) return;
-  const s={s:+p[1],e:+p[2],d:(p[3]||"").trim()};
-  if(p[4]&&p[4].trim()!=="-"){s.ws=+p[4];s.we=+p[5];}
-  const c=(p[6]||"").trim();
-  if(c==="#CODE") s.pad=true;
-  else if(c){const o=parseChoices(c); if(o.length) CH[id]=o;}
-  SEG[id]=s;
-});
-GRAW.trim().split("\n").forEach(l=>{
-  const p=l.split("|"); const n=(p[0]||"").trim(); if(!n) return;
-  GRP[n]=(p[1]||"").split("~").map(x=>{
-    const i=x.indexOf("?"); const raw=(i<0?x:x.slice(0,i)).trim();
-    return i<0?{s:raw}:{s:raw,c:x.slice(i+1).trim()};
-  });
-});
-PRAW.trim().split("\n").forEach(l=>{const i=l.indexOf("|");if(i>0)PREC[l.slice(0,i).trim()]=l.slice(i+1).trim();});
-ERAW.trim().split("\n").forEach(l=>{const p=l.split("|");if(p[0])EFF[p[0].trim()]=(p[1]||"").split(";");});
+const fmt=t=>{t=Math.max(0,Math.floor(t||0));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
+  return h?h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"):m+":"+String(s).padStart(2,"0");};
+const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const store={
+  get(){try{return JSON.parse(localStorage.getItem("xcode_log"));}catch(e){return null;}},
+  set(a){try{localStorage.setItem("xcode_log",JSON.stringify(a));}catch(e){}}
+};
 
-if(!SEG["3Ax"]&&!GRP["3Ax"]) GRP["3Ax"]=[{s:"2BChoice"}];
-
+/* ===================== MOTOR DE DATOS ===================== */
 const KEYS=["sp","tt","td","cs","w1","2b","3j","pt","cd","cj","sj","tud","lsd","vh","3l","3s","3z","ps","wb","kd","bo","5v","pc","sc","ty","cm","pr","3ad","s3af","nf","np","ne","pp","tp","bup","be","pe","pae","te","snt","8j","8d","8m","8q","8s","8v","vs","scs","3ab","3ac","3aj","3ah","3ak","3al","3af","5h","5ac","5ag","5ad","6c","8a","sj2"];
-let st={};
 function resetState(){st={};KEYS.forEach(k=>st[k]=false);st.ps="n";st.pc="n";st.vs="n";}
 function cloneState(){return JSON.parse(JSON.stringify(st));}
 
+function parseChoices(s){
+  return s.split("~").map(x=>{const i=x.indexOf(">");
+    return i<0?null:{t:x.slice(0,i).trim(),g:x.slice(i+1).trim()};}).filter(Boolean);
+}
+function parseAll(raw,graw,praw,eraw){
+  for(const k in SEG) delete SEG[k];
+  for(const k in CH) delete CH[k];
+  for(const k in GRP) delete GRP[k];
+  for(const k in PREC) delete PREC[k];
+  for(const k in EFF) delete EFF[k];
+  (raw||"").trim().split("\n").forEach(l=>{
+    const p=l.split("|");const id=(p[0]||"").trim();if(!id) return;
+    const s={s:+p[1],e:+p[2],d:(p[3]||"").trim()};
+    if(p[4]&&p[4].trim()!=="-"){s.ws=+p[4];s.we=+p[5];}
+    const c=(p[6]||"").trim();
+    if(c==="#CODE") s.pad=true;
+    else if(c){const o=parseChoices(c);if(o.length) CH[id]=o;}
+    SEG[id]=s;
+  });
+  (graw||"").trim().split("\n").forEach(l=>{
+    const p=l.split("|");const n=(p[0]||"").trim();if(!n) return;
+    GRP[n]=(p[1]||"").split("~").map(x=>{const i=x.indexOf("?");
+      const r=(i<0?x:x.slice(0,i)).trim();return i<0?{s:r}:{s:r,c:x.slice(i+1).trim()};});
+  });
+  (praw||"").trim().split("\n").forEach(l=>{const i=l.indexOf("|");if(i>0)PREC[l.slice(0,i).trim()]=l.slice(i+1).trim();});
+  (eraw||"").trim().split("\n").forEach(l=>{const p=l.split("|");if(p[0])EFF[p[0].trim()]=(p[1]||"").split(";");});
+  if(!SEG["3Ax"]&&!GRP["3Ax"]) GRP["3Ax"]=[{s:"2BChoice"}];
+}
 function ev(expr){
   if(!expr) return true;
-  let i=0;
-  const skip=()=>{while(expr[i]===" ")i++;};
+  let i=0;const skip=()=>{while(expr[i]===" ")i++;};
   function or(){let v=and();skip();while(expr[i]==="|"){i++;const r=and();v=v||r;skip();}return v;}
   function and(){let v=un();skip();while(expr[i]==="&"){i++;const r=un();v=v&&r;skip();}return v;}
   function un(){skip();if(expr[i]==="!"){i++;return !un();}if(expr[i]==="("){i++;const v=or();skip();if(expr[i]===")")i++;return v;}return atom();}
@@ -1032,95 +1153,153 @@ function ev(expr){
     return !!st[s];}
   try{return !!or();}catch(e){return true;}
 }
-
-function pick(group,depth){
-  if(depth>14) return null;
-  for(const e of group){
-    const at=e.s[0]==="@", name=at?e.s.slice(1):e.s;
-    const expr=(e.c&&PREC[e.c]!==undefined)?PREC[e.c]:PREC[name];
-    if(!ev(expr)) continue;
+function pick(g,d){
+  if(d>14) return null;
+  for(const e of g){
+    const at=e.s[0]==="@",name=at?e.s.slice(1):e.s;
+    const ex=(e.c&&PREC[e.c]!==undefined)?PREC[e.c]:PREC[name];
+    if(!ev(ex)) continue;
     let r=null;
-    if(at) r=GRP[name]?pick(GRP[name],depth+1):(SEG[name]?name:null);
-    else   r=SEG[name]?name:(GRP[name]?pick(GRP[name],depth+1):null);
+    if(at) r=GRP[name]?pick(GRP[name],d+1):(SEG[name]?name:null);
+    else r=SEG[name]?name:(GRP[name]?pick(GRP[name],d+1):null);
     if(r) return r;
   }
   return null;
 }
-function resolveTarget(name){
-  if(!name) return null;
-  if(SEG[name]){
-    if(PREC[name]!==undefined&&!ev(PREC[name])&&SEG[name+"cd"]&&ev(PREC[name+"cd"])) return name+"cd";
-    return name;
+function resolveTarget(n){
+  if(!n) return null;
+  if(SEG[n]){
+    if(PREC[n]!==undefined&&!ev(PREC[n])&&SEG[n+"cd"]&&ev(PREC[n+"cd"])) return n+"cd";
+    return n;
   }
-  if(GRP[name]) return pick(GRP[name],0);
+  if(GRP[n]) return pick(GRP[n],0);
   return null;
 }
 function nextOf(id){
-  const s=SEG[id]; if(!s) return null;
-  if(GRP[id]){const r=pick(GRP[id],0); if(r) return r;}
+  const s=SEG[id];if(!s) return null;
+  if(GRP[id]){const r=pick(GRP[id],0);if(r) return r;}
   return resolveTarget(s.d);
 }
 function applyKV(list){
-  for(const kv of list){
-    const i=kv.indexOf("="); if(i<0) continue;
-    const k=kv.slice(0,i), val=kv.slice(i+1);
-    st[k]=val==="1"?true:val==="0"?false:val;
-  }
+  for(const kv of list){const i=kv.indexOf("=");if(i<0) continue;
+    const k=kv.slice(0,i),val=kv.slice(i+1);
+    st[k]=val==="1"?true:val==="0"?false:val;}
 }
-function applyEff(id){const e=EFF[id]; if(e) applyKV(e);}
+function applyEff(id){const e=EFF[id];if(e) applyKV(e);}
 const GEFF={FlushThemChoice3X:["ps=f"],ThrowThemChoice:["ps=b"]};
-function applyChoiceEff(g){const e=GEFF[g]; if(e) applyKV(e);}
-/*LOGIC-END*/
+function applyChoiceEff(g){const e=GEFF[g];if(e) applyKV(e);}
 
-/* ===================== DOM ===================== */
-const $=id=>document.getElementById(id);
-let v=$("v");
-const stage=$("stage"),ov=$("ov"),optsEl=$("opts"),tbar=$("tbar"),timeEl=$("time"),seek=$("seek"),
-  endBox=$("end"),gate=$("gate"),gmsg=$("gmsg"),statusEl=$("status"),pad=$("pad"),disp=$("disp"),
-  mapEl=$("map"),logEl=$("log"),btnPlay=$("btnPlay"),keysEl=$("keys"),showSubEl=$("showSub"),
-  btnStart=$("btnStart"),aside=$("aside"),tvEl=$("tvMode"),sysFsEl=$("sysFs");
-
-let cur=null,shown=false,noTimer=false,held=false,seq=0,pend=null,code="",log=[],
-    started=false,dragging=false,failed=false,prepAt=0,prepDone=true,cands=[],
-    ovKey=null,lastKey=0,pseudo=false,ptrOff=null;
-
-const fmt=t=>{t=Math.max(0,Math.floor(t||0));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
-  return h?h+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"):m+":"+String(s).padStart(2,"0");};
-const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const store={
-  get(){try{return JSON.parse(localStorage.getItem("bsn_log"));}catch(e){return null;}},
-  set(a){try{localStorage.setItem("bsn_log",JSON.stringify(a));}catch(e){}}
-};
-
-function hideOv(){
-  ov.classList.remove("on");pad.classList.remove("on");document.body.classList.remove("deciding");if(ptrOff){ptrOff();ptrOff=null;}ov.onclick=null;
-  shown=false;held=false;pend=null;ovKey=null;
-  optsEl.innerHTML="";keysEl.innerHTML="";
-  const a=document.activeElement;
-  if(a&&a!==document.body&&a.blur) a.blur();
-  try{stage.focus({preventScroll:true});}catch(e){}
+/* ===================== SUBTÍTULOS ===================== */
+function ts(ms){ms=Math.max(0,Math.round(ms));
+  const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000),r=ms%1000;
+  return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")+"."+String(r).padStart(3,"0");}
+function shiftStamp(t,off){
+  const m=t.trim().match(/^(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})$/);
+  if(!m) return null;
+  return ts((+m[1]||0)*3600000+(+m[2])*60000+(+m[3])*1000+(+m[4].padEnd(3,"0"))+off);
 }
-
-/* ---------- fuentes de video ---------- */
-const SRCS=location.protocol==="file:"?[VIDEO_URL]:[VIDEO_LOCAL,VIDEO_URL];
-let srcIdx=0,subUrl=SUB_REMOTE;
-function loadSrc(i){srcIdx=i;v.src=SRCS[i];v.load();}
-
-/* ---------- subtítulos ---------- */
+function toVtt(raw,off){
+  const isSrt=/,\d{3}\s*-->/.test(raw);
+  const lines=raw.replace(/^\uFEFF/,"").replace(/\r/g,"").split("\n");
+  const out=["WEBVTT",""];
+  for(const line of lines){
+    if(line.indexOf("-->")>0){
+      const p=line.split("-->");
+      const a=shiftStamp(p[0],off),b=shiftStamp((p[1]||"").split(/\s+/)[0],off);
+      if(a&&b){out.push(a+" --> "+b);continue;}
+    }
+    if(/^WEBVTT/.test(line)) continue;
+    if(isSrt&&/^\d+$/.test(line.trim())) continue;
+    out.push(line);
+  }
+  return out.join("\n");
+}
 function applySubMode(el){
   const t=el.textTracks&&el.textTracks[0];
-  if(t) t.mode=showSubEl.checked?"showing":"hidden";
+  if(t) t.mode=showSubEl.checked&&subMode!=="none"?"showing":"hidden";
 }
 function applySubAll(){stage.querySelectorAll("video").forEach(applySubMode);}
+function mountSub(){
+  if(!subRaw) return;
+  if(subUrl) URL.revokeObjectURL(subUrl);
+  subUrl=URL.createObjectURL(new Blob([toVtt(subRaw,subOff)],{type:"text/vtt"}));
+  $("sub").src=subUrl;
+  subOffEl.textContent=(subOff/1000).toFixed(1)+" s";
+  applySubAll();
+  btnSub.classList.toggle("on",showSubEl.checked);
+}
+function setSub(raw,src){
+  subRaw=raw;subMode=src;subOff=0;
+  subState.textContent=src==="local"?"Subtítulos locales.":
+    src==="remoto"?"Subtítulos en español desde la red.":
+    src==="archivo"?"Subtítulos cargados desde tu archivo.":"Sin subtítulos.";
+  subState.style.color="#5f5f6b";
+  mountSub();
+}
+async function bootSubs(){
+  if(!FILM) return;
+  subRaw=null;subMode="none";subOff=0;subOffEl.textContent="0.0 s";
+  subState.textContent="Buscando subtítulos…";subState.style.color="#5f5f6b";
+  try{
+    const r=await fetch(FILM.subLocal,{method:"HEAD",cache:"no-store"});
+    if(r.ok){setSub(await (await fetch(FILM.subLocal)).text(),"local");return;}
+  }catch(e){}
+  for(const u of FILM.subRemote){
+    try{
+      const r=await fetch(u,{cache:"force-cache"});
+      if(!r.ok) continue;
+      const t=await r.text();
+      if(t.indexOf("-->")<0) continue;
+      setSub(t,"remoto");return;
+    }catch(e){}
+  }
+  subState.textContent="No se pudieron descargar. Usa «Cargar subtítulos».";
+}
+$("btnSubFile").onclick=()=>$("subFile").click();
+$("subFile").onchange=e=>{
+  const f=e.target.files&&e.target.files[0];if(!f) return;
+  const rd=new FileReader();rd.onload=()=>setSub(String(rd.result),"archivo");rd.readAsText(f,"utf-8");
+};
+$("subMinus").onclick=()=>{subOff-=500;mountSub();};
+$("subPlus").onclick=()=>{subOff+=500;mountSub();};
+showSubEl.onchange=()=>{applySubAll();btnSub.classList.toggle("on",showSubEl.checked);};
+btnSub.onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange();};
 
-/* ---------- relevos ---------- */
+/* ===================== CAPÍTULOS ===================== */
+function renderChap(){
+  chapEl.innerHTML="";
+  if(!FILM||!FILM.chapters) return;
+  FILM.chapters.forEach(c=>{
+    const b=document.createElement("button");b.type="button";
+    const n=document.createElement("span");n.className="n";n.textContent=c.t?fmt(c.t/1000):"0:00";
+    const t=document.createElement("span");t.textContent=c.n;
+    b.appendChild(n);b.appendChild(t);
+    b.addEventListener("mouseenter",()=>{if(Date.now()-lastKey>220) b.focus({preventScroll:true});});
+    b.onclick=()=>{seekTo(c.t);if(v.paused) v.play().catch(()=>{});};
+    chapEl.appendChild(b);
+  });
+  curChap=-1;markChap();
+}
+function markChap(){
+  if(!FILM||!FILM.chapters) return;
+  const ms=v.currentTime*1000;let k=0;
+  FILM.chapters.forEach((c,i)=>{if(ms>=c.t-1500) k=i;});
+  if(k===curChap) return;
+  curChap=k;
+  [...chapEl.children].forEach((b,i)=>b.classList.toggle("act",i===k));
+}
+
+/* ===================== VIDEOS DE RELEVO ===================== */
+const SRCS=[];
+let srcIdx=0;
 const standbys=[],pool=[];
+function loadSrc(i){srcIdx=i;v.src=SRCS[i];v.load();}
 function makeVideo(){
   const el=document.createElement("video");
   el.className="sb";el.preload="auto";el.muted=true;
   el.setAttribute("playsinline","");el.setAttribute("webkit-playsinline","");
   const tr=document.createElement("track");
-  tr.kind="subtitles";tr.srclang="es";tr.label="Español (LATAM)";tr.src=subUrl;
+  tr.kind="subtitles";tr.srclang="es";tr.label="Español (LATAM)";tr.src=subUrl||"";
   el.appendChild(tr);
   stage.insertBefore(el,v.nextSibling);
   bind(el);applySubMode(el);
@@ -1140,13 +1319,12 @@ function candidates(id){
   add(nextOf(id));
   return out;
 }
-let lite=/\bTV\b|AFT|BRAVIA|Tizen|Web0S|SMART-TV|Android TV/i.test(navigator.userAgent);
 function prepare(){
   if(!cur) return;
-  cands.slice(0,lite?1:2).forEach((c,ci)=>{
+  cands.slice(0,2).forEach(c=>{
     if(standbys.some(x=>x.tid===c.id)) return;
     const el=pool.pop()||makeVideo();
-    el._want=c.t;el.muted=true;el.preload=ci===0?"auto":"metadata";
+    el._want=c.t;el.muted=true;
     el.src=SRCS[srcIdx]+"#t="+c.t.toFixed(3);
     standbys.push({el,tid:c.id});
   });
@@ -1170,7 +1348,7 @@ function swapTo(sb,t){
   setTimeout(()=>{if(v===nu&&nu.classList.contains("sb")) bail();},2500);
 }
 
-/* ---------- registro / mapa ---------- */
+/* ===================== REGISTRO / MAPA ===================== */
 function pushLog(segId,chosen,opts){
   log.push({seg:segId,chosen:chosen,opts:opts,state:cloneState(),at:Date.now()});
   store.set(log);renderLog();renderMap();
@@ -1179,13 +1357,10 @@ function renderLog(){
   if(!log.length){logEl.innerHTML='<div class="empty">Sin decisiones registradas.</div>';return;}
   logEl.innerHTML="";
   for(let i=log.length-1;i>=0;i--){
-    const e=log[i];
-    const d=document.createElement("div");d.className="ent";
-    const hora=new Date(e.at).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
-    let html='<span class="t">'+hora+'</span> · segmento '+esc(e.seg);
-    e.opts.forEach(o=>{
-      html+=(o===e.chosen)?'<br><b>→ '+esc(o)+'</b>':'<br><span style="opacity:.45">· '+esc(o)+'</span>';
-    });
+    const e=log[i],d=document.createElement("div");d.className="ent";
+    const h=new Date(e.at).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+    let html='<span class="t">'+h+'</span> · '+esc(e.seg);
+    e.opts.forEach(o=>{html+=(o===e.chosen)?'<br><b>→ '+esc(o)+'</b>':'<br><span style="opacity:.45">· '+esc(o)+'</span>';});
     d.innerHTML=html;
     const b=document.createElement("button");b.textContent="volver a este punto";
     b.onclick=()=>rewindTo(i);
@@ -1194,34 +1369,42 @@ function renderLog(){
 }
 function renderMap(){
   if(!log.length){mapEl.innerHTML='<div class="empty">Aún no hay decisiones.</div>';return;}
-  const CW=132,RH=32,maxOpts=Math.max(...log.map(e=>e.opts.length));
-  const W=30+log.length*CW,H=46+maxOpts*RH;
+  const CW=132,RH=32,mx=Math.max(...log.map(e=>e.opts.length));
+  const W=30+log.length*CW,H=46+mx*RH;
   let s='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">';
   log.forEach((e,i)=>{
     const x=20+i*CW,y=16;
     s+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff"/>';
     s+='<text x="'+x+'" y="'+(y+16)+'" fill="#6a6a76" font-size="8" text-anchor="middle">'+esc(e.seg)+'</text>';
     e.opts.forEach((o,k)=>{
-      const oy=56+k*RH,taken=o===e.chosen;
-      s+='<line x1="'+x+'" y1="'+(y+5)+'" x2="'+(x+18)+'" y2="'+(oy-4)+'" stroke="'+(taken?"#fff":"#3a3a46")+'" stroke-width="1"/>';
-      s+='<circle cx="'+(x+18)+'" cy="'+(oy-4)+'" r="3" fill="'+(taken?"#fff":"#2a2a33")+'" stroke="#3a3a46"/>';
-      s+='<text x="'+(x+25)+'" y="'+oy+'" fill="'+(taken?"#e9e9ec":"#5f5f6b")+'" font-size="9">'+esc(String(o).slice(0,17))+'</text>';
+      const oy=56+k*RH,tk=o===e.chosen;
+      s+='<line x1="'+x+'" y1="'+(y+5)+'" x2="'+(x+18)+'" y2="'+(oy-4)+'" stroke="'+(tk?"#fff":"#3a3a46")+'" stroke-width="1"/>';
+      s+='<circle cx="'+(x+18)+'" cy="'+(oy-4)+'" r="3" fill="'+(tk?"#fff":"#2a2a33")+'" stroke="#3a3a46"/>';
+      s+='<text x="'+(x+25)+'" y="'+oy+'" fill="'+(tk?"#e9e9ec":"#5f5f6b")+'" font-size="9">'+esc(String(o).slice(0,17))+'</text>';
     });
   });
-  mapEl.innerHTML=s+"</svg>";
-  mapEl.scrollLeft=mapEl.scrollWidth;
+  mapEl.innerHTML=s+"</svg>";mapEl.scrollLeft=mapEl.scrollWidth;
 }
-function rewindTo(idx){
-  const e=log[idx];if(!e) return;
-  log=log.slice(0,idx);store.set(log);renderLog();renderMap();
+function rewindTo(i){
+  const e=log[i];if(!e) return;
+  log=log.slice(0,i);store.set(log);renderLog();renderMap();
   st=JSON.parse(JSON.stringify(e.state));
   gate.style.display="none";endBox.classList.remove("on");started=true;
   play(e.seg,true);
 }
 
-/* ---------- reproducción ---------- */
+/* ===================== REPRODUCCIÓN ===================== */
+function hideOv(){
+  ov.classList.remove("on");padEl.classList.remove("on");
+  shown=false;held=false;pend=null;ovKey=null;
+  optsEl.innerHTML="";keysEl.innerHTML="";
+  const a=document.activeElement;
+  if(a&&a!==document.body&&a.blur) a.blur();
+  try{stage.focus({preventScroll:true});}catch(e){}
+}
 function finish(){
   cur=null;hideOv();releaseStandbys();v.pause();
+  $("endP").textContent=FILM?FILM.credits:"";
   endBox.classList.add("on");statusEl.textContent="fin";
   try{$("btnAgain").focus({preventScroll:true});}catch(e){}
 }
@@ -1234,10 +1417,7 @@ function play(id,fromWindow){
   const far=Math.abs(v.currentTime-t)>0.4;
   const sb=(far&&!fromWindow)?standbys.find(x=>x.tid===id):null;
   if(sb) swapTo(sb,t);
-  else{
-    if(far){try{v.currentTime=t;}catch(err){}}
-    v.play().catch(()=>{});
-  }
+  else{if(far){try{v.currentTime=t;}catch(e){}}v.play().catch(()=>{});}
   releaseStandbys();
   statusEl.textContent="segmento "+id;
 }
@@ -1248,42 +1428,73 @@ function advance(target){
   if(!r){finish();return;}
   play(r);
 }
-
-/* ---------- resaltado activo (compatible con el cursor virtual de BrowseHere) ---------- */
-function markAct(container,idx){
-  const items=[...container.children];
-  items.forEach((b,i)=>b.classList.toggle("act",i===idx));
-  const b=items[idx];
-  if(b){try{b.focus({preventScroll:true});}catch(e){b.focus();}}
+function seekTo(ms){
+  const d=isFinite(v.duration)&&v.duration?v.duration*1000:(FILM&&FILM.chapters?SATAN_DURATION:0);
+  v.currentTime=Math.max(0,Math.min(ms,d-600))/1000;tick();
 }
-/* un teclado real y el cursor virtual conviven: tras una tecla, el puntero no manda 220 ms */
+function seekMs(ms){
+  const s=cur&&SEG[cur];
+  if(!s) return;
+  let hi=(s.e||v.currentTime*1000)-300;
+  if(s.ws) hi=Math.min(hi,s.ws+400);
+  v.currentTime=Math.min(Math.max(v.currentTime*1000+ms,s.s),Math.max(s.s,hi))/1000;
+  tick();
+}
+function uiTime(){
+  const s=cur&&SEG[cur];
+  const a=s?s.s:0,b=(s&&s.e)||(isFinite(v.duration)&&v.duration?v.duration*1000:SATAN_DURATION);
+  const len=Math.max(1,b-a),p=Math.min(Math.max(v.currentTime*1000-a,0),len);
+  const tx=fmt(p/1000)+" / "+fmt(len/1000);
+  if(timeEl._tx!==tx){timeEl._tx=tx;timeEl.textContent=tx;}
+  if(!dragging) seek.value=Math.round(p/len*1000);
+}
+function tick(){
+  if(!cur) return;
+  const s=SEG[cur];if(!s) return;
+  const ms=v.currentTime*1000;
+  uiTime();markChap();
+  if(!prepDone&&ms>=prepAt){prepDone=true;prepare();}
+  if(!shown&&s.ws&&ms>=s.ws&&ms<s.we-60){ if(s.pad) showPad(); else if(CH[cur]) showChoices(cur); }
+  if(shown){
+    if(ms<s.ws-350){hideOv();return;}
+    if(pend){
+      const left=s.we-ms;
+      tbar.style.width=Math.max(0,Math.min(100,left/(s.we-s.ws)*100))+"%";
+      if(noTimer){ if(left<=60){held=true;if(!v.paused)v.pause();} }
+      else if(left<=60){pend.auto();return;}
+    }
+    if(held){if(!v.paused)v.pause();return;}
+  }
+  if(!FILM||!FILM.chapters){
+    const end=s.e||((v.duration||0)*1000-200);
+    if(ms>=end-45) advance();
+  }
+  if(FILM&&FILM.chapters&&Date.now()-saveT>5000){
+    saveT=Date.now();
+    try{localStorage.setItem("xcode_pos_"+FILM.id,JSON.stringify({t:v.currentTime}));}catch(e){}
+  }
+}
+
+/* ===================== DECISIONES ===================== */
+function markAct(c,i){
+  [...c.children].forEach((b,k)=>b.classList.toggle("act",k===i));
+  const b=c.children[i];if(b){try{b.focus({preventScroll:true});}catch(e){b.focus();}}
+}
 const keyLocked=()=>Date.now()-lastKey<220;
 const okKey=e=>e.key==="Enter"||e.key===" "||e.key==="Select"||e.key==="Accept"||
-                e.keyCode===13||e.keyCode===32||e.keyCode===23;
+  e.keyCode===13||e.keyCode===32||e.keyCode===23;
 const backKey=e=>e.key==="GoBack"||e.key==="Backspace"||e.key==="Escape"||
-                 e.keyCode===8||e.keyCode===27||e.keyCode===461;
+  e.keyCode===8||e.keyCode===27||e.keyCode===461;
 
-/* ---------- decisiones ---------- */
 function showChoices(id){
-  const c=CH[id];
-  shown=true;held=false;const my=++seq;
+  const c=CH[id];shown=true;held=false;const my=++seq;
   optsEl.innerHTML="";
   let act=0;{const dt=resolveTarget(SEG[id].d),k0=c.findIndex(o=>resolveTarget(o.g)===dt);if(k0>=0)act=k0;}
-  const setAct=k=>{
-    act=Math.max(0,Math.min(c.length-1,k));
-    markAct(optsEl,act);
-  };
-  const take=k=>{
-    if(!pend||pend.my!==my) return;
-    const o=c[k]; if(!o) return;
-    hideOv();
-    pushLog(id,o.t,c.map(x=>x.t));
-    applyChoiceEff(o.g);
-    advance(o.g);
-  };
+  const setAct=k=>{act=Math.max(0,Math.min(c.length-1,k));markAct(optsEl,act);};
+  const take=k=>{if(!pend||pend.my!==my) return;const o=c[k];if(!o) return;
+    hideOv();pushLog(id,o.t,c.map(x=>x.t));applyChoiceEff(o.g);advance(o.g);};
   c.forEach((o,k)=>{
-    const b=document.createElement("button");
-    b.type="button";b.className="opt";b.textContent=o.t;
+    const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o.t;
     b.addEventListener("mouseenter",()=>{if(!keyLocked()){act=k;markAct(optsEl,k);}});
     b.onclick=ev2=>{ev2.stopPropagation();take(k);};
     optsEl.appendChild(b);
@@ -1300,66 +1511,48 @@ function showChoices(id){
     }
     if(k>=0&&k!==act){act=k;markAct(optsEl,k);}
   };
-  const ptrTypes=["mousemove","mouseover","pointermove","pointerover","pointerenter","touchmove","touchstart"];
-  ptrTypes.forEach(n=>document.addEventListener(n,onPtr,true));
-  /* respaldo: si BrowseHere mueve el puntero sin disparar eventos, el navegador igual marca :hover */
-  let lastHov=-2;
+  const ptr=["mousemove","mouseover","pointermove","pointerover"];
+  ptr.forEach(n=>document.addEventListener(n,onPtr,true));
   const poll=setInterval(()=>{
     if(!pend||pend.my!==my) return;
     const h=[...optsEl.children].findIndex(b=>b.matches(":hover"));
-    if(h===lastHov) return;
-    lastHov=h;
     if(!keyLocked()&&h>=0&&h!==act){act=h;markAct(optsEl,h);}
   },80);
-  ptrOff=()=>{ptrTypes.forEach(n=>document.removeEventListener(n,onPtr,true));clearInterval(poll);};
-  ov.onclick=()=>take(act);
   ovKey=e=>{
     if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();lastKey=Date.now();setAct(act-1);}
     else if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();lastKey=Date.now();setAct(act+1);}
     else if(okKey(e)){e.preventDefault();lastKey=Date.now();take(act);}
     else if(backKey(e)){e.preventDefault();}
   };
-  ov.classList.add("on");document.body.classList.add("deciding");
+  ov.classList.add("on");ov.onclick=()=>take(act);
   tbar.style.transition="none";tbar.style.width="100%";
   setAct(act);
 }
-
 function showPad(){
-  shown=true;held=false;code="";disp.textContent="-----";pad.classList.add("on");document.body.classList.add("deciding");
-  const my=++seq;
-  keysEl.innerHTML="";
+  shown=true;held=false;code="";dispEl.textContent="-----";padEl.classList.add("on");
+  const my=++seq;keysEl.innerHTML="";
   let act=4,lock=false;
-  const done=target=>{
-    if(!pend||pend.my!==my) return;
-    hideOv();advance(target);
-  };
+  const done=t=>{if(!pend||pend.my!==my) return;hideOv();advance(t);};
   pend={my,auto:()=>done("6D")};
   const press=k=>{
     if(!pend||pend.my!==my||code.length>=5) return;
-    code+=k;disp.textContent=code.padEnd(5,"-");
-    if(code.length===5){
-      lock=true;const typed=code;
-      setTimeout(()=>{
-        if(!pend||pend.my!==my) return;
+    code+=k;dispEl.textContent=code.padEnd(5,"-");
+    if(code.length===5){lock=true;const typed=code;
+      setTimeout(()=>{if(!pend||pend.my!==my) return;
         pushLog(cur,typed,typed==="20541"?["20541"]:["20541",typed]);
-        done(typed==="20541"?"6C":"6D");
-      },420);
-    }
+        done(typed==="20541"?"6C":"6D");},420);}
   };
   [1,2,3,4,5,6,7,8,9,0].forEach(k=>{
-    const b=document.createElement("button");
-    b.type="button";b.textContent=k;
+    const b=document.createElement("button");b.type="button";b.textContent=k;
     b.addEventListener("mouseenter",()=>{if(!keyLocked()){act=[...keysEl.children].indexOf(b);markAct(keysEl,act);}});
     b.onclick=e=>{e.stopPropagation();press(k);};
     keysEl.appendChild(b);
   });
   const nav=(dx,dy)=>{
-    const n=keysEl.children.length, rows=Math.ceil(n/3);
-    let r=Math.floor(act/3)+dy, c=(act%3)+dx;
-    if(c<0)c=2; if(c>2)c=0;
-    if(r<0)r=0; if(r>rows-1)r=rows-1;
-    let i=r*3+c; if(i>n-1)i=n-1;
-    act=i;markAct(keysEl,act);
+    const n=keysEl.children.length,rows=Math.ceil(n/3);
+    let r=Math.floor(act/3)+dy,c=(act%3)+dx;
+    if(c<0)c=2;if(c>2)c=0;if(r<0)r=0;if(r>rows-1)r=rows-1;
+    let i=r*3+c;if(i>n-1)i=n-1;act=i;markAct(keysEl,act);
   };
   ovKey=e=>{
     if(e.key==="ArrowLeft"){e.preventDefault();lastKey=Date.now();nav(-1,0);}
@@ -1367,164 +1560,134 @@ function showPad(){
     else if(e.key==="ArrowUp"){e.preventDefault();lastKey=Date.now();nav(0,-1);}
     else if(e.key==="ArrowDown"){e.preventDefault();lastKey=Date.now();nav(0,1);}
     else if(/^[0-9]$/.test(e.key)){e.preventDefault();lastKey=Date.now();press(e.key);}
-    else if(okKey(e)){e.preventDefault();lastKey=Date.now();
-      const b=keysEl.children[act];if(b)press(b.textContent);}
+    else if(okKey(e)){e.preventDefault();lastKey=Date.now();const b=keysEl.children[act];if(b)press(b.textContent);}
     else if(backKey(e)){e.preventDefault();lastKey=Date.now();
-      if(code.length&&!lock){code=code.slice(0,-1);disp.textContent=code.padEnd(5,"-");}}
+      if(code.length&&!lock){code=code.slice(0,-1);dispEl.textContent=code.padEnd(5,"-");}}
   };
   markAct(keysEl,act);
 }
 
-/* ---------- barra de tiempo ---------- */
-function uiTime(s,ms){
-  const a=s.s,b=s.e||ms,len=Math.max(1,b-a),p=Math.min(Math.max(ms-a,0),len);
-  {const tx=fmt(p/1000)+" / "+fmt(len/1000);if(timeEl._tx!==tx){timeEl._tx=tx;timeEl.textContent=tx;}}
-  if(!dragging) seek.value=Math.round(p/len*1000);
-}
-function tick(){
-  if(!cur) return;
-  const s=SEG[cur];if(!s) return;
-  const ms=v.currentTime*1000;
-  uiTime(s,ms);
-  if(!prepDone&&ms>=prepAt){prepDone=true;prepare();}
-  if(!shown&&s.ws&&ms>=s.ws&&ms<s.we-60){
-    if(s.pad) showPad(); else if(CH[cur]) showChoices(cur);
-  }
-  if(shown){
-    if(ms<s.ws-350){hideOv();return;}
-    if(pend){
-      const left=s.we-ms;
-      tbar.style.width=Math.max(0,Math.min(100,left/(s.we-s.ws)*100))+"%";
-      if(noTimer){
-        if(left<=60){held=true;if(!v.paused)v.pause();}
-      }else if(left<=60){pend.auto();return;}
-    }
-    if(held){if(!v.paused)v.pause();return;}
-  }
-  const end=s.e||((v.duration||0)*1000-200);
-  if(ms>=end-45) advance();
-}
-
-/* ---------- eventos del video ---------- */
+/* ===================== EVENTOS DEL VIDEO ===================== */
 function bind(el){
   el.addEventListener("play",()=>{if(el===v)btnPlay.textContent="❚❚";});
   el.addEventListener("pause",()=>{if(el===v)btnPlay.textContent="▶";});
   el.addEventListener("timeupdate",()=>{if(el===v)tick();});
-  el.addEventListener("waiting",()=>{if(el===v&&cur){statusEl.textContent="cargando…";$("spin").classList.add("on");}});
+  el.addEventListener("waiting",()=>{if(el===v&&cur)$("spin").classList.add("on");});
   el.addEventListener("seeking",()=>{if(el===v&&cur)$("spin").classList.add("on");});
   ["playing","seeked","canplay"].forEach(n=>el.addEventListener(n,()=>{if(el===v&&!el.seeking)$("spin").classList.remove("on");}));
   el.addEventListener("progress",()=>{
     if(el!==v||started||failed) return;
     const b=el.buffered,a=b.length?b.end(b.length-1):0;
-    gmsg.textContent=a>=6?"Listo ("+Math.floor(a)+" s cargados). Pulsa Empezar.":"Cargando el video… ("+Math.floor(a)+" s)";
+    gmsg.textContent=a>=6?"Listo ("+Math.floor(a)+" s cargados).":"Cargando el video… ("+Math.floor(a)+" s)";
   });
-  el.addEventListener("playing",()=>{if(el===v&&cur)statusEl.textContent="segmento "+cur;});
+  el.addEventListener("playing",()=>{if(el===v&&cur)statusEl.textContent="en reproducción";});
   el.addEventListener("ended",()=>{if(el===v&&cur)finish();});
   el.addEventListener("loadedmetadata",()=>{
     if(el._want!=null&&Math.abs(el.currentTime-el._want)>0.5){try{el.currentTime=el._want;}catch(e){}}
   });
   el.addEventListener("error",()=>{
-    if(el!==v){
-      const i=standbys.findIndex(x=>x.el===el);
-      if(i>=0){standbys.splice(i,1);el.remove();}
-      return;
-    }
-    if(srcIdx<SRCS.length-1){
-      const t=v.currentTime||0;
-      loadSrc(srcIdx+1);
-      v.addEventListener("loadedmetadata",()=>{
-        if(t>0){try{v.currentTime=t;}catch(e){}}
-        if(started&&cur) v.play().catch(()=>{});
-      },{once:true});
-      return;
-    }
-    failed=true;
-    gate.style.display="flex";
-    btnStart.textContent="Reintentar";
-    gmsg.className="err";
-    gmsg.textContent="Fallo al cargar el video ("+(v.error?v.error.code:"?")+"). Revisa la conexión, desactiva bloqueadores y reintenta.";
+    if(el!==v){const i=standbys.findIndex(x=>x.el===el);if(i>=0){standbys.splice(i,1);el.remove();}return;}
+    if(srcIdx<SRCS.length-1){loadSrc(srcIdx+1);return;}
+    failed=true;gate.style.display="flex";btnStart.textContent="Reintentar";gmsg.className="err";
+    gmsg.textContent="No se pudo cargar el video ("+(v.error?v.error.code:"?")+"). Coloca el archivo local junto a este HTML o revisa la conexión.";
     try{btnStart.focus({preventScroll:true});}catch(e){}
   });
 }
 bind(v);
 
-/* ---------- arranque ---------- */
-function startStory(){
-  if(failed){failed=false;loadSrc(0);}
-  gate.style.display="none";gmsg.className="";gmsg.textContent="";btnStart.textContent="Empezar";
-  endBox.classList.remove("on");hideOv();releaseStandbys();
-  resetState();log=[];store.set(log);renderLog();renderMap();
-  started=true;$("spin").classList.add("on");
-  play("1A");
-}
-btnStart.onclick=startStory;
-$("btnAgain").onclick=startStory;
-$("btnReset").onclick=startStory;
-$("btnClear").onclick=()=>{log=[];store.set(log);renderLog();renderMap();};
-$("noTimer").onchange=e=>{
-  noTimer=e.target.checked;
-  if(!noTimer&&held){held=false;if(cur)v.play().catch(()=>{});}
-};
-showSubEl.onchange=()=>{applySubAll();$("btnSub").classList.toggle("on",showSubEl.checked);};
+/* ===================== CATÁLOGO / RUTAS ===================== */
+function openFilm(key){
+  const f=FILMS[key];if(!f) return;
+  FILM=f;
+  document.body.dataset.view="player";
+  document.body.dataset.film=key;
+  $("btnBack").style.display="";
+  hTitle.style.display="";hTitle.textContent=f.title;
+  $("gateT").textContent=f.gate;$("gateS").textContent=f.sub;$("gateP").textContent=f.desc;
+  $("endP").textContent=f.credits;
+  gate.style.display="flex";endBox.classList.remove("on");
+  gmsg.className="";gmsg.textContent="Cargando el video…";btnStart.textContent="Empezar";
+  $("btnResume").style.display="none";
+  aside.classList.remove("show");
 
-/* ---------- modo TV y pantalla grande falsa ---------- */
-function setTV(on){document.body.classList.toggle("tv",on);tvEl.checked=on;
-  if(!on) aside.classList.remove("show");}
-tvEl.onchange=()=>setTV(tvEl.checked);
-$("btnPanel").onclick=()=>aside.classList.toggle("show");
+  parseAll(key==="bander"?RAW:SATAN_RAW, key==="bander"?GRAW:"", key==="bander"?PRAW:"", key==="bander"?ERAW:"");
+  resetState();cur=null;started=false;failed=false;ended=false;shown=false;log=[];
+  hideOv();releaseStandbys();
+  renderLog();renderMap();
+  chapEl.style.display=f.chapters?"":"none";
+  $("secChap").style.display=f.chapters?"":"none";
+  chapEl.innerHTML="";
+  if(f.chapters){renderChap();const r=resumeAt(key);if(r>60){const b=$("btnResume");b.style.display="";b.textContent="Reanudar en "+fmt(r/1000);}}
 
-/* pantalla grande por CSS: NO se llama a requestFullscreen, así BrowseHere no abre su reproductor */
-function setPseudo(on){
-  pseudo=on;
-  document.body.classList.toggle("pseudo",on);
-  $("btnFs").classList.toggle("on",on);
-  if(on) setTV(true);
+  SRCS.length=0;SRCS.push(f.local,f.remote);
+  loadSrc(0);
+  bootSubs();
+  try{btnStart.focus({preventScroll:true});}catch(e){}
 }
-$("btnFs").onclick=()=>{
-  if(sysFsEl.checked){
-    if(document.fullscreenElement) document.exitFullscreen();
-    else{const fe=$("stagewrap"),rq=fe.requestFullscreen||fe.webkitRequestFullscreen;if(rq){const p=rq.call(fe);if(p&&p.catch)p.catch(()=>{});}}
-    return;
-  }
-  setPseudo(!pseudo);
-};
-sysFsEl.onchange=()=>{
-  if(sysFsEl.checked) setPseudo(false);
-};
-
-/* ---------- controles ---------- */
-function seekMs(ms){
-  const s=cur&&SEG[cur];if(!s||shown) return;
-  let hi=(s.e||ms)-300;if(s.ws) hi=Math.min(hi,s.ws+400);
-  v.currentTime=Math.min(Math.max(ms,s.s),Math.max(s.s,hi))/1000;
-  tick();
+function closeFilm(){
+  document.body.dataset.view="home";
+  v.pause();hideOv();releaseStandbys();
+  gate.style.display="flex";endBox.classList.remove("on");cur=null;started=false;
+  setPseudo(false);
+  $("btnBack").style.display="none";hTitle.style.display="none";
+  aside.classList.remove("show");
+  const c=document.querySelector('.card[data-film="'+(FILM?FILM.id:"")+'"]');
+  if(c) try{c.focus({preventScroll:true});}catch(e){}
 }
-function toggle(){if(held||!cur) return;v.paused?v.play().catch(()=>{}):v.pause();}
-btnPlay.onclick=toggle;
-$("btnBack").onclick=()=>seekMs(v.currentTime*1000-10000);
-$("btnFwd").onclick=()=>seekMs(v.currentTime*1000+10000);
+function resumeAt(k){
+  try{const s=JSON.parse(localStorage.getItem("xcode_pos_"+k));if(s&&s.t>60) return (s.t-3)*1000;}catch(e){}
+  return 0;
+}
+function startAt(ms){
+  gate.style.display="none";endBox.classList.remove("on");ended=false;started=true;
+  $("spin").classList.add("on");
+  if(!FILM.chapters){resetState();play(FILM.start);}
+  else{if(ms) try{v.currentTime=ms/1000;}catch(e){}v.play().catch(()=>{});}
+  try{stage.focus({preventScroll:true});}catch(e){}
+}
+document.querySelectorAll(".card").forEach((c,i)=>{
+  c.addEventListener("mouseenter",()=>{if(Date.now()-lastKey>220) c.focus({preventScroll:true});});
+  c.onclick=()=>openFilm(c.dataset.film);
+});
+$("btnBack").onclick=closeFilm;
+btnStart.onclick=()=>{failed=false;startAt(0);};
+$("btnAgain").onclick=()=>startAt(0);
+$("btnResume").onclick=()=>startAt(resumeAt(FILM.id));
+$("btnReset").onclick=()=>startAt(0);
+btnPlay.onclick=()=>{if(!started) return;v.paused?v.play().catch(()=>{}):v.pause();};
+$("btnB10").onclick=()=>seekMs(-10000);
+$("btnF10").onclick=()=>seekMs(10000);
 seek.addEventListener("pointerdown",()=>{dragging=true;});
 seek.addEventListener("pointerup",()=>{dragging=false;});
 seek.addEventListener("change",()=>{dragging=false;});
 seek.addEventListener("input",()=>{
   const s=cur&&SEG[cur];if(!s||!s.e) return;
-  seekMs(s.s+seek.value/1000*(s.e-s.s));
+  v.currentTime=(s.s+seek.value/1000*(s.e-s.s))/1000;
 });
-$("btnSub").onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange();};
+$("btnChap").onclick=()=>{aside.classList.toggle("show");revealCtl();};
+$("btnPanel").onclick=()=>aside.classList.toggle("show");
+$("noTimer").onchange=e=>{noTimer=e.target.checked;if(!noTimer&&held){held=false;if(cur)v.play().catch(()=>{});}};
 
-/* ---------- teclado / control remoto ---------- */
-/* se captura en window para adelantarse al cursor virtual de BrowseHere */
-let ctlT=0;
-function revealCtl(){
-  if(!pseudo||shown) return;
-  document.body.classList.add("showctl");clearTimeout(ctlT);
-  ctlT=setTimeout(()=>{const a=document.activeElement;
-    if(a&&a.closest&&a.closest(".ctl")) a.blur();
-    document.body.classList.remove("showctl");
-    try{stage.focus({preventScroll:true});}catch(x){}},3500);
+/* ===================== MODO TV / PANTALLA GRANDE ===================== */
+function setTV(on){document.body.classList.toggle("tv",on);tvEl.checked=on;if(!on) aside.classList.remove("show");}
+tvEl.onchange=()=>setTV(tvEl.checked);
+function setPseudo(on){
+  pseudo=on;document.body.classList.toggle("pseudo",on);btnFs.classList.toggle("on",on);
+  if(on) setTV(true); else aside.classList.remove("show");
 }
-["pointermove","pointerdown","touchstart"].forEach(n=>window.addEventListener(n,revealCtl,{passive:true}));
-function normKey(e){
+btnFs.onclick=()=>{
+  if(sysFsEl.checked){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else{const el=$("stagewrap"),rq=el.requestFullscreen||el.webkitRequestFullscreen;
+      if(rq){const p=rq.call(el);if(p&&p.catch)p.catch(()=>{});}}
+    return;
+  }
+  setPseudo(!pseudo);
+};
+sysFsEl.onchange=()=>{if(sysFsEl.checked) setPseudo(false);};
+
+/* ===================== TECLADO ===================== */
+function norm(e){
   const c=e.keyCode;let k=e.key;
   if(c===37||c===21||k==="Left")k="ArrowLeft";
   else if(c===38||c===19||k==="Up")k="ArrowUp";
@@ -1533,65 +1696,87 @@ function normKey(e){
   else if(c===13||c===23||c===66)k="Enter";
   return {key:k,keyCode:c,code:e.code,target:e.target,preventDefault:()=>e.preventDefault()};
 }
-window.addEventListener("keydown",e0=>{const e=normKey(e0);
+function revealCtl(){
+  if(!pseudo||aside.classList.contains("show")) return;
+  document.body.classList.add("showctl");clearTimeout(ctlT);
+  ctlT=setTimeout(()=>{
+    const a=document.activeElement;
+    if(a&&a.closest&&a.closest(".ctl")) a.blur();
+    document.body.classList.remove("showctl");
+    try{stage.focus({preventScroll:true});}catch(x){}
+  },3500);
+}
+["pointermove","pointerdown","touchstart"].forEach(n=>window.addEventListener(n,revealCtl,{passive:true}));
+
+window.addEventListener("keydown",e0=>{
+  const e=norm(e0);lastKey=Date.now();
+
+  /* catálogo */
+  if(document.body.dataset.view==="home"){
+    const cards=[...document.querySelectorAll(".card")];
+    const i=cards.indexOf(document.activeElement);
+    if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();cards[Math.min(cards.length-1,(i<0?0:i+1))].focus();return;}
+    if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();cards[Math.max(0,(i<0?0:i-1))].focus();return;}
+    if(okKey(e)){e.preventDefault();if(cards[i])cards[i].click();else if(cards[0])cards[0].click();return;}
+    return;
+  }
   if(shown&&ovKey){ovKey(e);return;}
-  revealCtl();
-  const ae=document.activeElement,inCtl=!!(ae&&ae.closest&&ae.closest(".ctl"));
-  if(backKey(e)&&pseudo){e.preventDefault();setPseudo(false);return;}
-  if(started&&!endBox.classList.contains("on")){
-    if(inCtl&&ae.tagName==="BUTTON"&&(e.key==="ArrowLeft"||e.key==="ArrowRight")){
-      e.preventDefault();const bs=[...document.querySelectorAll(".ctl button")],i=bs.indexOf(ae);
-      bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowRight"?1:-1)))].focus();return;}
-    if(inCtl&&e.key==="ArrowUp"){e.preventDefault();ae.blur();try{stage.focus({preventScroll:true});}catch(x){}return;}
-    if(!inCtl&&e.key==="ArrowDown"){e.preventDefault();revealCtl();btnPlay.focus();return;}
+
+  const ae=document.activeElement;
+  const inCtl=!!(ae&&ae.closest&&ae.closest(".ctl"));
+  const inChap=!!(ae&&ae.closest&&ae.closest("#chap"));
+  const inAside=!!(ae&&ae.closest&&ae.closest("aside"));
+
+  if(backKey(e)){
+    if(aside.classList.contains("show")){e.preventDefault();aside.classList.remove("show");try{stage.focus({preventScroll:true});}catch(x){}return;}
+    if(pseudo){e.preventDefault();setPseudo(false);return;}
+    e.preventDefault();closeFilm();return;
+  }
+  if(inChap){
+    const bs=[...chapEl.children];
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      e.preventDefault();
+      const i=bs.indexOf(ae),n=Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowDown"?1:-1)));
+      if(bs[n]) bs[n].focus();return;
+    }
+    if(e.key==="ArrowLeft"){e.preventDefault();aside.classList.remove("show");try{stage.focus({preventScroll:true});}catch(x){}return;}
+    if(okKey(e)){e.preventDefault();ae.click();return;}
+  }
+  if(inCtl&&!ended){
+    if(e.key==="ArrowLeft"||e.key==="ArrowRight"){
+      e.preventDefault();
+      const bs=[...document.querySelectorAll(".ctl button")],i=bs.indexOf(ae);
+      bs[Math.max(0,Math.min(bs.length-1,i+(e.key==="ArrowRight"?1:-1)))].focus();return;
+    }
+    if(e.key==="ArrowUp"){e.preventDefault();ae.blur();try{stage.focus({preventScroll:true});}catch(x){}return;}
+  }
+  if(!inAside&&!ended&&started){
+    if(e.key==="ArrowDown"){e.preventDefault();revealCtl();btnPlay.focus();return;}
+    if(e.key==="ArrowRight"){e.preventDefault();aside.classList.add("show");return;}
   }
   const tg=e.target.tagName;
   if(tg==="INPUT"||tg==="TEXTAREA") return;
-  if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();toggle();}
-  else if(e.key==="ArrowLeft"){e.preventDefault();seekMs(v.currentTime*1000-10000);}
-  else if(e.key==="ArrowRight"){e.preventDefault();seekMs(v.currentTime*1000+10000);}
-  else if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();}
-  else if(e.key==="c"||e.key==="C") $("btnSub").click();
-  else if(e.key==="f"||e.key==="F") $("btnFs").click();
+  if(e.code==="Space"){if(tg==="BUTTON") return;e.preventDefault();if(started)v.paused?v.play().catch(()=>{}):v.pause();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();seekMs(-10000);}
+  else if(e.key==="ArrowRight"){e.preventDefault();seekMs(10000);}
+  else if(e.key==="c"||e.key==="C") btnSub.click();
+  else if(e.key==="f"||e.key==="F") btnFs.click();
+  else if(e.key==="l"||e.key==="L") $("btnChap").click();
   else if(okKey(e)){
-    if(gate.style.display!=="none"){e.preventDefault();btnStart.click();}
-    else if(endBox.classList.contains("on")){e.preventDefault();$("btnAgain").click();}
+    if(gate.style.display!=="none"&&!started){e.preventDefault();btnStart.click();}
+    else if(ended){e.preventDefault();$("btnAgain").click();}
+    else if(!inAside&&!inCtl){e.preventDefault();if(v.paused)v.play().catch(()=>{});else v.pause();}
   }
 },true);
 
-/* sin temporizador: si algo reanuda el video mientras se espera la elección, se vuelve a pausar */
-setInterval(tick,250);
-(function loop(){if(cur&&!v.paused)tick();requestAnimationFrame(loop);})();
-let autoP=false;
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){if(cur&&!v.paused){autoP=true;v.pause();}}
-  else if(autoP){autoP=false;if(cur&&!held) v.play().catch(()=>{});}
-});
-
-/* ---------- inicio de carga ---------- */
-loadSrc(0);
-(async()=>{
-  try{const r=await fetch(SUB_LOCAL,{method:"HEAD",cache:"no-store"});if(r.ok)subUrl=SUB_LOCAL;}catch(e){}
-  const tr=$("sub");tr.src=subUrl;applySubMode(v);
-})();
-
-const saved=store.get();
-if(Array.isArray(saved)){log=saved.filter(e=>e&&e.seg&&Array.isArray(e.opts)&&e.state);renderLog();renderMap();}
-resetState();
-
-/* arranque: pantalla grande sin puntero fino -> modo TV; foco en Empezar para que OK arranque */
+/* ===================== ARRANQUE ===================== */
+setInterval(tick,500);
 (function init(){
   const coarse=matchMedia("(pointer: coarse)").matches;
   if(Math.min(window.innerWidth,window.innerHeight)>=540&&!coarse) setTV(true);
-  gmsg.textContent="Cargando el video…";
-  const dbg=$("dbg");
-  $("dbgMode").onchange=e=>{dbg.style.display=e.target.checked?"block":"none";dbg.textContent="esperando eventos…";};
-  ["mousemove","mouseover","pointermove","pointerover","click","keydown","touchstart","touchmove","wheel"].forEach(n=>
-    window.addEventListener(n,e=>{if(dbg.style.display==="none")return;
-      dbg.textContent=n+" "+(e.key?("tecla="+e.key+" cod="+e.keyCode):(e.clientX+","+e.clientY))+" -> "+((e.target&&e.target.className)||(e.target&&e.target.tagName)||"");},true));
-  const lm=$("liteMode");lm.checked=lite;
-  lm.onchange=()=>{lite=lm.checked;};
-  try{btnStart.focus({preventScroll:true});}catch(e){}
+  document.body.dataset.view="home";
+  const first=document.querySelector(".card");
+  if(first) try{first.focus({preventScroll:true});}catch(e){}
 })();
 })();
 </script>
