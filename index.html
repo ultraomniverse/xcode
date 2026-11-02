@@ -10,318 +10,245 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{background:#000}
-body{font-family:"Courier New",Courier,monospace;color:#fff;background:#000;font-size:17px;line-height:1.6;overflow-x:hidden}
+body{font-family:"Courier New",Courier,monospace;color:#fff;background:#000;font-size:17px;line-height:1.6}
 
-#bg,#bg2{position:fixed;inset:-4%;z-index:0;background-color:#111;
-  background-position:center;background-size:cover;background-repeat:no-repeat;
-  filter:grayscale(1) contrast(1.5) brightness(1.2);will-change:transform,filter}
-#bg2{mix-blend-mode:difference;opacity:.45;filter:grayscale(1) contrast(2) brightness(.85) invert(1);
-  animation:jitter .18s steps(2) infinite}
-#bg{animation:tear 5.5s steps(1) infinite}
-@keyframes jitter{0%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}
-  50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,-1px)}100%{transform:translate(0,0)}}
-@keyframes tear{0%,86%{transform:none;filter:grayscale(1) contrast(1.5) brightness(1.2)}
-  87%{transform:translate(-9px,0) skewX(-.6deg);filter:grayscale(1) contrast(2.3) brightness(1.6)}
-  88%{transform:translate(7px,0) skewX(.8deg)}
-  89%{transform:translate(-4px,2px);filter:grayscale(1) contrast(1.2) brightness(.85)}
-  90%,100%{transform:none;filter:grayscale(1) contrast(1.5) brightness(1.2)}}
-#bands{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;
-  background:repeating-linear-gradient(0deg,rgba(255,255,255,.10) 0 1px,transparent 1px 4px);
-  animation:roll 1.2s steps(3) infinite}
-@keyframes roll{to{background-position:0 12px}}
-#slice{position:fixed;left:0;right:0;height:6vh;z-index:1;pointer-events:none;background:#fff;
-  mix-blend-mode:overlay;opacity:.3;animation:slice 3.2s steps(1) infinite}
-@keyframes slice{0%,70%{top:-10vh;height:6vh}71%{top:18vh;height:2vh}73%{top:62vh;height:9vh}
-  75%{top:41vh;height:1vh}78%{top:80vh;height:4vh}85%,100%{top:110vh;height:0}}
-#scan{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.55;
-  background:linear-gradient(180deg,rgba(0,0,0,.6),transparent 22%,transparent 68%,rgba(0,0,0,.78))}
-#noise{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.2;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain .55s steps(3) infinite}
-@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}}
+#bg{position:fixed;inset:-3%;z-index:0;background:#111 center/cover no-repeat;
+  filter:grayscale(1) contrast(1.5) brightness(1.25);animation:tear 6s steps(1) infinite}
+@keyframes tear{0%,88%{transform:none}89%{transform:translate(-8px,0) skewX(-.5deg);filter:grayscale(1) contrast(2.2) brightness(1.6)}
+  90%{transform:translate(6px,1px)}91%{transform:none;filter:grayscale(1) contrast(1.5) brightness(1.25)}}
+#lines{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.45;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.1) 0 1px,transparent 1px 4px)}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.62),transparent 25%,transparent 65%,rgba(0,0,0,.8))}
 
-.wrap{position:relative;z-index:5;max-width:1120px;margin:0 auto;padding:0 26px}
+.wrap{position:relative;z-index:5;max-width:1080px;margin:0 auto;padding:0 24px}
 header{position:sticky;top:0;z-index:40;background:#fff;border-bottom:4px solid #000}
-.hin{max-width:1120px;margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:16px}
-.cross{width:26px;height:34px;position:relative;flex:none}
+.hin{max-width:1080px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:14px}
+.cross{width:24px;height:32px;position:relative;flex:none}
 .cross::before,.cross::after{content:"";position:absolute;background:#000}
-.cross::before{left:11px;top:0;width:4px;height:34px}
-.cross::after{left:0;top:9px;width:26px;height:4px}
-.brand{font-size:26px;letter-spacing:.34em;font-weight:700;color:#000}
-header nav{margin-left:auto;display:flex;gap:18px;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
-header nav a{color:#000;text-decoration:none;border-bottom:2px solid transparent;padding-bottom:2px}
+.cross::before{left:10px;top:0;width:4px;height:32px}
+.cross::after{left:0;top:8px;width:24px;height:4px}
+.brand{font-size:24px;letter-spacing:.34em;font-weight:700;color:#000}
+header nav{margin-left:auto;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+header nav a{color:#000;text-decoration:none;border-bottom:2px solid transparent}
 header nav a:hover{border-color:#000}
 
-main{padding:64px 0 10px}
-.kicker{display:inline-block;font-size:11px;letter-spacing:.4em;text-transform:uppercase;
-  border:2px solid #fff;padding:6px 12px;margin-bottom:22px;background:rgba(0,0,0,.5)}
-h1{font-size:clamp(34px,7vw,74px);line-height:.98;letter-spacing:-.02em;text-transform:uppercase;
-  margin-bottom:18px;text-shadow:3px 3px 0 #000,-1px -1px 0 #000}
-.sub{font-size:17px;color:#eee;max-width:620px;margin-bottom:46px;text-shadow:2px 2px 0 #000}
-h2.sec{font-size:13px;letter-spacing:.4em;text-transform:uppercase;
-  border-bottom:2px solid #fff;padding-bottom:10px;margin-bottom:24px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:70px}
-.card{display:block;background:#000;border:2px solid #fff;color:#fff;padding:0;cursor:pointer;
-  text-align:left;font-family:inherit;position:relative;overflow:hidden;transition:transform .12s}
-.card:hover,.card:focus{outline:none;transform:translate(-3px,-3px);box-shadow:6px 6px 0 #fff}
-.poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#111;
-  filter:grayscale(1) contrast(1.2) brightness(.95)}
-.card:hover .poster{filter:grayscale(1) contrast(1.5) brightness(1.1)}
-.card .body{padding:13px 14px 16px;border-top:2px solid #fff}
-.card .t{font-size:18px;font-weight:700;line-height:1.2;text-transform:uppercase;margin-bottom:6px}
-.card .m{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#cfcfcf}
-.tag{display:inline-block;margin-top:9px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  border:1px solid #fff;padding:3px 8px}
-.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
-  border-bottom:2px solid #fff;background:repeating-linear-gradient(45deg,#000 0 12px,#0d0d0d 12px 24px)}
-.soon span{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#d0d0d0}
+main{padding:56px 0 0}
+.kicker{display:inline-block;font-size:10px;letter-spacing:.4em;text-transform:uppercase;
+  border:2px solid #fff;padding:5px 11px;margin-bottom:20px;background:rgba(0,0,0,.55)}
+h1{font-size:clamp(32px,6.5vw,68px);line-height:.98;text-transform:uppercase;letter-spacing:-.02em;
+  margin-bottom:16px;text-shadow:3px 3px 0 #000}
+.sub{color:#eee;max-width:600px;margin-bottom:44px;text-shadow:2px 2px 0 #000}
 
-footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;margin-top:30px}
-.fwrap{max-width:1120px;margin:0 auto;padding:48px 26px 30px}
-.cols{display:grid;grid-template-columns:repeat(6,1fr);gap:24px;margin-bottom:40px}
-.col h3{font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:12px}
-.col a{display:block;font-size:12px;color:#a8a8a8;text-decoration:none;padding:4px 0}
+.ficha{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start;
+  border:2px solid #fff;background:rgba(0,0,0,.82);padding:16px;margin-bottom:26px}
+.ficha img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;filter:grayscale(1) contrast(1.2)}
+.ficha h2{font-size:26px;text-transform:uppercase;line-height:1.1;margin-bottom:10px}
+.ficha .d{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c9c9c9;margin-bottom:14px}
+.ficha p{font-size:14px;color:#d8d8d8;margin-bottom:18px}
+.botones{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding:14px 26px;
+  background:#fff;color:#000;border:2px solid #fff;cursor:pointer;font-weight:700}
+.btn:hover{outline:3px solid #fff;outline-offset:3px}
+.btn.g{background:transparent;color:#fff}
+.aviso{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a9a9a;margin-top:14px}
+
+h2.sec{font-size:12px;letter-spacing:.4em;text-transform:uppercase;border-bottom:2px solid #fff;
+  padding-bottom:9px;margin:44px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:60px}
+.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;
+  border:2px dashed rgba(255,255,255,.5);background:rgba(0,0,0,.6)}
+.soon span{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#cfcfcf}
+
+footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff}
+.fwrap{max-width:1080px;margin:0 auto;padding:40px 24px 28px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-bottom:32px}
+.col h3{font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px}
+.col a{display:block;font-size:12px;color:#a5a5a5;text-decoration:none;padding:3px 0}
 .col a:hover{background:#fff;color:#000}
-.legal{border-top:1px solid #333;padding-top:22px;font-size:11px;color:#8c8c8c;line-height:1.75}
-.legal p{margin-bottom:12px}
-.copy{margin-top:22px;padding-top:18px;border-top:1px solid #333;font-size:11px;color:#777;
-  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;text-transform:uppercase;letter-spacing:.14em}
+.legal{border-top:1px solid #333;padding-top:18px;font-size:11px;color:#8a8a8a}
+.legal p{margin-bottom:10px}
+.copy{margin-top:16px;padding-top:14px;border-top:1px solid #333;font-size:10px;color:#777;
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;text-transform:uppercase;letter-spacing:.16em}
 
-/* ---------- reproductor ---------- */
+/* reproductor */
 #film{position:fixed;inset:0;z-index:200;background:#000;display:none}
 #film.on{display:block}
-#film.cur #stage{cursor:none}
-#stage{position:absolute;inset:0;overflow:hidden;background:#000}
+#film.cur{cursor:none}
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-#video::cue{background:rgba(0,0,0,.75);color:#fff;font-family:"Courier New",monospace;
-  font-size:clamp(16px,2.4vw,32px);line-height:1.35;white-space:pre-wrap}
-#dim{position:absolute;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity .28s;
-  background:radial-gradient(ellipse at 50% 38%,transparent 28%,rgba(0,0,0,.75) 100%)}
+#video::cue{background:rgba(0,0,0,.78);color:#fff;font-family:"Courier New",monospace;
+  font-size:clamp(16px,2.3vw,30px);line-height:1.35;white-space:pre-wrap}
+#dim{position:absolute;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse at 50% 36%,transparent 26%,rgba(0,0,0,.78) 100%)}
 #dim.on{opacity:1}
 
 #ov{position:absolute;left:0;right:0;bottom:0;height:30vh;z-index:20;background:#000;
-  display:flex;align-items:center;justify-content:space-between;gap:5vw;padding:0 7vw;
-  transform:translateY(101%);transition:transform .36s cubic-bezier(.22,.7,.2,1);pointer-events:none}
+  display:flex;align-items:center;justify-content:space-between;gap:5vw;padding:0 6vw;
+  transform:translateY(101%);transition:transform .34s cubic-bezier(.2,.7,.2,1);pointer-events:none}
 #ov.on{transform:translateY(0);pointer-events:auto}
-#q{position:absolute;top:14px;left:7vw;font-size:10px;letter-spacing:.42em;color:#8a8a8a;text-transform:uppercase}
+#q{position:absolute;top:13px;left:6vw;font-size:10px;letter-spacing:.42em;color:#8a8a8a;text-transform:uppercase}
 #tb{position:absolute;top:0;left:0;right:0;height:3px;display:flex}
-#tb i{flex:1;background:#9a9a9a}
+#tb i{flex:1;background:#9d9d9d}
 #tb i:first-child{transform-origin:left center}
 #tb i:last-child{transform-origin:right center}
-.opt{flex:1;max-width:44%;text-align:center;padding:22px 8px;font-family:inherit;
-  font-size:clamp(13px,1.7vw,20px);letter-spacing:.14em;text-transform:uppercase;color:#9a9a9a;
-  transition:.15s;line-height:1.35}
+.opt{flex:1;max-width:44%;text-align:center;padding:20px 8px;font-family:inherit;font-size:clamp(13px,1.7vw,20px);
+  letter-spacing:.13em;text-transform:uppercase;color:#9d9d9d;transition:.15s;line-height:1.35}
 .opt:hover,.opt:focus{outline:none;color:#fff}
-.opt.def{color:#cfcbc2}
+.opt.def{color:#d0ccc3}
 
 #bar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:8px;align-items:center;
-  padding:12px 18px;background:linear-gradient(#000,rgba(0,0,0,.55) 60%,transparent);
+  padding:11px 16px;background:linear-gradient(#000,rgba(0,0,0,.55) 60%,transparent);
   opacity:0;transition:.2s;pointer-events:none}
 #bar.on{opacity:1;pointer-events:auto}
-#bar button{font-family:inherit;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  padding:9px 14px;background:#000;color:#fff;border:1px solid #666;cursor:pointer}
+#bar button{font-family:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  padding:9px 13px;background:#000;color:#fff;border:1px solid #666;cursor:pointer}
 #bar button:hover,#bar button:focus{outline:2px solid #fff;outline-offset:2px}
 #bar .sp{flex:1}
-#bar .n{font-size:11px;color:#bbb;letter-spacing:.18em;text-transform:uppercase}
+#bar .n{font-size:11px;color:#bbb;letter-spacing:.16em;text-transform:uppercase}
 
-#veil{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;
-  justify-content:center;gap:14px;background:rgba(0,0,0,.92);text-align:center;padding:20px}
-#veil.on{display:flex}
-#veil h2{font-size:13px;letter-spacing:.44em;text-transform:uppercase;font-weight:normal}
-#veil p{font-size:11px;letter-spacing:.3em;color:#8a8a8a;text-transform:uppercase;max-width:520px;word-break:break-all}
-.spin{width:26px;height:26px;border:1px solid #333;border-top-color:#fff;border-radius:50%;
+#load{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;background:#000;text-align:center;padding:24px}
+#load.on{display:flex}
+#load h2{font-size:13px;letter-spacing:.4em;text-transform:uppercase;font-weight:normal}
+#load p{font-size:11px;letter-spacing:.26em;color:#8a8a8a;text-transform:uppercase;max-width:560px;word-break:break-all}
+#load .spin{width:24px;height:24px;border:1px solid #333;border-top-color:#fff;border-radius:50%;
   animation:sp .9s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+#load a{color:#fff;font-size:11px;letter-spacing:.24em;text-transform:uppercase;border:1px solid #fff;
+  padding:11px 20px;text-decoration:none;margin-top:6px}
 
 #play{position:absolute;inset:0;z-index:35;display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.35);cursor:pointer}
+  background:rgba(0,0,0,.3);cursor:pointer}
 #play.on{display:flex}
-#play span{width:86px;height:86px;border:3px solid #fff;border-radius:50%;display:flex;
-  align-items:center;justify-content:center;font-size:26px;padding-left:6px;background:rgba(0,0,0,.5)}
+#play span{width:84px;height:84px;border:3px solid #fff;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:26px;padding-left:6px;background:rgba(0,0,0,.55)}
 
 #diag{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;background:#000}
 #diag.on{display:flex}
-#diag .head{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:2px solid #fff}
-#diag .head b{font-size:12px;letter-spacing:.3em;text-transform:uppercase}
-#diag .head .sp{flex:1}
-#diag button{font-family:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  padding:8px 12px;background:#000;color:#fff;border:1px solid #666;cursor:pointer}
-#diag button:hover{outline:2px solid #fff;outline-offset:2px}
-#log{flex:1;overflow:auto;padding:12px 14px;font-size:12px;line-height:1.6;color:#bdbdbd}
-#log div{padding:3px 0;border-bottom:1px solid #141414;word-break:break-all}
-#log .e{color:#ff6b6b}
-#log .w{color:#ffd166}
-#log .k{color:#7ee0a2}
+#diag .h{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:2px solid #fff}
+#diag .h b{font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+#diag .h .sp{flex:1}
+#diag button{font-family:inherit;font-size:11px;padding:8px 12px;background:#000;color:#fff;
+  border:1px solid #666;cursor:pointer;letter-spacing:.14em;text-transform:uppercase}
+#log{flex:1;overflow:auto;padding:12px;font-size:12px;line-height:1.55;color:#bdbdbd}
+#log div{padding:2px 0;border-bottom:1px solid #131313;word-break:break-all}
+#log .e{color:#ff6b6b}#log .w{color:#ffd166}#log .k{color:#7ee0a2}
 
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.cols{grid-template-columns:repeat(2,1fr)}
-  header nav{display:none}#ov{height:36vh;padding:0 4vw}#q{left:4vw}}
+@media(max-width:760px){
+  .ficha{grid-template-columns:130px 1fr;gap:14px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .cols{grid-template-columns:repeat(2,1fr)}
+  #ov{height:36vh;padding:0 4vw}#q{left:4vw}
+}
 </style>
 </head>
 <body>
 
 <div id="bg"></div>
-<div id="bg2"></div>
-<div id="slice"></div>
-<div id="bands"></div>
-<div id="noise"></div>
-<div id="scan"></div>
+<div id="lines"></div>
+<div id="veil"></div>
 
-<header>
-  <div class="hin">
-    <div class="cross"></div>
-    <div class="brand">XCODE</div>
-    <nav><a href="#cartelera">Cartelera</a><a href="#info">Info</a></nav>
-  </div>
-</header>
+<header><div class="hin"><div class="cross"></div><div class="brand">XCODE</div>
+  <nav><a href="#cartelera">Cartelera</a></nav></div></header>
 
 <div class="wrap">
   <main>
     <span class="kicker">La plataforma nº1 del abismo</span>
-    <h1>Streaming<br>desde el pozo.</h1>
-    <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin subir archivos. Elegís y se reproduce.</p>
+    <h1>Streaming desde el pozo.</h1>
+    <p class="sub">Cine que no se digiere. Elegís y se reproduce.</p>
 
-    <h2 class="sec" id="cartelera">Cartelera</h2>
-    <div class="grid">
-      <button class="card" data-play="ban">
-        <img class="poster" decoding="async" alt="Bandersnatch"
+    <div class="ficha">
+      <img alt="Bandersnatch"
         src="https://m.media-amazon.com/images/M/MV5BMjM5MzgzMjM3OF5BMl5BanBnXkFtZTgwMzQ2MzQwNzM@._V1_.jpg">
-        <div class="body">
-          <div class="t">Black Mirror: Bandersnatch</div>
-          <div class="m">2018 · interactivo · 5 h 12 min</div>
-          <span class="tag">subtítulos latino · interactivo</span>
+      <div>
+        <h2>Black Mirror: Bandersnatch</h2>
+        <div class="d">2018 · interactivo · 5 h 12 min · subtítulos latino</div>
+        <p>Stefan construye un videojuego y vos decidís por él. No hay barra, no hay adelantar: las decisiones son el único salto. Si no elegís, el film elige.</p>
+        <div class="botones">
+          <button class="btn" id="play1">▶ Reproducir</button>
+          <button class="btn g" id="diagTop">Diagnóstico</button>
         </div>
-      </button>
-      <div class="card" style="cursor:default">
-        <div class="soon"><span>Espacio reservado<br>para otra<br>que baja pronto</span></div>
-        <div class="body"><div class="t">—</div><div class="m">Próximamente</div></div>
+        <div class="aviso">Fuente: Internet Archive · nodo automático</div>
       </div>
-      <div class="card" style="cursor:default">
-        <div class="soon"><span>Más cine<br>del abismo<br>en camino</span></div>
-        <div class="body"><div class="t">—</div><div class="m">Próximamente</div></div>
-      </div>
+    </div>
+
+    <h2 class="sec" id="cartelera">Próximamente</h2>
+    <div class="grid">
+      <div class="soon"><span>Espacio reservado<br>para otra<br>que baja pronto</span></div>
+      <div class="soon"><span>Más cine<br>del abismo<br>en camino</span></div>
+      <div class="soon"><span>Hueco libre</span></div>
     </div>
   </main>
 </div>
 
-<footer id="info">
+<footer>
   <div class="fwrap">
     <div class="cols">
-      <div class="col"><h3>Compañía</h3><a href="#">Sobre XCODE</a><a href="#">Historia</a><a href="#">Empleo</a><a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a></div>
-      <div class="col"><h3>Catálogo</h3><a href="#">Películas</a><a href="#">Interactivos</a><a href="#">Cine de culto</a><a href="#">Documentales</a><a href="#">Próximos estrenos</a><a href="#">Archivo</a></div>
-      <div class="col"><h3>Ayuda</h3><a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a><a href="#">Reportar un error</a><a href="#">Estado de nodos</a><a href="#">Contacto</a></div>
-      <div class="col"><h3>Legal</h3><a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a><a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a></div>
-      <div class="col"><h3>Regiones</h3><a href="#">España</a><a href="#">México</a><a href="#">Argentina</a><a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a></div>
-      <div class="col"><h3>Recursos</h3><a href="#">Fuentes de video</a><a href="#">Datos de ramificación</a><a href="#">Subtítulos</a><a href="#">API pública</a><a href="#">Espejos</a><a href="#">UltraOmniverse</a></div>
+      <div class="col"><h3>XCODE</h3><a href="#">Sobre</a><a href="#">Catálogo</a><a href="#">Interactivos</a><a href="#">Contacto</a></div>
+      <div class="col"><h3>Ayuda</h3><a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Reportar un error</a><a href="#">Estado de nodos</a></div>
+      <div class="col"><h3>Legal</h3><a href="#">Términos</a><a href="#">Privacidad</a><a href="#">Cookies</a><a href="#">Aviso legal</a></div>
+      <div class="col"><h3>Recursos</h3><a href="#">Fuentes</a><a href="#">Datos de ramificación</a><a href="#">Subtítulos</a><a href="#">UltraOmniverse</a></div>
     </div>
     <div class="legal">
-      <p>XCODE es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; XCODE no aloja los archivos ni reclama su titularidad. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
-      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad depende del ancho de banda, del dispositivo y de la fuente.</p>
-      <p>Este sitio no utiliza cookies de seguimiento. Las decisiones tomadas y el estado narrativo se guardan localmente en el dispositivo.</p>
-      <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos.</p>
+      <p>XCODE exhibe cine de autor e interactivo desde fuentes originales; no aloja archivos ni reclama titularidad. Bandersnatch (2018, Netflix) se reproduce con datos de ramificación de código abierto sobre una copia de Internet Archive.</p>
+      <p>Sin cookies de seguimiento. El estado narrativo se guarda en el dispositivo.</p>
     </div>
-    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.3</span></div>
+    <div class="copy"><span>© 2026 XCODE</span><span>v4.0 · un archivo, sin subidas</span></div>
   </div>
 </footer>
 
 <div id="film">
-  <div id="stage">
-    <video id="video" playsinline preload="auto">
-      <track id="trk" kind="subtitles" srclang="es" label="Español" default>
-    </video>
-    <div id="dim"></div>
-    <div id="play"><span>▶</span></div>
-    <div id="ov"><div id="tb"><i></i><i></i></div><div id="q">Elegí</div></div>
-    <div id="bar">
-      <button id="back">← Volver</button>
-      <button id="restart">Reiniciar</button>
-      <button id="diagBtn">Diag</button>
-      <span class="sp"></span>
-      <span class="n">Bandersnatch · interactivo</span>
-      <button id="fs">Pantalla</button>
-    </div>
-    <div id="veil">
-      <div class="spin"></div>
-      <h2 id="vt">Cargando</h2>
-      <p id="vp">preparando la cinta</p>
-    </div>
-    <div id="diag">
-      <div class="head"><b>Diagnóstico</b><span class="sp"></span>
-        <button id="copy">Copiar</button><button id="closeDiag">Cerrar</button></div>
-      <div id="log"></div>
-    </div>
+  <video id="video" playsinline preload="auto">
+    <track id="trk" kind="subtitles" srclang="es" label="Español" default>
+  </video>
+  <div id="dim"></div>
+  <div id="play"><span>▶</span></div>
+  <div id="ov"><div id="tb"><i></i><i></i></div><div id="q">Elegí</div></div>
+  <div id="bar">
+    <button id="back">← Volver</button>
+    <button id="restart">Reiniciar</button>
+    <button id="diagBtn">Diag</button>
+    <span class="sp"></span><span class="n">Bandersnatch</span>
+    <button id="fs">Pantalla</button>
+  </div>
+  <div id="load">
+    <div class="spin"></div>
+    <h2 id="lt">Cargando</h2>
+    <p id="lp">conectando</p>
+    <a id="ext" href="#" target="_blank" rel="noopener" style="display:none">Abrir en Internet Archive</a>
+  </div>
+  <div id="diag">
+    <div class="h"><b>Diagnóstico</b><span class="sp"></span>
+      <button id="copy">Copiar</button><button id="closeDiag">Cerrar</button></div>
+    <div id="log"></div>
   </div>
 </div>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const film=$("film"), stage=$("stage"), v=$("video"), ov=$("ov"), dim=$("dim"), veil=$("veil"),
-      vt=$("vt"), vp=$("vp"), bar=$("bar"), tb=$("tb"), q=$("q"), trk=$("trk"),
-      playBtn=$("play"), diag=$("diag"), logEl=$("log");
+const film=$("film"), v=$("video"), ov=$("ov"), dim=$("dim"), load=$("load"), lt=$("lt"), lp=$("lp"),
+      ext=$("ext"), bar=$("bar"), tb=$("tb"), q=$("q"), trk=$("trk"), playBtn=$("play"), diag=$("diag"), logEl=$("log");
 
 const ITEM="black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web";
 const FILE="Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
-/* orden de preferencia: endpoint canónico (resuelve solo a nodo vivo), luego nodos fijos */
-const CAND=[
-  "https://archive.org/download/"+ITEM+"/"+FILE,
+const CANON="https://archive.org/download/"+ITEM+"/"+FILE;
+const CAND=[CANON,
   "https://ia800103.us.archive.org/9/items/"+ITEM+"/"+FILE,
-  "https://ia600103.us.archive.org/9/items/"+ITEM+"/"+FILE
-];
+  "https://ia600103.us.archive.org/9/items/"+ITEM+"/"+FILE];
 const BASE="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/";
 const VTT=BASE+"subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
 
-function log(msg,cls){
-  const d=document.createElement("div");
-  if(cls)d.className=cls;
-  d.textContent=new Date().toISOString().slice(11,19)+"  "+msg;
-  logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;
-}
-function showDiag(){diag.classList.add("on");bar.classList.add("on");film.classList.remove("cur");}
-$("diagBtn").onclick=()=>{diag.classList.contains("on")?diag.classList.remove("on"):showDiag();};
+function log(m,c){const d=document.createElement("div");if(c)d.className=c;
+  d.textContent=new Date().toISOString().slice(11,19)+"  "+m;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;}
+function diagOn(){diag.classList.add("on");bar.classList.add("on");film.classList.remove("cur");}
+$("diagBtn").onclick=()=>diag.classList.toggle("on");
+$("diagTop").onclick=()=>{open();diagOn();};
 $("closeDiag").onclick=()=>diag.classList.remove("on");
-$("copy").onclick=()=>{
-  const txt=[...logEl.children].map(c=>c.textContent).join("\n");
-  navigator.clipboard?.writeText(txt).then(()=>log("log copiado","k"),()=>log("no se pudo copiar","w"));
-};
+$("copy").onclick=()=>{const t=[...logEl.children].map(c=>c.textContent).join("\n");
+  navigator.clipboard?.writeText(t).then(()=>log("log copiado","k"),()=>log("no se pudo copiar","w"));};
 
-const ME=["","cancelado","error de red","error de decodificación","formato no soportado o URL rota"];
-v.addEventListener("error",()=>{
-  const e=v.error,code=e?e.code:0;
-  log("ERROR DE VIDEO · código "+code+" · "+(e&&e.message||ME[code]||"desconocido"),"e");
-  log("src: "+(v.currentSrc||v.src||"(vacío)"),"e");
-  veil.classList.add("on");vt.textContent="Error "+code;vp.textContent=ME[code]||"desconocido";
-  showDiag();
-});
-
-/* ---------- prueba de fuentes ---------- */
-function probe(url,ms){
-  return new Promise((ok,no)=>{
-    const t=document.createElement("video");
-    t.preload="metadata";t.muted=true;t.setAttribute("playsinline","");
-    let fin=false;
-    const end=(good,why)=>{
-      if(fin)return;fin=true;clearTimeout(tm);
-      t.onloadedmetadata=t.onerror=null;
-      t.removeAttribute("src");try{t.load();}catch(e){}
-      good?ok():no(new Error(why));
-    };
-    const tm=setTimeout(()=>end(false,"timeout "+ms+"ms sin metadata"),ms);
-    t.onloadedmetadata=()=>end(true);
-    t.onerror=()=>end(false,"error de media código "+(t.error?t.error.code:0));
-    t.src=url;
-  });
-}
-async function pickSource(){
-  for(const u of CAND){
-    log("probando: "+u);
-    try{await probe(u,9000);log("fuente OK","k");return u;}
-    catch(e){log("descartada · "+e.message,"w");}
-  }
-  return null;
-}
-
-/* ---------- datos ---------- */
+/* ---- diccionario de decisiones ---- */
 const D={"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
 "accept":"ACEPTAR","reject":"RECHAZAR","yes":"SÍ","no":"NO","throw tea over computer":"TIRAR TÉ EN LA COMPUTADORA",
 "throw tea":"TIRAR TÉ EN LA COMPUTADORA","shout at dad":"GRITARLE AL PADRE","phaedra":"PHAEDRA",
@@ -337,31 +264,21 @@ const D={"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THO
 "watch the tape":"VER LA CINTA","burn it":"QUEMARLO","keep it":"GUARDARLO","give up":"RENDIRSE"};
 const tr=s=>{const k=String(s||"").trim().toLowerCase();return D[k]||String(s||"").toUpperCase();};
 
-let SEGS=[],SEG={},MOM={},SG={},PREC={},ready=false,cur=null,shown=false,lock=false,openM=null,tId=0,usedSrc="";
+let SEGS=[],SEG={},MOM={},SG={},PREC={},ready=false,cur=null,shown=false,lock=false,openM=null,tId=0,watch=0,ci=0;
 
-function loadJS(src){
-  return new Promise((ok,no)=>{
-    log("cargando script: "+src);
-    const s=document.createElement("script");
-    s.src=src;
-    s.onload=()=>{log("script ok","k");ok();};
-    s.onerror=()=>{log("FALLO script: "+src,"e");no(new Error("script "+src));};
-    document.head.appendChild(s);
-  });
-}
+function loadJS(src){return new Promise((ok,no)=>{
+  const s=document.createElement("script");s.src=src;
+  s.onload=()=>{log("script ok","k");ok();};
+  s.onerror=()=>{log("FALLO script "+src,"e");no(new Error(src));};
+  document.head.appendChild(s);});}
+
 function build(){
-  if(!window.bandersnatch)throw new Error("bandersnatch.js no dejó el objeto global");
-  if(!window.SegmentMap)throw new Error("SegmentMap.js no dejó el objeto global");
   const V=window.bandersnatch.videos["80988062"].interactiveVideoMoments.value;
   MOM=V.momentsBySegment||{};SG=V.segmentGroups||{};PREC=V.preconditions||{};
-  const SM=window.SegmentMap.segments;
-  let n=0;
-  for(const id in SM){
-    SEG[id]={s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext};
-    SEGS.push({id,s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext});n++;
-  }
-  SEGS.sort((a,b)=>a.s-b.s);ready=true;
-  log("datos ok · "+n+" segmentos · "+Object.keys(MOM).length+" con momentos","k");
+  const SM=window.SegmentMap.segments;let n=0;
+  for(const id in SM){SEG[id]={s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext};
+    SEGS.push({id,s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext});n++;}
+  SEGS.sort((a,b)=>a.s-b.s);ready=true;log("datos ok · "+n+" segmentos","k");
 }
 function condOk(c){
   if(c===undefined||c===null||c===true)return true;
@@ -384,20 +301,15 @@ function resolveSG(id){
   }
   return null;
 }
-function impression(d){
-  if(d&&d.type==="userState"&&d.data&&d.data.persistent)
-    for(const k in d.data.persistent)localStorage["ps_"+k]=JSON.stringify(d.data.persistent[k]);
-}
+function impression(d){if(d&&d.type==="userState"&&d.data&&d.data.persistent)
+  for(const k in d.data.persistent)localStorage["ps_"+k]=JSON.stringify(d.data.persistent[k]);}
 function segAt(ms){for(const s of SEGS)if(ms>=s.s&&(!s.e||ms<s.e))return s.id;return null;}
 
 function jump(id){
-  const s=SEG[id];
-  if(!s){log("salto a segmento inexistente: "+id,"e");return false;}
-  log("salto → "+id+" @"+(s.s/1000).toFixed(2)+"s");
+  const s=SEG[id];if(!s)return false;
   lock=true;cur=id;shown=false;closeOv();
-  try{v.currentTime=s.s/1000;}catch(e){log("no se pudo saltar: "+e.message,"e");}
-  setTimeout(()=>{lock=false;},380);
-  return true;
+  try{v.currentTime=s.s/1000;}catch(e){log("salto falló: "+e.message,"e");}
+  setTimeout(()=>{lock=false;},380);return true;
 }
 function advance(prev,idx){
   let nxt=null;
@@ -405,13 +317,12 @@ function advance(prev,idx){
     const c=openM.choices[idx];impression(c.impressionData);
     nxt=c.segmentId||(c.sg?resolveSG(c.sg):null);
   }
-  if(!nxt&&prev&&SEG[prev]&&SEG[prev].d){nxt=SEG[SEG[prev].d]?SEG[prev].d:resolveSG(SEG[prev].d);}
-  if(nxt)jump(nxt);else{log("sin destino, cierro overlay","w");closeOv();}
+  if(!nxt&&prev&&SEG[prev]&&SEG[prev].d)nxt=SEG[SEG[prev].d]?SEG[prev].d:resolveSG(SEG[prev].d);
+  if(nxt)jump(nxt);else closeOv();
 }
 function showOv(m){
   if(shown)return;
   shown=true;openM=m;q.textContent="Elegí";
-  log("decisión en "+cur+" · "+m.choices.length+" opciones");
   ov.querySelectorAll(".opt").forEach(n=>n.remove());
   const def=Math.min(m.defaultChoiceIndex??1,m.choices.length-1);
   m.choices.forEach((c,i)=>{
@@ -423,16 +334,12 @@ function showOv(m){
   });
   const from=m.uiDisplayMS??m.startMs,to=m.uiHideMS??m.endMs,dur=Math.max(1200,to-from);
   ov.classList.add("on");dim.classList.add("on");
-  tb.querySelectorAll("i").forEach(b=>{
-    b.getAnimations().forEach(a=>a.cancel());
-    b.animate([{transform:"scaleX(1)"},{transform:"scaleX(0)"}],{duration:dur,easing:"linear"});
-  });
+  tb.querySelectorAll("i").forEach(b=>{b.getAnimations().forEach(a=>a.cancel());
+    b.animate([{transform:"scaleX(1)"},{transform:"scaleX(0)"}],{duration:dur,easing:"linear"});});
   clearTimeout(tId);tId=setTimeout(()=>{if(shown)pick(def);},dur);
 }
 function closeOv(){
-  shown=false;openM=null;
-  ov.classList.remove("on");dim.classList.remove("on");
-  clearTimeout(tId);
+  shown=false;openM=null;ov.classList.remove("on");dim.classList.remove("on");clearTimeout(tId);
   tb.querySelectorAll("i").forEach(b=>b.getAnimations().forEach(a=>a.cancel()));
   setTimeout(()=>{if(!shown)ov.querySelectorAll(".opt").forEach(n=>n.remove());},380);
 }
@@ -450,26 +357,24 @@ function loop(ts){
   if(!ready||!film.classList.contains("on"))return;
   if(ts-lastT<100)return;lastT=ts;
   if(lock||v.paused||v.ended||v.readyState<2)return;
-  const ms=Math.round(v.currentTime*1000);
-  const id=segAt(ms);if(!id)return;
+  const ms=Math.round(v.currentTime*1000),id=segAt(ms);
+  if(!id)return;
   if(id!==cur)cur=id;
   for(const m of (MOM[id]||[])){
     if(!m.choices)continue;
-    const from=m.uiDisplayMS??m.startMs,to=m.uiHideMS??m.endMs;
-    if(ms>=from&&ms<to&&!shown&&(!m.precondition||condOk(m.precondition))){showOv(m);return;}
+    const a=m.uiDisplayMS??m.startMs,b=m.uiHideMS??m.endMs;
+    if(ms>=a&&ms<b&&!shown&&(!m.precondition||condOk(m.precondition))){showOv(m);return;}
   }
   const s=SEG[id];
-  if(s&&s.e&&ms>=s.e-50){
-    if(s.d){const n=SEG[s.d]?s.d:resolveSG(s.d);if(n)jump(n);}
-  }
+  if(s&&s.e&&ms>=s.e-50&&s.d){const n=SEG[s.d]?s.d:resolveSG(s.d);if(n)jump(n);}
 }
 requestAnimationFrame(loop);
 
 let hideT=0;
 function wake(){bar.classList.add("on");film.classList.remove("cur");clearTimeout(hideT);
   hideT=setTimeout(()=>{if(!diag.classList.contains("on")){bar.classList.remove("on");film.classList.add("cur");}},3500);}
-stage.addEventListener("pointermove",wake);
-stage.addEventListener("touchstart",wake,{passive:true});
+film.addEventListener("pointermove",wake);
+film.addEventListener("touchstart",wake,{passive:true});
 
 document.addEventListener("keydown",e=>{
   if(!film.classList.contains("on"))return;
@@ -483,23 +388,49 @@ document.addEventListener("keydown",e=>{
 
 function open(){film.classList.add("on");document.body.style.overflow="hidden";wake();}
 function close(){
-  film.classList.remove("on","cur");bar.classList.remove("on");
-  try{v.pause();}catch(e){log("pause falló: "+e.message,"w");}
+  film.classList.remove("on","cur");bar.classList.remove("on");diag.classList.remove("on");
+  clearTimeout(watch);
+  try{v.pause();}catch(e){}
   v.removeAttribute("src");v.load();
-  closeOv();veil.classList.remove("on");diag.classList.remove("on");playBtn.classList.remove("on");
-  document.body.style.overflow="";ready=false;cur=null;shown=false;usedSrc="";
-  log("reproductor cerrado");
+  closeOv();load.classList.remove("on");playBtn.classList.remove("on");
+  document.body.style.overflow="";ready=false;cur=null;shown=false;ci=0;
 }
 $("back").onclick=close;
-$("fs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.();}
-  catch(e){log("pantalla completa falló: "+e.message,"e");}};
-playBtn.onclick=()=>{playBtn.classList.remove("on");
-  v.play().then(()=>log("play manual ok","k")).catch(e=>log("play manual falló: "+e.message,"e"));};
+$("fs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.();}catch(e){}};
+playBtn.onclick=()=>{playBtn.classList.remove("on");v.play().catch(e=>log("play falló: "+e.message,"e"));};
+
+/* ---- carga con relevo automático ---- */
+function dead(){
+  clearTimeout(watch);
+  log("todas las fuentes fallaron","e");
+  lt.textContent="No hay nodo vivo";lp.textContent="archive.org no responde desde acá";
+  ext.href="https://archive.org/details/"+ITEM;ext.style.display="inline-block";
+  load.classList.add("on");diagOn();
+}
+function nextSrc(){
+  if(ci>=CAND.length){dead();return;}
+  const u=CAND[ci++];
+  log("fuente "+ci+"/"+CAND.length);
+  v.src=u;v.load();
+  clearTimeout(watch);
+  watch=setTimeout(()=>{
+    if(v.readyState<2){log("sin respuesta en 12s, relevo","w");nextSrc();}
+  },12000);
+}
+v.addEventListener("error",()=>{
+  const c=v.error?v.error.code:0;
+  log("error de video código "+c+" ("+["","cancelado","red","decode","formato/URL"][c]+")","e");
+  if(film.classList.contains("on"))nextSrc();
+});
+v.addEventListener("loadedmetadata",()=>{clearTimeout(watch);log("metadata ok · "+v.duration.toFixed(0)+"s","k");});
+v.addEventListener("canplay",()=>{clearTimeout(watch);load.classList.remove("on");});
+v.addEventListener("playing",()=>{load.classList.remove("on");log("reproduciendo","k");});
+v.addEventListener("waiting",()=>{log("buffering","w");if(!shown){lt.textContent="Cargando";lp.textContent="un momento";load.classList.add("on");}});
 
 async function start(){
-  open();logEl.innerHTML="";
-  log("arranque · UA: "+navigator.userAgent);
-  veil.classList.add("on");vt.textContent="Cargando";vp.textContent="buscando fuente viva";
+  open();logEl.innerHTML="";ci=0;
+  log("arranque");
+  load.classList.add("on");lt.textContent="Cargando";lp.textContent="conectando";ext.style.display="none";
 
   if(!ready){
     try{
@@ -507,56 +438,28 @@ async function start(){
       await loadJS(BASE+"assets/bandersnatch.js");
       build();
     }catch(e){
-      log("no se pudieron cargar los datos: "+e.message,"e");
-      vt.textContent="Faltan los datos";vp.textContent=e.message;showDiag();return;
+      lt.textContent="Faltan los datos";lp.textContent=e.message;diagOn();return;
     }
     try{
-      log("bajando subtítulos");
       const r=await fetch(VTT,{cache:"force-cache"});
       if(!r.ok)throw new Error("HTTP "+r.status);
       const t=await r.text();
       trk.src=URL.createObjectURL(new Blob([t],{type:"text/vtt"}));
-      setTimeout(()=>{try{trk.track.mode="showing";log("subtítulos activados","k");}catch(e){log("track no disponible","w");}},250);
+      setTimeout(()=>{try{trk.track.mode="showing";log("subtítulos ok","k");}catch(e){}},300);
     }catch(e){log("subtítulos fallaron: "+e.message,"e");}
   }
-
-  vp.textContent="probando nodos";
-  const src=await pickSource();
-  if(!src){
-    log("NINGUNA FUENTE RESPONDIÓ","e");
-    vt.textContent="Ningún nodo responde";
-    vp.textContent="las tres fuentes fallaron, mirá el log";
-    showDiag();return;
-  }
-  usedSrc=src;
-  log("usando fuente: "+src,"k");
-  v.src=src;v.load();
-
-  const t=setTimeout(()=>{
-    if(v.readyState<2){
-      log("TIMEOUT 20s tras asignar la fuente (readyState "+v.readyState+")","e");
-      vt.textContent="El nodo se colgó";vp.textContent="readyState "+v.readyState;
-      showDiag();
-    }
-  },20000);
-  v.addEventListener("playing",()=>{clearTimeout(t);veil.classList.remove("on");log("reproduciendo","k");},{once:true});
-  v.addEventListener("loadedmetadata",()=>log("metadata ok · "+v.duration.toFixed(1)+"s","k"),{once:true});
+  nextSrc();
 }
-v.addEventListener("waiting",()=>{log("buffering en "+v.currentTime.toFixed(1)+"s","w");if(!shown)veil.classList.add("on");});
-v.addEventListener("stalled",()=>log("stalled","w"));
-v.addEventListener("canplay",()=>{if(veil.classList.contains("on"))veil.classList.remove("on");});
-v.addEventListener("ended",()=>log("fin del video","k"));
-
-$("restart").onclick=()=>{log("reinicio pedido","w");localStorage.clear();close();setTimeout(start,150);};
-document.querySelectorAll("[data-play]").forEach(c=>c.addEventListener("click",start));
+$("restart").onclick=()=>{localStorage.clear();close();setTimeout(start,120);};
+$("play1").onclick=start;
 
 const PH=["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1600px-Orthodox_cemetery_vilnius_by_night.JPG",
 "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1600px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"];
 (function bg(i){
-  if(i>=PH.length){log("FONDO: ninguna imagen cargó","e");return;}
+  if(i>=PH.length)return;
   const im=new Image();
-  im.onload=()=>{$("bg").style.backgroundImage='url("'+PH[i]+'")';$("bg2").style.backgroundImage='url("'+PH[i]+'")';};
-  im.onerror=()=>{log("fondo falló: "+PH[i],"w");bg(i+1);};
+  im.onload=()=>{$("bg").style.backgroundImage='url("'+PH[i]+'")';};
+  im.onerror=()=>bg(i+1);
   im.src=PH[i];
 })(0);
 </script>
