@@ -10,13 +10,11 @@ html{background:#1b1b1b}
 body{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#1b1b1b;font-size:18px;line-height:1.6}
 
 #bg{position:fixed;inset:0;z-index:0;
-background:#444 url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG") center/cover no-repeat;
-filter:grayscale(1) contrast(1.25) brightness(1.5)}
-#veil{position:fixed;inset:0;z-index:1;
-background:linear-gradient(to bottom,rgba(0,0,0,.75),rgba(0,0,0,.45) 30%,rgba(0,0,0,.72))}
+background:#2a2a2a url("https://previews.123rf.com/images/gillcopeland/gillcopeland1903/gillcopeland190300003/119540271-an-english-grave-yard-in-the-mist-in-the-foreground-the-head-stones-are-in-the-shape-of-christian.jpg") center/cover no-repeat;
+filter:grayscale(1) contrast(1.35) brightness(1.15)}
+#veil{position:fixed;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(0,0,0,.72),rgba(0,0,0,.38) 35%,rgba(0,0,0,.7))}
 
 .wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 28px}
-
 header{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
 .brand{display:flex;align-items:center;gap:14px}
 .cross{width:26px;height:34px;position:relative}
@@ -26,26 +24,18 @@ header{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
 .brand b{font-size:30px;letter-spacing:.16em;font-weight:700}
 
 main{padding:60px 0 20px}
-h1{font-size:52px;line-height:1.1;font-weight:700;margin-bottom:14px;letter-spacing:-.01em}
+h1{font-size:52px;line-height:1.1;font-weight:700;margin-bottom:14px}
 .sub{font-size:19px;color:#d4d4d4;margin-bottom:52px;max-width:640px}
-
-h2.sec{font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:#cfcfcf;
-margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
-
+h2.sec{font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:#cfcfcf;margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:70px}
-
-.card{display:block;background:#111;border:1px solid rgba(255,255,255,.28);
-text-decoration:none;color:#fff;padding:0;cursor:pointer;text-align:left;font-family:inherit}
+.card{display:block;background:#111;border:1px solid rgba(255,255,255,.28);text-decoration:none;color:#fff;padding:0;cursor:pointer;text-align:left;font-family:inherit}
 .card:hover,.card:focus{outline:3px solid #fff;outline-offset:3px;background:#000}
 .poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#222}
 .card .body{padding:14px 16px 18px}
 .card .t{font-size:20px;font-weight:700;line-height:1.25;margin-bottom:6px}
 .card .m{font-size:13px;color:#bcbcbc;letter-spacing:.06em;text-transform:uppercase}
-.tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.18em;
-text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 9px;color:#e2e2e2}
-
-.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;
-border:1px dashed rgba(255,255,255,.45);background:rgba(0,0,0,.45);text-align:center;padding:24px}
+.tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 9px;color:#e2e2e2}
+.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;border:1px dashed rgba(255,255,255,.45);background:rgba(0,0,0,.45);text-align:center;padding:24px}
 .soon span{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:#d8d8d8}
 
 footer{position:relative;z-index:2;background:#0b0b0b;border-top:1px solid #333;margin-top:40px}
@@ -56,29 +46,36 @@ footer{position:relative;z-index:2;background:#0b0b0b;border-top:1px solid #333;
 .col a:hover{color:#fff;text-decoration:underline}
 .legal{border-top:1px solid #2a2a2a;padding-top:26px;font-size:12px;color:#7d7d7d;line-height:1.75}
 .legal p{margin-bottom:14px}
-.copy{margin-top:26px;padding-top:20px;border-top:1px solid #2a2a2a;
-font-size:12px;color:#6f6f6f;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.copy{margin-top:26px;padding-top:20px;border-top:1px solid #2a2a2a;font-size:12px;color:#6f6f6f;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 #film{position:fixed;inset:0;z-index:20;background:#000;display:none}
 #film.on{display:block}
 #frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-#bar{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;gap:12px;align-items:center;
-padding:12px 16px;background:rgba(0,0,0,.75)}
-#bar button{font-family:inherit;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
-padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointer}
+#bn{position:absolute;inset:0;display:none;background:#000}
+#bn.on{display:block}
+#video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#video::cue{background:rgba(0,0,0,.8);color:#fff;font-family:Arial,sans-serif;font-size:22px}
+
+#bar{position:absolute;top:0;left:0;right:0;z-index:4;display:flex;gap:10px;align-items:center;padding:12px 16px;background:rgba(0,0,0,.78);flex-wrap:wrap}
+#bar button{font-family:inherit;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:10px 14px;background:#111;color:#fff;border:1px solid #555;cursor:pointer}
 #bar button:hover,#bar button:focus{outline:3px solid #fff;outline-offset:2px}
 #bar .sp{flex:1}
 #bar .n{font-size:13px;color:#ccc;letter-spacing:.14em;text-transform:uppercase}
 
-@media(max-width:900px){
+#choices{position:absolute;left:0;right:0;bottom:14%;z-index:3;display:flex;gap:26px;justify-content:center;padding:0 40px;pointer-events:none}
+#choices.on{pointer-events:auto}
+.ch{font-family:inherit;font-size:20px;letter-spacing:.06em;font-weight:700;padding:20px 44px;min-width:190px;text-align:center;background:rgba(0,0,0,.55);color:#fff;border:2px solid rgba(255,255,255,.55);cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.ch:hover,.ch:focus{background:#fff;color:#000;border-color:#fff;outline:none}
+#timer{position:absolute;left:0;right:0;bottom:calc(14% - 14px);height:4px;z-index:3;background:rgba(255,255,255,.18);display:none}
+#timer i{display:block;height:100%;width:100%;background:#fff}
+#loading{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:#000;font-size:13px;letter-spacing:.4em;text-transform:uppercase;color:#bbb}
+
+@media(max-width:700px){
   .grid{grid-template-columns:repeat(2,1fr)}
   .cols{grid-template-columns:repeat(3,1fr)}
-  h1{font-size:38px}
-}
-@media(max-width:600px){
-  .grid{grid-template-columns:1fr}
-  .cols{grid-template-columns:repeat(2,1fr)}
-  h1{font-size:30px}
+  h1{font-size:36px}
+  .ch{font-size:16px;padding:16px 22px;min-width:120px}
+  #choices{gap:14px;bottom:16%}
 }
 </style>
 </head>
@@ -88,45 +85,26 @@ padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointe
 <div id="veil"></div>
 
 <div class="wrap">
-  <header>
-    <div class="brand"><div class="cross"></div><b>XCODE</b></div>
-  </header>
-
+  <header><div class="brand"><div class="cross"></div><b>XCODE</b></div></header>
   <main>
     <h1>El catálogo del abismo.</h1>
     <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin prisa. Entrá y elegí.</p>
-
     <h2 class="sec">Disponible ahora</h2>
     <div class="grid">
-
       <button class="card" data-play="sat">
         <img class="poster" loading="lazy" decoding="async" alt="Sátántángó"
         src="https://m.media-amazon.com/images/M/MV5BM2U1ZGYwNTItMjcwMS00ZTdjLWE2OWUtNDI5M2JlNjdmMTZlXkEyXkFqcGc@._V1_.jpg">
-        <div class="body">
-          <div class="t">Sátántangó</div>
-          <div class="m">1994 · Béla Tarr · 7 h 19 min</div>
-          <span class="tag">1080p · subtítulos ES</span>
-        </div>
+        <div class="body"><div class="t">Sátántangó</div><div class="m">1994 · Béla Tarr · 7 h 19 min</div><span class="tag">subtítulos ES</span></div>
       </button>
-
       <button class="card" data-play="ban">
         <img class="poster" loading="lazy" decoding="async" alt="Bandersnatch"
         src="https://m.media-amazon.com/images/M/MV5BMjM5MzgzMjM3OF5BMl5BanBnXkFtZTgwMzQ2MzQwNzM@._V1_.jpg">
-        <div class="body">
-          <div class="t">Black Mirror: Bandersnatch</div>
-          <div class="m">2018 · David Slade · interactivo</div>
-          <span class="tag">1080p · subtítulos ES</span>
-        </div>
+        <div class="body"><div class="t">Black Mirror: Bandersnatch</div><div class="m">2018 · David Slade · interactivo</div><span class="tag">subtítulos ES</span></div>
       </button>
-
       <div class="card" style="cursor:default">
         <div class="soon"><span>Espacio disponible<br>para otra<br>que viene pronto</span></div>
-        <div class="body">
-          <div class="t">—</div>
-          <div class="m">Próximamente</div>
-        </div>
+        <div class="body"><div class="t">—</div><div class="m">Próximamente</div></div>
       </div>
-
     </div>
   </main>
 </div>
@@ -134,57 +112,39 @@ padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointe
 <footer>
   <div class="fwrap">
     <div class="cols">
-      <div class="col">
-        <h3>Compañía</h3>
-        <a href="#">Sobre xcode</a><a href="#">Historia</a><a href="#">Empleo</a>
-        <a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a>
-      </div>
-      <div class="col">
-        <h3>Catálogo</h3>
-        <a href="#">Películas</a><a href="#">Series</a><a href="#">Documentales</a>
-        <a href="#">Cine de culto</a><a href="#">Interactivos</a><a href="#">Próximos estrenos</a>
-      </div>
-      <div class="col">
-        <h3>Ayuda</h3>
-        <a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a>
-        <a href="#">Facturación</a><a href="#">Reportar un error</a><a href="#">Estado del servicio</a>
-      </div>
-      <div class="col">
-        <h3>Legal</h3>
-        <a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a>
-        <a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a>
-      </div>
-      <div class="col">
-        <h3>Regiones</h3>
-        <a href="#">España</a><a href="#">México</a><a href="#">Argentina</a>
-        <a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a>
-      </div>
-      <div class="col">
-        <h3>Recursos</h3>
-        <a href="#">API</a><a href="#">Desarrolladores</a><a href="#">Kit de prensa</a>
-        <a href="#">Blog</a><a href="#">Comunidad</a><a href="#">Contacto</a>
-      </div>
+      <div class="col"><h3>Compañía</h3><a href="#">Sobre xcode</a><a href="#">Historia</a><a href="#">Empleo</a><a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a></div>
+      <div class="col"><h3>Catálogo</h3><a href="#">Películas</a><a href="#">Series</a><a href="#">Documentales</a><a href="#">Cine de culto</a><a href="#">Interactivos</a><a href="#">Próximos estrenos</a></div>
+      <div class="col"><h3>Ayuda</h3><a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a><a href="#">Facturación</a><a href="#">Reportar un error</a><a href="#">Estado del servicio</a></div>
+      <div class="col"><h3>Legal</h3><a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a><a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a></div>
+      <div class="col"><h3>Regiones</h3><a href="#">España</a><a href="#">México</a><a href="#">Argentina</a><a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a></div>
+      <div class="col"><h3>Recursos</h3><a href="#">API</a><a href="#">Desarrolladores</a><a href="#">Kit de prensa</a><a href="#">Blog</a><a href="#">Comunidad</a><a href="#">Contacto</a></div>
     </div>
-
     <div class="legal">
-      <p>xcode es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; xcode no aloja los archivos ni reclama su titularidad. Sátántangó (1994), dirigida por Béla Tarr, se exhibe desde un espejo público. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce mediante el reproductor interactivo de código abierto BandersnatchInteractive y requiere que el usuario aporte su propio archivo de video con una duración exacta de 5 h 12 min 14 s.</p>
-      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad de reproducción depende del ancho de banda del usuario, del dispositivo y de la fuente. Los subtítulos en español latinoamericano se ofrecen según disponibilidad de cada obra y pueden requerir selección manual en el reproductor.</p>
-      <p>Este sitio no utiliza cookies de seguimiento ni perfiles de usuario. El progreso y las preferencias se guardan localmente en el dispositivo. Ninguna recomendación es automática: el orden del catálogo es editorial y puede cambiar por criterio curatorial.</p>
-      <p>Marcas, títulos, carteles y nombres comerciales pertenecen a sus respectivos titulares y se emplean con fines informativos. Las imágenes de portada provienen de bases de datos públicas de metadatos.</p>
-      <p>xcode opera de forma independiente y sin fines comerciales. No se ofrece soporte telefónico. Las consultas se atienden por correo y con demora variable.</p>
+      <p>xcode es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; xcode no aloja los archivos ni reclama su titularidad. Sátántangó (1994), dirigida por Béla Tarr, se exhibe desde un espejo público. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
+      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad de reproducción depende del ancho de banda, del dispositivo y de la fuente. Los subtítulos se ofrecen según disponibilidad de cada obra.</p>
+      <p>Este sitio no utiliza cookies de seguimiento. El progreso y las decisiones tomadas se guardan localmente en el dispositivo.</p>
+      <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos.</p>
     </div>
-
-    <div class="copy">
-      <span>© 2026 xcode. Todos los derechos reservados.</span>
-      <span>Hecho en el abismo · versión 1.0</span>
-    </div>
+    <div class="copy"><span>© 2026 xcode. Todos los derechos reservados.</span><span>Hecho en el abismo · versión 1.2</span></div>
   </div>
 </footer>
 
 <div id="film">
-  <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
+  <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer"></iframe>
+  <div id="bn">
+    <video id="video" playsinline preload="metadata">
+      <track id="trk" kind="captions" srclang="es" label="Español" default
+        src="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt">
+    </video>
+    <div id="choices"></div>
+    <div id="timer"><i></i></div>
+    <div id="loading">Cargando</div>
+  </div>
   <div id="bar">
     <button id="back">← Volver</button>
+    <button id="restart">Reiniciar</button>
+    <button id="subm" title="Atrasar subtítulos">sub −</button>
+    <button id="subp" title="Adelantar subtítulos">sub +</button>
     <span class="sp"></span>
     <span class="n" id="now"></span>
   </div>
@@ -193,31 +153,215 @@ padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointe
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
+const v=$("video");
+const ls=window.localStorage;
 
-const SRC={
-  sat:{u:"https://ok.ru/videoembed/7513547082408", n:"Sátántangó · 1080p"},
-  ban:{u:"https://cybershadow.github.io/BandersnatchInteractive/", n:"Bandersnatch · interactivo"}
+$("back").onclick=()=>{
+  $("frame").src="about:blank";
+  try{v.pause();}catch(e){}
+  $("film").classList.remove("on");
+  $("bn").classList.remove("on");
+  document.body.style.overflow="";
 };
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && $("film").classList.contains("on")) $("back").click();
+});
 
 document.querySelectorAll("[data-play]").forEach(c=>{
   c.addEventListener("click",()=>{
-    const k=c.dataset.play, s=SRC[k];
-    $("now").textContent=s.n;
-    $("frame").src=s.u;
+    const k=c.dataset.play;
     $("film").classList.add("on");
-    $("back").focus();
     document.body.style.overflow="hidden";
+    $("back").focus();
+    if(k==="sat"){
+      $("bn").classList.remove("on");
+      $("frame").style.display="block";
+      $("frame").src="https://ok.ru/videoembed/7513547082408";
+      $("now").textContent="Sátántangó";
+    }else{
+      $("frame").style.display="none";
+      $("frame").src="about:blank";
+      $("bn").classList.add("on");
+      $("now").textContent="Bandersnatch";
+      bootBan();
+    }
   });
 });
 
-$("back").addEventListener("click",()=>{
-  $("frame").src="about:blank";
-  $("film").classList.remove("on");
-  document.body.style.overflow="";
-});
+let off=parseFloat(ls.getItem("bs_off")||"0");
+function shiftSub(d){
+  const tr=v.textTracks&&v.textTracks[0];
+  if(!tr||!tr.cues)return;
+  for(const c of tr.cues){c.startTime=Math.max(0,c.startTime+d);c.endTime=Math.max(.1,c.endTime+d);}
+  off=Math.round((off+d)*10)/10;
+  ls.setItem("bs_off",off);
+  $("now").textContent="Bandersnatch · subs "+(off>0?"+":"")+off.toFixed(1)+"s";
+}
+$("subm").onclick=()=>shiftSub(-.5);
+$("subp").onclick=()=>shiftSub(.5);
 
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape" && $("film").classList.contains("on")) $("back").click();
+const VID="https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
+let MOM=null,PREC=null,SG=null,SEGS=[],ready=false,busy=false,lastSeg=null,curMom=null,choice=-1;
+
+function condOk(c){
+  if(c===undefined||c===null)return true;
+  if(c===true)return true;
+  if(c===false)return false;
+  if(typeof c==="string")return condOk(PREC[c]);
+  const op=c[0],a=c.slice(1);
+  if(op==="persistentState"){try{return JSON.parse(ls["ps_"+a[0]]??"null");}catch(e){return null;}}
+  if(op==="not")return !condOk(a[0]);
+  if(op==="and")return a.every(condOk);
+  if(op==="or")return a.some(condOk);
+  if(op==="eql"){const g=x=>x&&x[0]==="persistentState"?JSON.parse(ls["ps_"+x[1]]??"null"):condOk(x);return g(a[0])==g(a[1]);}
+  return true;
+}
+function resolveSG(id){
+  for(const e of SG[id]||[]){
+    if(e.precondition && !condOk(e.precondition))continue;
+    if(e.segmentGroup)return resolveSG(e.segmentGroup);
+    if(e.segment)return e.segment;
+    if(!condOk(e))continue;
+    return e;
+  }
+  return null;
+}
+function segAt(ms){ for(const s of SEGS){ if(ms>=s.s && (!s.e||ms<s.e)) return s.id; } return null; }
+function segStart(id){const s=SEGS.find(x=>x.id===id);return s?s.s:0;}
+function impression(d){
+  if(d&&d.type==="userState"&&d.data&&d.data.persistent)
+    for(const k in d.data.persistent) ls["ps_"+k]=JSON.stringify(d.data.persistent[k]);
+}
+function jumpTo(id){
+  if(!id)return;
+  busy=true; lastSeg=id;
+  v.currentTime=segStart(id)/1000;
+  setTimeout(()=>{busy=false;},150);
+}
+function clearChoices(){
+  $("choices").innerHTML="";
+  $("choices").classList.remove("on");
+  $("timer").style.display="none";
+}
+function advance(prev,idx){
+  let nxt=null;
+  if(idx>=0 && curMom && curMom.choices && curMom.choices[idx]){
+    const x=curMom.choices[idx];
+    impression(x.impressionData);
+    nxt=x.segmentId||(x.sg?resolveSG(x.sg):null);
+  }
+  if(!nxt && prev && SG[prev]) nxt=resolveSG(prev);
+  if(!nxt && prev){const s=SEGS.find(x=>x.id===prev); if(s&&s.defaultNext) nxt=s.defaultNext;}
+  choice=-1; curMom=null;
+  clearChoices();
+  if(nxt) jumpTo(nxt);
+}
+function showChoices(m){
+  curMom=m; choice=-1;
+  const box=$("choices");
+  box.innerHTML="";
+  m.choices.forEach((c,i)=>{
+    const b=document.createElement("button");
+    b.className="ch";
+    b.textContent=c.text||"Elegir";
+    b.onclick=()=>advance(lastSeg,i);
+    b.onmouseenter=()=>{choice=i;};
+    box.appendChild(b);
+  });
+  box.classList.add("on");
+  $("timer").style.display="block";
+  const f=box.querySelector(".ch"); if(f)f.focus({preventScroll:true});
+}
+
+function tick(){
+  try{
+    if(!ready||!SEGS.length||v.paused||v.ended)return;
+    const ms=v.currentTime*1000;
+    const id=segAt(ms);
+    if(!id)return;
+    if(id!==lastSeg){
+      if(!busy && lastSeg){ advance(lastSeg,-1); return; }
+      lastSeg=id;
+    }
+    const seg=SEGS.find(x=>x.id===id);
+    if(seg&&seg.e&&ms>=seg.e-70){advance(id,-1);return;}
+    let act=null;
+    for(const m of (MOM[id]||[])){
+      if(m.choices && ms>=m.startMs && ms<m.endMs && condOk(m.precondition)){ act=m; break; }
+    }
+    if(act){
+      if(curMom!==act) showChoices(act);
+      const left=100-((ms-act.startMs)*100/(act.endMs-act.startMs));
+      $("timer").firstElementChild.style.width=Math.max(0,Math.min(100,left))+"%";
+      if(ms>=act.endMs-70) advance(id, act.defaultChoiceIndex||0);
+    } else if(curMom){
+      advance(id, curMom.defaultChoiceIndex||0);
+    }
+  }catch(e){}
+}
+setInterval(tick,150);
+
+v.addEventListener("click",()=>{ if(v.paused)v.play().catch(()=>{}); else v.pause(); });
+v.addEventListener("play",()=>{$("loading").style.display="none";});
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src=src; s.onload=res; s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+async function bootBan(){
+  if(ready){ v.play().catch(()=>{}); return; }
+  $("loading").style.display="flex";
+  $("loading").textContent="Cargando";
+  try{
+    await Promise.all([
+      loadScript("https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/assets/SegmentMap.js"),
+      loadScript("https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/assets/bandersnatch.js")
+    ]);
+    const bv=window.bandersnatch.videos["80988062"].interactiveVideoMoments.value;
+    MOM=bv.momentsBySegment; PREC=bv.preconditions; SG=bv.segmentGroups;
+    for(const k in window.SegmentMap.segments){
+      const s=window.SegmentMap.segments[k];
+      SEGS.push({id:k,s:s.startTimeMs,e:s.endTimeMs,defaultNext:s.defaultNext});
+    }
+    SEGS.sort((a,b)=>a.s-b.s);
+    if(!ls["ps_init"]){
+      for(const k in bv.stateHistory) ls["ps_"+k]=JSON.stringify(bv.stateHistory[k]);
+      ls["ps_init"]="1";
+    }
+    v.src=VID;
+    const tr=$("trk");
+    if(tr&&tr.track){try{tr.track.mode="showing";}catch(e){}}
+    ready=true;
+    if(off)setTimeout(()=>shiftSub(0),800);
+    $("loading").textContent="Toca el video";
+    v.play().catch(()=>{});
+  }catch(e){
+    console.error(e);
+    $("loading").textContent="Error de carga";
+  }
+}
+
+$("restart").onclick=()=>{
+  if(!ready)return;
+  for(const k of Object.keys(ls)) if(k.indexOf("ps_")===0) ls.removeItem(k);
+  curMom=null;choice=-1;lastSeg=null;clearChoices();
+  jumpTo("1A");
+  v.play().catch(()=>{});
+};
+
+addEventListener("keydown",e=>{
+  if(!$("bn").classList.contains("on"))return;
+  if(e.key==="[")shiftSub(-.5);
+  if(e.key==="]")shiftSub(.5);
+  if(!$("choices").classList.contains("on"))return;
+  const b=$("choices").querySelectorAll(".ch");
+  if(!b.length)return;
+  if(e.key==="ArrowRight"){choice=(choice+1)%b.length;b[choice].focus();}
+  if(e.key==="ArrowLeft"){choice=(choice-1+b.length)%b.length;b[choice].focus();}
+  if(e.key==="Enter"&&choice>=0)advance(lastSeg,choice);
 });
 </script>
 </body>
