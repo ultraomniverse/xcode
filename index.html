@@ -137,21 +137,32 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
 .p-controls{position:absolute;left:0;right:0;bottom:0;padding:10px clamp(14px,3vw,34px) 20px;
   background:linear-gradient(#0000,#000e 45%,#000);transition:opacity .3s;z-index:6}
 .p-progress{position:relative;height:22px;display:flex;align-items:center;margin-bottom:6px}
-.p-progress input{position:relative;z-index:2;width:100%;-webkit-appearance:none;appearance:none;background:#0000;height:22px;cursor:pointer}
-.p-progress input::-webkit-slider-runnable-track{height:4px;background:#ffffff2e}
-.p-progress input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;margin-top:-5px;box-shadow:0 0 10px #000}
-.p-progress input::-moz-range-track{height:4px;background:#ffffff2e}
-.p-progress input::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#fff}
-.p-buffer{position:absolute;left:0;top:9px;height:4px;background:#ffffff2a;width:0;z-index:1}
+.p-track{position:relative;width:100%;height:4px;background:#ffffff2e;overflow:hidden}
+.p-buffer{position:absolute;left:0;top:0;height:100%;background:#ffffff2a;width:0;z-index:1}
+.p-fill{position:absolute;left:0;top:0;height:100%;background:#fff;width:0;z-index:2;box-shadow:0 0 10px #fff6}
 .p-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .p-row button{background:#0000;border:0;color:#fff;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
-  padding:10px 12px;cursor:pointer;border-radius:3px;transition:.15s;display:inline-flex;align-items:center;gap:5px;min-height:42px}
+  padding:10px 12px;cursor:pointer;border-radius:3px;transition:.15s;display:inline-flex;align-items:center;gap:6px;min-height:42px}
 .p-row button:hover,.p-row button:focus-visible{background:#ffffff1f;outline:2px solid #fff;outline-offset:1px}
 .p-row button svg{width:17px;height:17px}
 .p-time{font-family:var(--f-mono);font-size:10.5px;color:#b9b9b9;letter-spacing:.08em;margin-left:6px}
 .p-time b{color:#fff;font-weight:400}
 #ccBtn.off{color:#5e5e5e}
 #ccBtn.on{border-bottom:2px solid #fff}
+
+/* candado */
+.lock-badge{position:absolute;top:14px;right:14px;z-index:12;display:inline-flex;align-items:center;gap:8px;
+  background:#000d;border:1px solid #ffffff45;color:#eaeaea;font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;
+  padding:9px 13px;cursor:pointer;backdrop-filter:blur(4px);transition:.18s}
+.lock-badge[hidden]{display:none}
+.lock-badge svg{width:13px;height:13px}
+.lock-badge:hover,.lock-badge:focus-visible{background:#fff;color:#000;border-color:#fff;outline:none}
+.player.locked .p-top,.player.locked .p-controls{opacity:0;pointer-events:none}
+.player.locked .p-big{pointer-events:none}
+.lock-toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:13;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.3em;color:#fff;background:#000c;border:1px solid #ffffff33;
+  padding:12px 20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.lock-toast.show{opacity:1}
 
 .p-big{position:absolute;inset:0;display:grid;place-items:center;z-index:5;cursor:pointer}
 .p-big svg{width:74px;height:74px;color:#fffc;filter:drop-shadow(0 4px 20px #000)}
@@ -381,7 +392,7 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
     <section id="acerca" class="acerca">
       <h2>ACERCA DEL ARCHIVO</h2>
       <p>Psychotic Entertainment es un panteón digital de cine perturbador. Todo se transmite desde fuentes públicas, sin descargas, sin cuentas, sin registro. Abre la página y mira.</p>
-      <p class="small">Controles: <kbd>Espacio</kbd> pausa · <kbd>←</kbd><kbd>→</kbd> moverte entre opciones · <kbd>Enter</kbd> elegir · <kbd>F</kbd> pantalla completa · <kbd>C</kbd> subtítulos</p>
+      <p class="small">La reproducción es un continuo: no puedes saltar a cualquier minuto, solo avanzar por tus decisiones. Controles: <kbd>←</kbd><kbd>→</kbd> elegir · <kbd>Enter</kbd> confirmar · <kbd>F9</kbd> candado · <kbd>F</kbd> pantalla completa · <kbd>C</kbd> subtítulos · <kbd>R</kbd> reiniciar</p>
     </section>
   </main>
 
@@ -402,6 +413,13 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
     <div class="p-status" id="status">480p</div>
   </div>
 
+  <button class="lock-badge" id="lockBadge" hidden title="Desbloquear (F9)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    BLOQUEADO · F9
+  </button>
+
+  <div class="lock-toast" id="lockToast"></div>
+
   <div class="subs" id="subs" aria-live="polite"></div>
 
   <div class="choice-layer" id="choiceLayer" hidden>
@@ -415,19 +433,23 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
 
   <div class="p-controls" id="controls">
     <div class="p-progress">
-      <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Progreso">
-      <div class="p-buffer" id="buffer"></div>
+      <div class="p-track"><div class="p-buffer" id="buffer"></div><div class="p-fill" id="fill"></div></div>
     </div>
     <div class="p-row">
       <button id="playBtn" title="Reproducir / Pausar (Espacio)">
         <svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>
       </button>
-      <button id="back10" title="Retroceder 10s (J)">↺10</button>
-      <button id="fwd10" title="Avanzar 10s (L)">10↻</button>
       <span class="p-time"><b id="tCur">0:00</b> / <span id="tTot">0:00</span></span>
       <div class="p-spacer"></div>
       <button id="ccBtn" class="on" title="Subtítulos (C)">CC <span id="ccLabel">ES</span></button>
       <button id="qBtn" title="Calidad">480p</button>
+      <button id="resetBtn" title="Reiniciar desde cero (R)">
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        REINICIAR
+      </button>
+      <button id="lockBtn" title="Bloquear la barra (F9)">
+        <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
       <button id="fsBtn" title="Pantalla completa (F)">
         <svg viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
@@ -457,7 +479,8 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
         <li><b>1.</b> En cada bifurcación aparecen dos opciones.</li>
         <li><b>2.</b> Tienes 15 segundos. Si no eliges, el sistema elige por ti.</li>
         <li><b>3.</b> Con control remoto: flechas para moverte, OK para elegir.</li>
-        <li><b>4.</b> Los subtítulos en español están activados.</li>
+        <li><b>4.</b> La cinta corre sin saltos: solo avanzas por lo que decides.</li>
+        <li><b>5.</b> El candado esconde la barra. Se abre con F9 o tocándolo.</li>
       </ul>
       <button id="tutStart">EMPEZAR</button>
       <p class="tut-note">Consejo: sube el volumen. Y no confíes en nadie.</p>
@@ -769,8 +792,9 @@ const $=s=>document.querySelector(s);
 const v=$('#v'), pre=$('#pre'), player=$('#player'), site=$('#site');
 const choiceLayer=$('#choiceLayer'), choiceRow=$('#choiceRow'), ring=$('#ring');
 const endScreen=$('#endScreen'), tutorial=$('#tutorial'), toastEl=$('#toast');
-const seek=$('#seek'), tCur=$('#tCur'), tTot=$('#tTot'), buffer=$('#buffer');
+const tCur=$('#tCur'), tTot=$('#tTot'), buffer=$('#buffer'), fill=$('#fill');
 const subsEl=$('#subs'), loader=$('#loader'), fatal=$('#fatal');
+const lockBadge=$('#lockBadge'), lockToast=$('#lockToast');
 
 const LIMIT=15000;
 const BASE='https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/';
@@ -781,7 +805,7 @@ const SRC={
 const SUB_ES='https://mohetios.github.io/BandersnatchInteractive/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt';
 const SUB_EN='https://mohetios.github.io/BandersnatchInteractive/subtitle/Black.Mirror.Bandersnatch.2018.WEBRip.x264-NoGRP.vtt';
 
-let cur=null, picked=false, showing=false, seeking=false, quality='480', ended=false;
+let cur=null, picked=false, showing=false, seeking=false, quality='480', ended=false, locked=false;
 let countdown=null, ccMode='es', subs={es:[],en:[]}, subsReady=false, loaded=false;
 let metaHandler=null, fbTimer=null, fatalCount=0, preArmed=false;
 
@@ -810,6 +834,28 @@ function play(){
     v.play().then(()=>toast('Reproduciendo en silencio. Sube el volumen.')).catch(()=>{});
   });
 }
+
+/* ---------- CANDADO ---------- */
+function flashLock(msg){
+  lockToast.textContent=msg; lockToast.classList.add('show');
+  clearTimeout(flashLock._t); flashLock._t=setTimeout(()=>lockToast.classList.remove('show'),1400);
+}
+function lock(){
+  locked=true; player.classList.add('locked');
+  player.classList.remove('idle'); player.classList.remove('controls-up');
+  lockBadge.hidden=false;
+  try{ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); }catch(e){}
+  flashLock('BARRA BLOQUEADA');
+}
+function unlock(){
+  locked=false; player.classList.remove('locked');
+  lockBadge.hidden=true;
+  flashLock('BARRA LIBRE');
+  controlsUp();
+}
+function toggleLock(){ locked ? unlock() : lock(); }
+$('#lockBtn').addEventListener('click',e=>{ e.stopPropagation(); lock(); });
+$('#lockBadge').addEventListener('click',e=>{ e.stopPropagation(); unlock(); });
 
 /* ---------- CARGA DE VIDEO ---------- */
 function setQuality(q, keepTime){
@@ -947,7 +993,7 @@ function showChoices(id){
   countdown=setInterval(()=>{
     if(Date.now()-t0>=LIMIT){ clearInterval(countdown); if(showing&&!picked){ const d=SEG[cur][3]; choose(d); } }
   },150);
-  armIdle();
+  if(!locked) armIdle();
 }
 function markSel(b){ [...choiceRow.children].forEach(c=>c.classList.toggle('sel',c===b)); }
 
@@ -976,10 +1022,22 @@ function jumpTo(sec){
 }
 v.addEventListener('seeked',()=>{ setTimeout(()=>{seeking=false;},130); });
 
+/* reinicio desde cero */
+function restart(){
+  ended=false; endScreen.hidden=true; unlock();
+  cur=null; picked=false; showing=false; seeking=false;
+  try{ pre.currentTime=0; }catch(e){}
+  jumpTo(0);
+  toast('Cinta rebobinada al inicio');
+}
+$('#resetBtn').addEventListener('click',e=>{ e.stopPropagation(); restart(); });
+$('#againBtn').addEventListener('click',restart);
+$('#freeBtn').addEventListener('click',()=>{ endScreen.hidden=true; play(); });
+
 v.addEventListener('timeupdate',()=>{
   paintSubs();
   if(!v.duration) return;
-  seek.value=Math.round(v.currentTime/v.duration*1000);
+  fill.style.width=(v.currentTime/v.duration*100)+'%';
   tCur.textContent=fmt(v.currentTime); tTot.textContent=fmt(v.duration);
   try{ if(v.buffered.length) buffer.style.width=(v.buffered.end(v.buffered.length-1)/v.duration*100)+'%'; }catch(e){}
 
@@ -1008,44 +1066,47 @@ v.addEventListener('timeupdate',()=>{
 
 /* ---------- CONTROLES ---------- */
 function togglePlay(){ if(v.paused){ if(ended){ restart(); } else play(); } else v.pause(); }
-$('#playBtn').addEventListener('click',togglePlay);
-$('#bigPlay').addEventListener('click',togglePlay);
+$('#playBtn').addEventListener('click',e=>{ e.stopPropagation(); togglePlay(); });
+$('#bigPlay').addEventListener('click',()=>{ if(showing) return; togglePlay(); });
 v.addEventListener('click',()=>{ if(showing) return; togglePlay(); });
-v.addEventListener('play',()=>{ $('#playIcon').innerHTML='<path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>'; $('#bigPlay').classList.add('hide'); armIdle(); });
+v.addEventListener('play',()=>{ $('#playIcon').innerHTML='<path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>'; $('#bigPlay').classList.add('hide'); if(!locked) armIdle(); });
 v.addEventListener('pause',()=>{ $('#playIcon').innerHTML='<path d="M7 4l13 8-13 8z" fill="currentColor"/>'; $('#bigPlay').classList.remove('hide'); player.classList.remove('idle'); });
 v.addEventListener('waiting',()=>{ loader.hidden=false; });
 v.addEventListener('playing',()=>{ loader.hidden=true; });
 
-$('#back10').addEventListener('click',()=>{ try{v.currentTime=Math.max(0,v.currentTime-10);}catch(e){} });
-$('#fwd10').addEventListener('click',()=>{ try{v.currentTime=Math.min(v.duration||1e9,v.currentTime+10);}catch(e){} });
-$('#fsBtn').addEventListener('click',()=>{
+$('#fsBtn').addEventListener('click',e=>{
+  e.stopPropagation();
   try{
     if(!document.fullscreenElement){
       if(player.requestFullscreen) player.requestFullscreen().catch(()=>{});
       else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
     } else document.exitFullscreen();
-  }catch(e){}
+  }catch(e2){}
 });
-seek.addEventListener('input',()=>{ if(v.duration) try{ v.currentTime=seek.value/1000*v.duration; }catch(e){} });
 function fmt(s){ s=Math.max(0,Math.floor(s||0)); const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60; return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0'); }
-
-$('#againBtn').addEventListener('click',restart);
-$('#freeBtn').addEventListener('click',()=>{ endScreen.hidden=true; play(); });
-function restart(){ ended=false; endScreen.hidden=true; jumpTo(0); }
 
 let idleT=null;
 function controlsUp(){
   player.classList.add('controls-up'); player.classList.remove('idle');
   clearTimeout(idleT);
-  idleT=setTimeout(()=>{ if(!v.paused && !showing){ player.classList.add('idle'); player.classList.remove('controls-up'); } },3600);
+  idleT=setTimeout(()=>{ if(!v.paused && !showing && !locked){ player.classList.add('idle'); player.classList.remove('controls-up'); } },3600);
 }
-function armIdle(){ controlsUp(); }
-['mousemove','touchstart','pointerdown','keydown'].forEach(e=>player.addEventListener(e,armIdle));
+function armIdle(){ if(locked) return; controlsUp(); }
+['mousemove','touchstart','pointerdown'].forEach(e=>player.addEventListener(e,()=>{ if(!locked) armIdle(); }));
 
 document.addEventListener('keydown',e=>{
   if(player.hidden) return;
   const k=e.key;
-  armIdle();
+  if(!locked) armIdle();
+  if(k==='F9'){ e.preventDefault(); toggleLock(); return; }
+  if(locked){
+    if(k===' '||k==='k'){ e.preventDefault(); togglePlay(); }
+    else if(k==='f'){ e.preventDefault(); $('#fsBtn').click(); }
+    else if(k==='c'){ e.preventDefault(); $('#ccBtn').click(); }
+    else if(k==='r'){ e.preventDefault(); restart(); }
+    else if(k==='Escape'){ if(!document.fullscreenElement) $('#backBtn').click(); }
+    return;
+  }
   if(showing && (k==='ArrowLeft'||k==='ArrowRight'||k==='ArrowUp'||k==='ArrowDown')){
     const bs=[...choiceRow.querySelectorAll('button')];
     if(bs.length){
@@ -1063,12 +1124,9 @@ document.addEventListener('keydown',e=>{
     e.preventDefault(); return;
   }
   if(k===' '||k==='k'){ e.preventDefault(); togglePlay(); }
-  else if(k==='ArrowLeft'){ e.preventDefault(); try{v.currentTime=Math.max(0,v.currentTime-10);}catch(err){} }
-  else if(k==='ArrowRight'){ e.preventDefault(); try{v.currentTime=Math.min(v.duration||1e9,v.currentTime+10);}catch(err){} }
-  else if(k==='j'){ try{v.currentTime=Math.max(0,v.currentTime-10);}catch(err){} }
-  else if(k==='l'){ try{v.currentTime=Math.min(v.duration||1e9,v.currentTime+10);}catch(err){} }
   else if(k==='f'){ $('#fsBtn').click(); }
   else if(k==='c'){ $('#ccBtn').click(); }
+  else if(k==='r'){ restart(); }
   else if(k==='Escape'){ if(!document.fullscreenElement) $('#backBtn').click(); }
 });
 
