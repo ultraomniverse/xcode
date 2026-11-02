@@ -25,114 +25,114 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 ::selection{background:var(--blood);color:#000}
 
 /* ============================================================
-   PORTADA — CEMENTERIO
+   PORTADA — CEMENTERIO A PLENA VISTA
    ============================================================ */
 #home{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;
   justify-content:center;overflow:hidden;background:#000;
   transition:opacity 1.1s,transform 1.1s,filter 1.1s}
 #home.out{opacity:0;transform:scale(1.3) translateY(4%);filter:blur(10px) brightness(.4);pointer-events:none}
 
-/* foto del cementerio */
+/* la foto: sin máscara, sin desenfoque, brillo casi neutro */
 #photo{position:absolute;inset:0;z-index:0;background:#000 center 45%/cover no-repeat;
-  filter:grayscale(1) contrast(1.1) brightness(.72);
+  filter:grayscale(1) contrast(1.04) brightness(.98);
   opacity:0;transition:opacity 1.6s ease;
-  animation:photoIn 26s ease-in-out infinite alternate;
-  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,#000 12%,#000 84%,rgba(0,0,0,.5) 100%);
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,#000 12%,#000 84%,rgba(0,0,0,.5) 100%)}
+  animation:photoIn 30s ease-in-out infinite alternate}
 #photo.on{opacity:1}
-@keyframes photoIn{from{transform:scale(1)}to{transform:scale(1.06)}}
+@keyframes photoIn{from{transform:scale(1)}to{transform:scale(1.05)}}
 
 /* luna */
-#moon{position:absolute;left:50%;top:6%;width:min(46vw,420px);aspect-ratio:1;transform:translateX(-50%);
+#moon{position:absolute;left:50%;top:5%;width:min(46vw,420px);aspect-ratio:1;transform:translateX(-50%);
   border-radius:50%;pointer-events:none;z-index:0;
-  background:radial-gradient(circle at 50% 50%,rgba(233,229,217,.1),rgba(233,229,217,.02) 42%,transparent 68%)}
+  background:radial-gradient(circle at 50% 50%,rgba(255,252,240,.12),rgba(255,252,240,.03) 44%,transparent 70%)}
 #moon::after{content:"";position:absolute;inset:0;border-radius:50%;
-  box-shadow:0 0 170px 44px rgba(233,229,217,.045)}
+  box-shadow:0 0 180px 50px rgba(255,252,240,.05)}
 
-/* siluetas translúcidas sobre la foto */
-#cem{position:absolute;left:0;right:0;bottom:0;height:56%;width:100%;z-index:1;pointer-events:none;opacity:.7}
-#cem .far{fill:rgba(0,0,0,.5);stroke:#0d0c08;stroke-width:1.2}
-#cem .mid{fill:rgba(0,0,0,.72);stroke:#161510;stroke-width:1.4}
-#cem .near{fill:#000;stroke:#221f16;stroke-width:2}
-#cem .tree{fill:none;stroke:#100f08;stroke-width:2.4;stroke-linecap:round}
+/* siluetas de primer plano, muy tenues para no tapar la foto */
+#cem{position:absolute;left:0;right:0;bottom:0;height:48%;width:100%;z-index:1;pointer-events:none;opacity:.42}
+#cem .far{fill:rgba(0,0,0,.45);stroke:#0c0b07;stroke-width:1.1}
+#cem .mid{fill:rgba(0,0,0,.62);stroke:#141310;stroke-width:1.3}
+#cem .near{fill:rgba(0,0,0,.85);stroke:#1d1b14;stroke-width:1.8}
+#cem .tree{fill:none;stroke:#0d0c07;stroke-width:2.2;stroke-linecap:round}
 
 /* niebla */
 .fog{position:absolute;inset:-30%;z-index:2;pointer-events:none;
-  background:radial-gradient(closest-side at 50% 60%,rgba(210,206,196,.045),transparent 72%);
-  filter:blur(36px);animation:fogA 46s linear infinite alternate}
-.fog.b{animation:fogB 63s linear infinite alternate;opacity:.45}
+  background:radial-gradient(closest-side at 50% 60%,rgba(215,211,200,.05),transparent 72%);
+  filter:blur(38px);animation:fogA 46s linear infinite alternate}
+.fog.b{animation:fogB 63s linear infinite alternate;opacity:.5}
 @keyframes fogA{from{transform:translate(-9%,3%) scale(1.1)}to{transform:translate(9%,-4%) scale(1.35)}}
 @keyframes fogB{from{transform:translate(11%,-5%) scale(1.3)}to{transform:translate(-11%,4%) scale(1)}}
 
 #rain{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
 
-/* viñeta abierta */
+/* sombra mínima: solo esquinas y bordes */
 #home::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
   background:
-    radial-gradient(ellipse 82% 74% at 50% 44%,transparent 32%,rgba(0,0,0,.42) 74%,rgba(0,0,0,.92) 100%),
-    linear-gradient(to bottom,rgba(0,0,0,.75) 0%,transparent 15%,transparent 80%,rgba(0,0,0,.85) 100%),
-    repeating-linear-gradient(to bottom,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)}
+    radial-gradient(ellipse 100% 96% at 50% 45%,transparent 58%,rgba(0,0,0,.32) 88%,rgba(0,0,0,.78) 100%),
+    linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 13%,transparent 86%,rgba(0,0,0,.72) 100%),
+    repeating-linear-gradient(to bottom,rgba(0,0,0,.1) 0 1px,transparent 1px 3px)}
 
 /* barra superior con el sello */
 #seal{position:absolute;left:0;right:0;top:0;z-index:8;display:flex;align-items:center;gap:12px;
   padding:14px 20px;pointer-events:none;
-  border-bottom:1px solid rgba(233,229,217,.07);background:linear-gradient(to bottom,rgba(0,0,0,.92),transparent)}
-#seal svg{width:26px;height:33px;flex:none;filter:drop-shadow(0 0 10px rgba(192,20,28,.85))}
+  border-bottom:1px solid rgba(233,229,217,.09);background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent)}
+#seal svg{width:26px;height:33px;flex:none;filter:drop-shadow(0 0 10px rgba(192,20,28,.9))}
 #seal .wm{font-family:"Black Ops One",Impact,sans-serif;font-size:15px;letter-spacing:.16em;color:var(--bone)}
 #seal .wm small{display:block;font-family:Oswald,sans-serif;font-size:8px;font-weight:300;
   letter-spacing:.46em;color:var(--blood);margin-top:2px}
 #seal .sp{flex:1}
-#seal .tag{font-size:9px;letter-spacing:.4em;color:#4a4841;text-transform:uppercase}
+#seal .tag{font-size:9px;letter-spacing:.4em;color:#7d7a72;text-transform:uppercase}
 
 /* bloque central */
 .core{position:relative;z-index:7;display:flex;flex-direction:column;align-items:center;
   gap:14px;text-align:center;padding:0 20px;will-change:transform}
 .core::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(1100px,120vw);height:150%;z-index:-1;pointer-events:none;
-  background:radial-gradient(ellipse 50% 46% at 50% 50%,rgba(0,0,0,.78),rgba(0,0,0,.45) 58%,transparent 78%)}
-.kicker{font-size:9px;letter-spacing:.56em;text-transform:uppercase;color:#55534c}
+  width:min(1150px,125vw);height:160%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 52% 48% at 50% 50%,rgba(0,0,0,.66),rgba(0,0,0,.34) 58%,transparent 78%)}
+.kicker{font-size:9px;letter-spacing:.56em;text-transform:uppercase;color:#a8a49b;
+  text-shadow:0 1px 12px #000,0 0 30px #000}
 .kicker b{color:var(--blood);font-weight:500}
 
 h1{margin:0;font-family:"Black Ops One",Impact,sans-serif;
-  font-size:clamp(38px,9.4vw,124px);line-height:.86;letter-spacing:.01em;color:var(--bone);
-  text-shadow:0 0 70px rgba(192,20,28,.4),0 10px 46px #000,0 0 120px #000}
+  font-size:clamp(38px,9.4vw,124px);line-height:.86;letter-spacing:.01em;color:#fbf8f0;
+  text-shadow:0 2px 24px #000,0 0 70px rgba(0,0,0,.95),0 0 130px #000}
 h2{margin:-2px 0 0;font-family:"Black Ops One",Impact,sans-serif;
   font-size:clamp(21px,5vw,64px);line-height:.95;letter-spacing:.05em;
   color:transparent;-webkit-text-stroke:1.6px var(--blood);
-  filter:drop-shadow(0 0 26px rgba(192,20,28,.6))}
+  filter:drop-shadow(0 0 14px rgba(0,0,0,.95)) drop-shadow(0 0 30px rgba(192,20,28,.7))}
 .tagline{margin:6px 0 0;font-size:clamp(10px,1.7vw,15px);font-weight:300;
-  letter-spacing:.44em;text-transform:uppercase;color:#8b8880}
+  letter-spacing:.44em;text-transform:uppercase;color:#d5d1c6;text-shadow:0 2px 16px #000,0 0 40px #000}
 
 /* arsenal */
-.arsenal{display:flex;align-items:center;gap:16px;margin-top:4px;opacity:.42}
+.arsenal{display:flex;align-items:center;gap:16px;margin-top:4px;opacity:.6}
 .arsenal svg{width:26px;height:26px;fill:none;stroke:var(--bone);stroke-width:1.4;
-  stroke-linecap:round;stroke-linejoin:round}
-.arsenal .sep{width:1px;height:16px;background:#2a2823}
+  stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 6px #000)}
+.arsenal .sep{width:1px;height:16px;background:rgba(233,229,217,.35)}
 
 /* botones */
 .acts{display:flex;flex-direction:column;gap:11px;margin-top:22px;align-items:center}
-.acts button{min-width:min(340px,78vw);padding:17px 42px;border:1px solid #35332c;
-  background:rgba(0,0,0,.62);letter-spacing:.44em;font-size:13px;font-weight:500;
-  text-transform:uppercase;color:var(--bone);transition:.28s;position:relative;overflow:hidden}
+.acts button{min-width:min(340px,78vw);padding:17px 42px;border:1px solid rgba(233,229,217,.35);
+  background:rgba(0,0,0,.7);letter-spacing:.44em;font-size:13px;font-weight:500;
+  text-transform:uppercase;color:var(--bone);transition:.28s;position:relative;overflow:hidden;
+  backdrop-filter:blur(2px)}
 .acts button::before{content:"";position:absolute;inset:0;background:var(--blood);
   transform:translateY(101%);transition:transform .28s;z-index:-1}
 .acts button:hover,.acts button:focus{outline:none;border-color:var(--bone);letter-spacing:.5em;
-  box-shadow:0 0 0 1px rgba(233,229,217,.3),0 0 70px rgba(192,20,28,.35)}
+  box-shadow:0 0 0 1px rgba(233,229,217,.35),0 0 70px rgba(192,20,28,.4)}
 .acts button:active::before{transform:translateY(0)}
-.acts .ghost{min-width:min(340px,78vw);border-color:#221f1a;color:#9d9a91;font-size:11px;
+.acts .ghost{min-width:min(340px,78vw);border-color:rgba(233,229,217,.16);color:#c2beb3;font-size:11px;
   letter-spacing:.34em;padding:12px 34px}
 .acts .ghost:hover{border-color:var(--blood);color:var(--blood);box-shadow:none}
 #res[hidden]{display:none}
-.acts small{display:block;font-size:9px;letter-spacing:.3em;color:#5b584f;margin-top:6px}
+.acts small{display:block;font-size:9px;letter-spacing:.3em;color:#8d8a81;margin-top:6px}
 
 /* franja técnica */
 #strip{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;flex-wrap:wrap;
-  justify-content:center;gap:0;border-top:1px solid rgba(233,229,217,.07);
-  background:linear-gradient(to top,rgba(0,0,0,.96),transparent);pointer-events:none}
-#strip span{padding:11px 16px;font-size:9px;letter-spacing:.36em;color:#4a4841;text-transform:uppercase}
-#strip span+span{border-left:1px solid rgba(233,229,217,.07)}
+  justify-content:center;gap:0;border-top:1px solid rgba(233,229,217,.1);
+  background:linear-gradient(to top,rgba(0,0,0,.96),rgba(0,0,0,.6) 60%,transparent);pointer-events:none}
+#strip span{padding:11px 16px;font-size:9px;letter-spacing:.36em;color:#8b887f;text-transform:uppercase}
+#strip span+span{border-left:1px solid rgba(233,229,217,.1)}
 #strip b{color:var(--blood);font-weight:500}
-#strip .cred{color:#3a3833;letter-spacing:.24em}
+#strip .cred{color:#6d6a62;letter-spacing:.24em}
 
 /* ============================================================
    REPRODUCTOR
@@ -192,39 +192,39 @@ h2{margin:-2px 0 0;font-family:"Black Ops One",Impact,sans-serif;
   <div id="photo"></div>
   <div id="moon"></div>
   <svg id="cem" viewBox="0 0 1400 420" preserveAspectRatio="none" aria-hidden="true">
-    <path class="far" d="M0 330 Q140 300 260 322 Q380 344 500 318 Q640 288 780 314 Q920 340 1060 312 Q1200 284 1400 320 L1400 420 L0 420Z"/>
+    <path class="far" d="M0 340 Q140 314 260 334 Q380 354 500 330 Q640 302 780 326 Q920 350 1060 324 Q1200 298 1400 332 L1400 420 L0 420Z"/>
     <g class="far">
-      <path d="M120 330v-42M108 296h24M120 288v-8"/>
-      <path d="M182 332v-30M173 314h18"/>
-      <path d="M243 330v-38M232 306h22M243 298v-8"/>
-      <path d="M1080 328v-34M1070 308h20"/>
-      <path d="M1140 330v-42M1128 296h24M1140 288v-8"/>
-      <path d="M1206 332v-26M1198 316h16"/>
+      <path d="M120 340v-40M109 308h22M120 300v-8"/>
+      <path d="M182 342v-28M174 326h16"/>
+      <path d="M243 340v-36M233 318h20M243 310v-8"/>
+      <path d="M1080 338v-32M1071 320h18"/>
+      <path d="M1140 340v-40M1129 308h22M1140 300v-8"/>
+      <path d="M1206 342v-24M1199 328h14"/>
     </g>
-    <path class="mid" d="M0 356 Q180 340 340 352 Q520 364 700 348 Q880 332 1060 350 Q1240 366 1400 350 L1400 420 L0 420Z"/>
+    <path class="mid" d="M0 366 Q180 352 340 362 Q520 372 700 358 Q880 344 1060 360 Q1240 374 1400 360 L1400 420 L0 420Z"/>
     <g class="mid">
-      <path d="M60 356v-56M44 318h32M60 306v-12"/>
-      <path d="M132 358v-34M120 340h24M120 330h24"/>
-      <path d="M196 356v-48M180 322h32M196 310v-12"/>
-      <path d="M258 358v-26M248 342h20"/>
-      <path d="M320 356v-40M306 330h28"/>
-      <rect x="380" y="336" width="30" height="22" rx="9"/>
-      <path d="M448 356v-52M432 320h32M448 306v-14"/>
-      <path d="M1010 356v-46M994 324h32M1010 312v-12"/>
-      <path d="M1078 358v-30M1066 340h24"/>
-      <rect x="1132" y="338" width="28" height="20" rx="8"/>
-      <path d="M1198 356v-50M1182 320h32M1198 308v-12"/>
-      <path d="M1264 358v-32M1252 338h24M1252 328h24"/>
-      <path d="M1330 356v-44M1314 324h32"/>
+      <path d="M60 366v-52M45 332h30M60 320v-12"/>
+      <path d="M132 368v-32M121 352h22M121 342h22"/>
+      <path d="M196 366v-44M181 336h30M196 324v-12"/>
+      <path d="M258 368v-24M249 354h18"/>
+      <path d="M320 366v-38M307 344h26"/>
+      <rect x="380" y="346" width="28" height="20" rx="8"/>
+      <path d="M448 366v-48M433 336h30M448 324v-12"/>
+      <path d="M1010 366v-42M995 340h30M1010 328v-12"/>
+      <path d="M1078 368v-28M1067 352h22"/>
+      <rect x="1132" y="348" width="26" height="18" rx="7"/>
+      <path d="M1198 366v-46M1183 336h30M1198 324v-12"/>
+      <path d="M1264 368v-30M1253 350h22M1253 340h22"/>
+      <path d="M1330 366v-40M1315 340h30"/>
     </g>
     <g class="tree">
-      <path d="M520 420V250M520 300l-26-30M520 282l30-34M520 330l-18-18"/>
-      <path d="M900 420V236M900 292l-30-34M900 270l26-30M900 322l20-20"/>
+      <path d="M520 420V262M520 306l-24-28M520 290l28-32M520 334l-16-16"/>
+      <path d="M900 420V250M900 298l-28-32M900 278l24-28M900 326l18-18"/>
     </g>
-    <path class="near" d="M0 400 Q200 388 400 396 Q620 404 840 392 Q1060 380 1240 394 Q1330 400 1400 394 L1400 420 L0 420Z"/>
+    <path class="near" d="M0 404 Q200 394 400 400 Q620 406 840 396 Q1060 386 1240 398 Q1330 402 1400 398 L1400 420 L0 420Z"/>
     <g class="near">
-      <path d="M24 400v-66M4 350h40M24 336v-16"/>
-      <path d="M1372 400v-70M1352 348h40M1372 334v-16"/>
+      <path d="M24 404v-62M6 358h36M24 346v-14"/>
+      <path d="M1372 404v-66M1354 356h36M1372 344v-14"/>
     </g>
   </svg>
 
@@ -295,6 +295,8 @@ h2{margin:-2px 0 0;font-family:"Black Ops One",Impact,sans-serif;
 <script>
 "use strict";
 const SRC="https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
+const ID="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
+const FNAME="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
 const LOCAL="satantango.es-419.srt";
 const MIRRORS=[
   "https://www.subtitlecat.com/subs/1324/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es-419.srt",
@@ -306,6 +308,7 @@ const PHOTOS=[
   "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Midnight_Graveyard_-_Flickr_-_rselph.jpg/1280px-Midnight_Graveyard_-_Flickr_-_rselph.jpg"
 ];
 const DUR=26348.92;
+const BPS_FALLBACK=175000;
 const $=id=>document.getElementById(id),v=$("v");
 const KP="sat.pos",KO="sat.off",KN="sat.node",KS="sat.size";
 const num=k=>{try{return +localStorage.getItem(k)||0;}catch{return 0;}};
@@ -322,16 +325,16 @@ let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false;
   im.src=PHOTOS[i];
 })(0);
 
-/* ============ arranque inmediato del vídeo ============
-   El <video> apunta desde el primer segundo a archive.org. Nada lo espera. */
+/* ============ arranque inmediato del vídeo ============ */
 v.src=SRC;
 v.load();
 (function(){const p=num(KP);if(p>60)v.addEventListener("loadedmetadata",()=>{v.currentTime=p;},{once:true});})();
 
-/* ============ nodo directo: solo para precalentar caché ============
-   archive.org redirige a un nodo en cada petición parcial. Averiguarlo una vez
-   y usarlo en las PRECARGAS evita la redirección en el camino caliente.
-   Nunca sustituye el src del vídeo, así que no puede romper la reproducción. */
+/* ============ nodo + tamaño vía API de metadatos ============
+   Los nodos de descarga no mandan Access-Control-Allow-Origin, así que
+   cualquier fetch en modo CORS contra ellos falla. La API de metadatos sí
+   manda CORS: de ahí sacamos el tamaño real y la ruta del nodo.
+   Las precargas van en mode:"no-cors" (el <video> tampoco necesita CORS). */
 function preconnect(u){try{
   const o=new URL(u).origin;
   ["preconnect","dns-prefetch"].forEach(rel=>{
@@ -341,37 +344,37 @@ function preconnect(u){try{
 async function resolveNode(){
   try{
     const c=sessionStorage.getItem(KN);
-    if(c&&/^https:\/\/ia\d+\.archive\.org\//.test(c))NODE=c;
+    if(c&&/^https:\/\/[a-z0-9.-]+\.archive\.org\//i.test(c))NODE=c;
     const s=+(sessionStorage.getItem(KS)||0);if(s)SIZE=s;
   }catch{}
-  if(NODE){preconnect(NODE);return;}
+  if(NODE&&SIZE){preconnect(NODE);return;}
   try{
-    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),3000);
-    const r=await fetch(SRC,{headers:{Range:"bytes=0-1"},signal:ac.signal});
+    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),5000);
+    const r=await fetch("https://archive.org/metadata/"+ID,{signal:ac.signal});
     clearTimeout(to);
-    if(r.url&&/^https:\/\/ia\d+\.archive\.org\//.test(r.url))NODE=r.url;
-    const cr=r.headers.get("content-range");
-    const m=cr&&/\/(\d+)\s*$/.exec(cr);
-    if(m)SIZE=+m[1];
+    const j=await r.json();
+    const f=(j.files||[]).find(x=>/\.mp4$/i.test(x.name||""));
+    if(f&&+f.size)SIZE=+f.size;
+    if(j.server&&j.dir)NODE="https://"+j.server+j.dir+"/"+FNAME;
     try{sessionStorage.setItem(KN,NODE||"");sessionStorage.setItem(KS,SIZE);}catch{}
     if(NODE)preconnect(NODE);
   }catch{}
 }
 
-/* ============ precarga por rango ============ */
+/* ============ precarga por rango (no-cors) ============ */
 function prefetch(t){
   const base=NODE||SRC;
-  if(!SIZE)return;
+  const bps=SIZE?SIZE/DUR:BPS_FALLBACK;
   clearTimeout(pfT);
   pfT=setTimeout(()=>{
-    const bps=SIZE/DUR;
     const start=Math.max(0,Math.floor(t*bps)-1e6);
-    const end=Math.min(SIZE-1,start+2.2e6);
-    if(end<=start)return;
+    const end=start+2e6;
+    if(SIZE&&start>=SIZE)return;
     try{if(pfAbort)pfAbort.abort();}catch{}
     pfAbort=new AbortController();
-    fetch(base,{headers:{Range:"bytes="+start+"-"+end},signal:pfAbort.signal})
-      .then(r=>r.arrayBuffer()).catch(()=>{});
+    fetch(base,{mode:"no-cors",credentials:"omit",
+      headers:{Range:"bytes="+start+"-"+end},signal:pfAbort.signal})
+      .then(()=>{}).catch(()=>{});
   },110);
 }
 
@@ -421,14 +424,14 @@ function shift(d){
 const cv=$("rain"),cx=cv.getContext("2d");let W,H,dr=[],run=true;
 function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;
   cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);
-  dr=Array.from({length:Math.min(160,W/8|0)},()=>({x:Math.random()*W,y:Math.random()*H,
+  dr=Array.from({length:Math.min(170,W/8|0)},()=>({x:Math.random()*W,y:Math.random()*H,
     l:9+Math.random()*38,v:.7+Math.random()*1.7,o:.05+Math.random()*.24,w:Math.random()<.2?1:.6}));}
 addEventListener("resize",size);size();
 (function loop(){
   if(!run)return;
   cx.clearRect(0,0,W,H);
   for(const d of dr){
-    cx.strokeStyle="rgba(226,222,212,"+d.o+")";cx.lineWidth=d.w;
+    cx.strokeStyle="rgba(230,227,218,"+d.o+")";cx.lineWidth=d.w;
     cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1,d.y+d.l);cx.stroke();
     d.y+=d.v;d.x-=.22;
     if(d.y>H+40){d.y=-40;d.x=Math.random()*W;}
@@ -522,10 +525,7 @@ v.addEventListener("play",lock);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!v.paused)lock();});
 
 /* ============ errores ============ */
-v.addEventListener("error",()=>{
-  if(!v.getAttribute("src"))return;
-  $("err").classList.add("on");
-});
+v.addEventListener("error",()=>{if(v.getAttribute("src"))$("err").classList.add("on");});
 $("retry").onclick=()=>{
   const t=v.currentTime||num(KP);$("err").classList.remove("on");
   v.load();
@@ -564,7 +564,7 @@ resolveNode();
 bootSubs();
 if(num(KP)>60){$("res").hidden=false;$("resT").textContent="desde "+fmt(num(KP));$("res").focus();}
 else $("go").focus();
-setTimeout(()=>prefetch(0),1400);
+setTimeout(()=>prefetch(0),1500);
 </script>
 </body>
 </html>
