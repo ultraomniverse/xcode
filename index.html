@@ -133,15 +133,13 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
   animation:sp .9s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* boton de play si el autoplay se bloquea */
 #play{position:absolute;inset:0;z-index:35;display:none;align-items:center;justify-content:center;
   background:rgba(0,0,0,.35);cursor:pointer}
 #play.on{display:flex}
 #play span{width:86px;height:86px;border:3px solid #fff;border-radius:50%;display:flex;
   align-items:center;justify-content:center;font-size:26px;padding-left:6px;background:rgba(0,0,0,.5)}
 
-/* diagnostico */
-#diag{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;background:#000;padding:0}
+#diag{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;background:#000}
 #diag.on{display:flex}
 #diag .head{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:2px solid #fff}
 #diag .head b{font-size:12px;letter-spacing:.3em;text-transform:uppercase}
@@ -222,7 +220,7 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
       <p>Este sitio no utiliza cookies de seguimiento. Las decisiones tomadas y el estado narrativo se guardan localmente en el dispositivo.</p>
       <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos.</p>
     </div>
-    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.2</span></div>
+    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.3</span></div>
   </div>
 </footer>
 
@@ -262,19 +260,22 @@ const film=$("film"), stage=$("stage"), v=$("video"), ov=$("ov"), dim=$("dim"), 
       vt=$("vt"), vp=$("vp"), bar=$("bar"), tb=$("tb"), q=$("q"), trk=$("trk"),
       playBtn=$("play"), diag=$("diag"), logEl=$("log");
 
-const H1="https://ia800103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
-const H2="https://ia600103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
+const ITEM="black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web";
+const FILE="Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
+/* orden de preferencia: endpoint canónico (resuelve solo a nodo vivo), luego nodos fijos */
+const CAND=[
+  "https://archive.org/download/"+ITEM+"/"+FILE,
+  "https://ia800103.us.archive.org/9/items/"+ITEM+"/"+FILE,
+  "https://ia600103.us.archive.org/9/items/"+ITEM+"/"+FILE
+];
 const BASE="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/";
 const VTT=BASE+"subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
 
-/* ---------- log visible ---------- */
 function log(msg,cls){
   const d=document.createElement("div");
   if(cls)d.className=cls;
-  const t=new Date().toISOString().slice(11,19);
-  d.textContent=t+"  "+msg;
-  logEl.appendChild(d);
-  logEl.scrollTop=logEl.scrollHeight;
+  d.textContent=new Date().toISOString().slice(11,19)+"  "+msg;
+  logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;
 }
 function showDiag(){diag.classList.add("on");bar.classList.add("on");film.classList.remove("cur");}
 $("diagBtn").onclick=()=>{diag.classList.contains("on")?diag.classList.remove("on"):showDiag();};
@@ -284,18 +285,41 @@ $("copy").onclick=()=>{
   navigator.clipboard?.writeText(txt).then(()=>log("log copiado","k"),()=>log("no se pudo copiar","w"));
 };
 
-/* ---------- errores de media ---------- */
-const ME=["","cancelado por el usuario","error de red","error de decodificación","formato no soportado o URL rota"];
-function mediaError(){
-  const e=v.error;
-  const code=e?e.code:0;
-  const txt=e?(e.message||ME[code]||"desconocido"):"desconocido";
-  log("ERROR DE VIDEO · código "+code+" · "+txt,"e");
-  log("src actual: "+(v.currentSrc||v.src||"(vacío)"),"e");
-  veil.classList.add("on");vt.textContent="Error "+code;vp.textContent=txt;
+const ME=["","cancelado","error de red","error de decodificación","formato no soportado o URL rota"];
+v.addEventListener("error",()=>{
+  const e=v.error,code=e?e.code:0;
+  log("ERROR DE VIDEO · código "+code+" · "+(e&&e.message||ME[code]||"desconocido"),"e");
+  log("src: "+(v.currentSrc||v.src||"(vacío)"),"e");
+  veil.classList.add("on");vt.textContent="Error "+code;vp.textContent=ME[code]||"desconocido";
   showDiag();
+});
+
+/* ---------- prueba de fuentes ---------- */
+function probe(url,ms){
+  return new Promise((ok,no)=>{
+    const t=document.createElement("video");
+    t.preload="metadata";t.muted=true;t.setAttribute("playsinline","");
+    let fin=false;
+    const end=(good,why)=>{
+      if(fin)return;fin=true;clearTimeout(tm);
+      t.onloadedmetadata=t.onerror=null;
+      t.removeAttribute("src");try{t.load();}catch(e){}
+      good?ok():no(new Error(why));
+    };
+    const tm=setTimeout(()=>end(false,"timeout "+ms+"ms sin metadata"),ms);
+    t.onloadedmetadata=()=>end(true);
+    t.onerror=()=>end(false,"error de media código "+(t.error?t.error.code:0));
+    t.src=url;
+  });
 }
-v.addEventListener("error",mediaError);
+async function pickSource(){
+  for(const u of CAND){
+    log("probando: "+u);
+    try{await probe(u,9000);log("fuente OK","k");return u;}
+    catch(e){log("descartada · "+e.message,"w");}
+  }
+  return null;
+}
 
 /* ---------- datos ---------- */
 const D={"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
@@ -313,7 +337,7 @@ const D={"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THO
 "watch the tape":"VER LA CINTA","burn it":"QUEMARLO","keep it":"GUARDARLO","give up":"RENDIRSE"};
 const tr=s=>{const k=String(s||"").trim().toLowerCase();return D[k]||String(s||"").toUpperCase();};
 
-let SEGS=[],SEG={},MOM={},SG={},PREC={},ready=false,cur=null,shown=false,lock=false,openM=null,tId=0;
+let SEGS=[],SEG={},MOM={},SG={},PREC={},ready=false,cur=null,shown=false,lock=false,openM=null,tId=0,usedSrc="";
 
 function loadJS(src){
   return new Promise((ok,no)=>{
@@ -334,11 +358,10 @@ function build(){
   let n=0;
   for(const id in SM){
     SEG[id]={s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext};
-    SEGS.push({id,s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext});
-    n++;
+    SEGS.push({id,s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext});n++;
   }
   SEGS.sort((a,b)=>a.s-b.s);ready=true;
-  log("datos ok · "+n+" segmentos · "+Object.keys(MOM).length+" segmentos con momentos","k");
+  log("datos ok · "+n+" segmentos · "+Object.keys(MOM).length+" con momentos","k");
 }
 function condOk(c){
   if(c===undefined||c===null||c===true)return true;
@@ -385,11 +408,10 @@ function advance(prev,idx){
   if(!nxt&&prev&&SEG[prev]&&SEG[prev].d){nxt=SEG[SEG[prev].d]?SEG[prev].d:resolveSG(SEG[prev].d);}
   if(nxt)jump(nxt);else{log("sin destino, cierro overlay","w");closeOv();}
 }
-
 function showOv(m){
   if(shown)return;
   shown=true;openM=m;q.textContent="Elegí";
-  log("decisión en segmento "+cur+" · "+m.choices.length+" opciones");
+  log("decisión en "+cur+" · "+m.choices.length+" opciones");
   ov.querySelectorAll(".opt").forEach(n=>n.remove());
   const def=Math.min(m.defaultChoiceIndex??1,m.choices.length-1);
   m.choices.forEach((c,i)=>{
@@ -429,8 +451,7 @@ function loop(ts){
   if(ts-lastT<100)return;lastT=ts;
   if(lock||v.paused||v.ended||v.readyState<2)return;
   const ms=Math.round(v.currentTime*1000);
-  const id=segAt(ms);
-  if(!id)return;
+  const id=segAt(ms);if(!id)return;
   if(id!==cur)cur=id;
   for(const m of (MOM[id]||[])){
     if(!m.choices)continue;
@@ -466,21 +487,19 @@ function close(){
   try{v.pause();}catch(e){log("pause falló: "+e.message,"w");}
   v.removeAttribute("src");v.load();
   closeOv();veil.classList.remove("on");diag.classList.remove("on");playBtn.classList.remove("on");
-  document.body.style.overflow="";ready=false;cur=null;shown=false;
+  document.body.style.overflow="";ready=false;cur=null;shown=false;usedSrc="";
   log("reproductor cerrado");
 }
 $("back").onclick=close;
-$("fs").onclick=()=>{
-  try{ document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.(); }
-  catch(e){ log("pantalla completa falló: "+e.message,"e"); }
-};
-playBtn.onclick=()=>{playBtn.classList.remove("on");v.play().then(()=>log("play manual ok","k")).catch(e=>log("play manual falló: "+e.message,"e"));};
+$("fs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.();}
+  catch(e){log("pantalla completa falló: "+e.message,"e");}};
+playBtn.onclick=()=>{playBtn.classList.remove("on");
+  v.play().then(()=>log("play manual ok","k")).catch(e=>log("play manual falló: "+e.message,"e"));};
 
-/* ---------- arranque ---------- */
 async function start(){
   open();logEl.innerHTML="";
   log("arranque · UA: "+navigator.userAgent);
-  veil.classList.add("on");vt.textContent="Cargando";vp.textContent="preparando la cinta";
+  veil.classList.add("on");vt.textContent="Cargando";vp.textContent="buscando fuente viva";
 
   if(!ready){
     try{
@@ -489,55 +508,48 @@ async function start(){
       build();
     }catch(e){
       log("no se pudieron cargar los datos: "+e.message,"e");
-      veil.classList.add("on");vt.textContent="Faltan los datos";vp.textContent=e.message;
-      showDiag();return;
+      vt.textContent="Faltan los datos";vp.textContent=e.message;showDiag();return;
     }
     try{
-      log("bajando subtítulos: "+VTT);
+      log("bajando subtítulos");
       const r=await fetch(VTT,{cache:"force-cache"});
       if(!r.ok)throw new Error("HTTP "+r.status);
       const t=await r.text();
       trk.src=URL.createObjectURL(new Blob([t],{type:"text/vtt"}));
-      setTimeout(()=>{try{trk.track.mode="showing";log("subtítulos activados","k");}catch(e){log("track no disponible: "+e.message,"w");}},250);
-      setTimeout(()=>{try{trk.track.mode="showing";}catch(e){}},1100);
-    }catch(e){ log("subtítulos fallaron: "+e.message,"e"); }
+      setTimeout(()=>{try{trk.track.mode="showing";log("subtítulos activados","k");}catch(e){log("track no disponible","w");}},250);
+    }catch(e){log("subtítulos fallaron: "+e.message,"e");}
   }
 
-  log("asignando video: "+H1);
-  v.src=H1;v.load();
+  vp.textContent="probando nodos";
+  const src=await pickSource();
+  if(!src){
+    log("NINGUNA FUENTE RESPONDIÓ","e");
+    vt.textContent="Ningún nodo responde";
+    vp.textContent="las tres fuentes fallaron, mirá el log";
+    showDiag();return;
+  }
+  usedSrc=src;
+  log("usando fuente: "+src,"k");
+  v.src=src;v.load();
 
   const t=setTimeout(()=>{
     if(v.readyState<2){
-      log("TIMEOUT 12s sin readyState>=2 (actual "+v.readyState+")","e");
-      veil.classList.add("on");vt.textContent="El nodo no responde";
-      vp.textContent="readyState "+v.readyState+" · "+H1;
+      log("TIMEOUT 20s tras asignar la fuente (readyState "+v.readyState+")","e");
+      vt.textContent="El nodo se colgó";vp.textContent="readyState "+v.readyState;
       showDiag();
     }
-  },12000);
+  },20000);
   v.addEventListener("playing",()=>{clearTimeout(t);veil.classList.remove("on");log("reproduciendo","k");},{once:true});
-  v.addEventListener("loadedmetadata",()=>log("metadata ok · duración "+v.duration.toFixed(1)+"s","k"),{once:true});
+  v.addEventListener("loadedmetadata",()=>log("metadata ok · "+v.duration.toFixed(1)+"s","k"),{once:true});
 }
-v.addEventListener("waiting",()=>{log("waiting (buffering) en "+v.currentTime.toFixed(1)+"s","w");if(!shown)veil.classList.add("on");});
+v.addEventListener("waiting",()=>{log("buffering en "+v.currentTime.toFixed(1)+"s","w");if(!shown)veil.classList.add("on");});
 v.addEventListener("stalled",()=>log("stalled","w"));
 v.addEventListener("canplay",()=>{if(veil.classList.contains("on"))veil.classList.remove("on");});
-v.addEventListener("abort",()=>log("abort","w"));
 v.addEventListener("ended",()=>log("fin del video","k"));
-v.addEventListener("play",()=>{
-  const p=v.play();
-  if(p&&p.catch)p.catch(e=>{
-    log("autoplay bloqueado: "+e.name,"w");
-    playBtn.classList.add("on");veil.classList.remove("on");
-  });
-},{once:true});
 
-$("restart").onclick=()=>{
-  log("reinicio pedido","w");
-  localStorage.clear();
-  close();setTimeout(start,150);
-};
+$("restart").onclick=()=>{log("reinicio pedido","w");localStorage.clear();close();setTimeout(start,150);};
 document.querySelectorAll("[data-play]").forEach(c=>c.addEventListener("click",start));
 
-/* ---------- fondo con respaldo y log ---------- */
 const PH=["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1600px-Orthodox_cemetery_vilnius_by_night.JPG",
 "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1600px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"];
 (function bg(i){
