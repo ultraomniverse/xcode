@@ -226,6 +226,15 @@
     border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;display:none;z-index:35;pointer-events:none}
   #spin.on{display:block}@keyframes sp{to{transform:rotate(360deg)}}
 
+  #toast{position:absolute;left:50%;bottom:14px;transform:translateX(-50%) translateY(8px);
+    background:rgba(0,0,0,.92);border:1px solid rgba(255,255,255,.3);color:#fff;
+    font-size:11px;letter-spacing:.06em;padding:7px 14px;border-radius:99px;
+    opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:50;
+    max-width:86%;text-align:center}
+  #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  body.tv #toast{font-size:15px;padding:11px 20px}
+  .ctl button.off{opacity:.45}
+
   @media (max-width:900px){
     main{position:relative}
     aside{display:none}
@@ -288,6 +297,7 @@
         <track id="sub" kind="subtitles" srclang="es" label="Español (LATAM)">
       </video>
       <div id="spin"></div>
+      <div id="toast"></div>
 
       <div class="gate" id="gate">
         <h2 id="gateT">—</h2>
@@ -1190,6 +1200,12 @@ const GEFF={FlushThemChoice3X:["ps=f"],ThrowThemChoice:["ps=b"]};
 function applyChoiceEff(g){const e=GEFF[g];if(e) applyKV(e);}
 
 /* ===================== SUBTÍTULOS ===================== */
+let subGen=0;                       /* invalida respuestas tardías de otra película */
+const toastEl=$("toast");let toastT=0;
+function toast(msg,ms){
+  toastEl.textContent=msg;toastEl.classList.add("on");
+  clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("on"),ms||4500);
+}
 function ts(ms){ms=Math.max(0,Math.round(ms));
   const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000),r=ms%1000;
   return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")+"."+String(r).padStart(3,"0");}
@@ -1214,56 +1230,103 @@ function toVtt(raw,off){
   }
   return out.join("\n");
 }
+
+const subReady=()=>subMode!=="none"&&!!subRaw;
+
+function refreshSubUI(){
+  const ok=subReady();
+  btnSub.classList.toggle("on",ok&&showSubEl.checked);
+  btnSub.classList.toggle("off",!ok);
+  btnSub.title=ok?"Subtítulos (c)":"Sin subtítulos cargados";
+}
 function applySubMode(el){
   const t=el.textTracks&&el.textTracks[0];
-  if(t) t.mode=showSubEl.checked&&subMode!=="none"?"showing":"hidden";
+  if(t) t.mode=(showSubEl.checked&&subReady())?"showing":"hidden";
 }
 function applySubAll(){stage.querySelectorAll("video").forEach(applySubMode);}
+
+/* un solo blob vivo, repartido a TODAS las pistas (principal y de relevo) */
 function mountSub(){
   if(!subRaw) return;
-  if(subUrl) URL.revokeObjectURL(subUrl);
-  subUrl=URL.createObjectURL(new Blob([toVtt(subRaw,subOff)],{type:"text/vtt"}));
-  $("sub").src=subUrl;
+  const url=URL.createObjectURL(new Blob([toVtt(subRaw,subOff)],{type:"text/vtt"}));
+  const old=subUrl;subUrl=url;
+  stage.querySelectorAll("track").forEach(tr=>{tr.src=url;});
+  if(old) setTimeout(()=>URL.revokeObjectURL(old),5000);
   subOffEl.textContent=(subOff/1000).toFixed(1)+" s";
-  applySubAll();
-  btnSub.classList.toggle("on",showSubEl.checked);
+  applySubAll();refreshSubUI();
 }
-function setSub(raw,src){
+function setSub(raw,src,info){
   subRaw=raw;subMode=src;subOff=0;
-  subState.textContent=src==="local"?"Subtítulos locales.":
-    src==="remoto"?"Subtítulos en español desde la red.":
-    src==="archivo"?"Subtítulos cargados desde tu archivo.":"Sin subtítulos.";
-  subState.style.color="#5f5f6b";
+  const map={local:"Cargado del archivo del proyecto",remoto:"Descargado de la red",
+    archivo:"Cargado desde tu equipo"};
+  const kb=Math.max(1,Math.round(raw.length/1024));
+  subState.textContent=(map[src]||"Sin subtítulos")+(info?" · "+info:"")+" · "+kb+" KB";
+  subState.style.color=src==="local"?"#9fe3b0":"#5f5f6b";
+  console.log("[XCODE] subtítulos:",src,info||"","|",raw.length,"caracteres");
+  toast("Subtítulos: "+(info||src)+" · "+kb+" KB");
   mountSub();
 }
 async function bootSubs(){
   if(!FILM) return;
+  const my=++subGen;
   subRaw=null;subMode="none";subOff=0;subOffEl.textContent="0.0 s";
-  subState.textContent="Buscando subtítulos…";subState.style.color="#5f5f6b";
+  subState.textContent="Buscando subtítulos…";subState.style.color="#5f5f6b";refreshSubUI();
+  const name=FILM.subLocal;
   try{
-    const r=await fetch(FILM.subLocal,{method:"HEAD",cache:"no-store"});
-    if(r.ok){setSub(await (await fetch(FILM.subLocal)).text(),"local");return;}
-  }catch(e){}
+    const r=await fetch(name,{cache:"no-store"});
+    if(my!==subGen) return;
+    if(r.ok){
+      const t=await r.text();
+      if(my!==subGen) return;
+      if(t.indexOf("-->")>0){setSub(t,"local",name);return;}
+      subState.textContent=name+" existe pero no tiene marcas de tiempo.";
+      toast(name+" no parece un subtítulo válido");
+    }else{
+      subState.textContent=name+" no está (HTTP "+r.status+"). Buscando en la red…";
+    }
+  }catch(e){
+    if(my!==subGen) return;
+    subState.textContent=name+" no se pudo abrir. Buscando en la red…";
+  }
   for(const u of FILM.subRemote){
     try{
       const r=await fetch(u,{cache:"force-cache"});
+      if(my!==subGen) return;
       if(!r.ok) continue;
       const t=await r.text();
+      if(my!==subGen) return;
       if(t.indexOf("-->")<0) continue;
-      setSub(t,"remoto");return;
+      setSub(t,"remoto",u.split("/").pop());return;
     }catch(e){}
   }
-  subState.textContent="No se pudieron descargar. Usa «Cargar subtítulos».";
+  if(my!==subGen) return;
+  subState.textContent="No se encontraron subtítulos. Usa «Cargar subtítulos».";
+  refreshSubUI();
 }
+
+function toggleSubs(force){
+  if(!subReady()){
+    toast("Todavía no hay subtítulos para esta película");
+    return;
+  }
+  showSubEl.checked=(force===undefined)?!showSubEl.checked:!!force;
+  mountSub();                        /* re-monta y fuerza el modo real */
+}
+btnSub.onclick=e=>{if(e) e.stopPropagation();toggleSubs();};
+showSubEl.onchange=()=>toggleSubs(showSubEl.checked);
 $("btnSubFile").onclick=()=>$("subFile").click();
 $("subFile").onchange=e=>{
   const f=e.target.files&&e.target.files[0];if(!f) return;
-  const rd=new FileReader();rd.onload=()=>setSub(String(rd.result),"archivo");rd.readAsText(f,"utf-8");
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const t=String(rd.result);
+    if(t.indexOf("-->")<0){toast(f.name+" no tiene marcas de tiempo");return;}
+    setSub(t,"archivo",f.name);
+  };
+  rd.readAsText(f,"utf-8");
 };
-$("subMinus").onclick=()=>{subOff-=500;mountSub();};
-$("subPlus").onclick=()=>{subOff+=500;mountSub();};
-showSubEl.onchange=()=>{applySubAll();btnSub.classList.toggle("on",showSubEl.checked);};
-btnSub.onclick=()=>{showSubEl.checked=!showSubEl.checked;showSubEl.onchange();};
+$("subMinus").onclick=()=>{if(!subRaw) return;subOff-=500;mountSub();};
+$("subPlus").onclick=()=>{if(!subRaw) return;subOff+=500;mountSub();};
 
 /* ===================== CAPÍTULOS ===================== */
 function renderChap(){
@@ -1613,6 +1676,10 @@ function openFilm(key){
   $("btnResume").style.display="none";
   aside.classList.remove("show");
 
+  subGen++;subRaw=null;subMode="none";subOff=0;subUrl=null;
+  stage.querySelectorAll("track").forEach(tr=>tr.removeAttribute("src"));
+  refreshSubUI();
+
   parseAll(key==="bander"?RAW:SATAN_RAW, key==="bander"?GRAW:"", key==="bander"?PRAW:"", key==="bander"?ERAW:"");
   resetState();cur=null;started=false;ended=false;failed=false;shown=false;
   hideOv();
@@ -1636,6 +1703,9 @@ function closeFilm(){
   document.body.dataset.view="home";
   v.pause();cur=null;started=false;ended=false;hideOv();releaseStandbys();
   v=vMain;
+  subGen++;subRaw=null;subMode="none";subUrl=null;
+  stage.querySelectorAll("track").forEach(tr=>tr.removeAttribute("src"));
+  refreshSubUI();
   gate.style.display="flex";endBox.classList.remove("on");
   setPseudo(false);
   $("btnBack").style.display="none";hTitle.style.display="none";
@@ -1792,7 +1862,7 @@ setInterval(tick,500);
   const coarse=matchMedia("(pointer: coarse)").matches;
   if(Math.min(window.innerWidth,window.innerHeight)>=540&&!coarse) setTV(true);
   document.body.dataset.view="home";
-  renderLog();renderMap();
+  renderLog();renderMap();refreshSubUI();
   const first=document.querySelector(".card");
   if(first) try{first.focus({preventScroll:true});}catch(e){}
 })();
