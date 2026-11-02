@@ -3,257 +3,221 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#000000">
-<title>Dear colleague</title>
+<title>xcode</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+html{background:#1b1b1b}
+body{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#1b1b1b;font-size:18px;line-height:1.6}
 
-html{background:#3a3a3a}
-body{
-  min-height:100%;
-  font-family:Arial,Helvetica,sans-serif;
-  color:#fff;
-  background:#2b2b2b;
-  -webkit-font-smoothing:antialiased;
-}
+#bg{position:fixed;inset:0;z-index:0;
+background:#444 url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG") center/cover no-repeat;
+filter:grayscale(1) contrast(1.25) brightness(1.5)}
+#veil{position:fixed;inset:0;z-index:1;
+background:linear-gradient(to bottom,rgba(0,0,0,.75),rgba(0,0,0,.45) 30%,rgba(0,0,0,.72))}
 
-/* fondo cementerio: gris teatral, muy luminoso, legible en cualquier pantalla */
-#bg{
-  position:fixed;inset:0;z-index:0;
-  background:#555 url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG") center/cover no-repeat;
-  filter:grayscale(1) contrast(1.35) brightness(2.05);
-}
-/* levantamiento de luz: garantiza visibilidad en pantallas oscuras */
-#lift{
-  position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:rgba(255,255,255,.16);
-  mix-blend-mode:screen;
-}
-/* haz de luz teatral desde arriba */
-#beam{
-  position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
-  background:
-    conic-gradient(from 190deg at 50% -12%, transparent 0deg, rgba(255,255,255,.22) 18deg, transparent 34deg),
-    radial-gradient(ellipse 55% 40% at 50% 0%,rgba(255,255,255,.26),transparent 70%);
-}
-/* viñeta: bordes apenas oscurecidos, centro limpio */
-#veil{
-  position:fixed;inset:0;z-index:3;pointer-events:none;
-  background:
-    radial-gradient(ellipse 72% 66% at 50% 45%,transparent 0%,rgba(0,0,0,.12) 62%,rgba(0,0,0,.62) 100%),
-    linear-gradient(to bottom,rgba(0,0,0,.34),transparent 20%,transparent 74%,rgba(0,0,0,.72));
-}
-/* niebla rastrera */
-#fog{
-  position:fixed;left:-40%;right:-40%;bottom:-8%;height:55%;z-index:4;pointer-events:none;
-  background:
-    radial-gradient(ellipse 40% 55% at 25% 70%,rgba(255,255,255,.28),transparent 70%),
-    radial-gradient(ellipse 45% 50% at 70% 60%,rgba(255,255,255,.22),transparent 72%);
-  filter:blur(22px);opacity:.9;
-  animation:drift 52s linear infinite alternate;
-}
-@keyframes drift{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
-/* grano */
-#grain{
-  position:fixed;inset:-60%;z-index:5;pointer-events:none;opacity:.18;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
-  animation:g .8s steps(4) infinite;
-}
-@keyframes g{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,2%)}100%{transform:translate(0,0)}}
+.wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 28px}
 
-/* carta */
-#page{
-  position:relative;z-index:6;
-  min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  padding:70px 22px;
-}
-#letter{
-  position:relative;
-  width:100%;max-width:620px;
-  font-size:16.5px;line-height:1.95;letter-spacing:.012em;
-  text-shadow:0 1px 3px #000,0 2px 12px rgba(0,0,0,.95),0 0 40px rgba(0,0,0,.9);
-}
-/* halo oscuro local: legibilidad sin apagar el fondo */
-#letter::before{
-  content:"";position:absolute;inset:-52px -46px;z-index:-1;
-  background:radial-gradient(ellipse 62% 55% at 50% 50%,rgba(0,0,0,.66) 0%,rgba(0,0,0,.4) 55%,transparent 82%);
-  filter:blur(18px);
-}
-#letter .mark{
-  font-size:9.5px;letter-spacing:.55em;text-transform:uppercase;
-  opacity:.8;margin-bottom:42px;
-}
-#letter p{margin:0 0 21px}
-#letter .salute{margin-bottom:26px}
-#letter .close{margin-top:34px;margin-bottom:6px}
-#letter .pd{
-  font-size:13px;line-height:1.7;opacity:.85;margin-top:34px;
-  padding-top:20px;border-top:1px solid rgba(255,255,255,.32);
-}
+header{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
+.brand{display:flex;align-items:center;gap:14px}
+.cross{width:26px;height:34px;position:relative}
+.cross::before,.cross::after{content:"";position:absolute;background:#fff}
+.cross::before{left:11px;top:0;width:4px;height:34px}
+.cross::after{left:0;top:9px;width:26px;height:4px}
+.brand b{font-size:30px;letter-spacing:.16em;font-weight:700}
 
-#sign{
-  display:block;width:190px;max-width:55%;
-  margin:16px 0 0 -4px;
-  filter:invert(1) brightness(1.2) drop-shadow(0 2px 8px rgba(0,0,0,.9));
-  opacity:.95;
-}
+main{padding:60px 0 20px}
+h1{font-size:52px;line-height:1.1;font-weight:700;margin-bottom:14px;letter-spacing:-.01em}
+.sub{font-size:19px;color:#d4d4d4;margin-bottom:52px;max-width:640px}
 
-/* play */
-#play{
-  position:relative;z-index:6;
-  display:flex;align-items:center;justify-content:center;
-  width:64px;height:64px;margin:0 auto 78px;
-  border:1px solid rgba(255,255,255,.75);border-radius:50%;
-  background:rgba(0,0,0,.5);cursor:pointer;
-  transition:background .3s,border-color .3s,transform .3s;
-  box-shadow:0 0 30px rgba(0,0,0,.9);
-  backdrop-filter:blur(2px);
-}
-#play:hover,#play:focus{
-  outline:none;background:#fff;border-color:#fff;transform:scale(1.06);
-}
-#play svg{width:20px;height:20px;fill:#fff;transition:fill .3s;margin-left:3px}
-#play:hover svg,#play:focus svg{fill:#000}
-#play::after{
-  content:"ver la película";position:absolute;top:74px;left:50%;
-  transform:translateX(-50%);white-space:nowrap;
-  font-size:9px;letter-spacing:.4em;text-transform:uppercase;opacity:.75;
-  text-shadow:0 1px 6px #000;
-}
+h2.sec{font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:#cfcfcf;
+margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
 
-/* reproductor */
-#film{position:fixed;inset:0;z-index:10;background:#000;visibility:hidden}
-#film.on{visibility:visible}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:70px}
+
+.card{display:block;background:#111;border:1px solid rgba(255,255,255,.28);
+text-decoration:none;color:#fff;padding:0;cursor:pointer;text-align:left;font-family:inherit}
+.card:hover,.card:focus{outline:3px solid #fff;outline-offset:3px;background:#000}
+.poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#222}
+.card .body{padding:14px 16px 18px}
+.card .t{font-size:20px;font-weight:700;line-height:1.25;margin-bottom:6px}
+.card .m{font-size:13px;color:#bcbcbc;letter-spacing:.06em;text-transform:uppercase}
+.tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.18em;
+text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 9px;color:#e2e2e2}
+
+.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;
+border:1px dashed rgba(255,255,255,.45);background:rgba(0,0,0,.45);text-align:center;padding:24px}
+.soon span{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:#d8d8d8}
+
+footer{position:relative;z-index:2;background:#0b0b0b;border-top:1px solid #333;margin-top:40px}
+.fwrap{max-width:1100px;margin:0 auto;padding:52px 28px 34px}
+.cols{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-bottom:44px}
+.col h3{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:14px}
+.col a{display:block;font-size:13px;color:#9d9d9d;text-decoration:none;padding:5px 0;line-height:1.4}
+.col a:hover{color:#fff;text-decoration:underline}
+.legal{border-top:1px solid #2a2a2a;padding-top:26px;font-size:12px;color:#7d7d7d;line-height:1.75}
+.legal p{margin-bottom:14px}
+.copy{margin-top:26px;padding-top:20px;border-top:1px solid #2a2a2a;
+font-size:12px;color:#6f6f6f;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+#film{position:fixed;inset:0;z-index:20;background:#000;display:none}
+#film.on{display:block}
 #frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-
-#bar{
-  position:absolute;top:0;left:0;right:0;z-index:20;
-  display:flex;align-items:center;gap:10px;padding:12px 16px;
-  background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);
-  opacity:0;transition:opacity .3s;font-family:Arial,sans-serif;
-}
-#film:hover #bar,#bar:focus-within{opacity:1}
-#bar button{
-  padding:9px 14px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);
-  color:#ddd;font-family:Arial,sans-serif;font-size:10px;letter-spacing:.22em;
-  text-transform:uppercase;cursor:pointer;transition:.2s;
-}
-#bar button:hover,#bar button:focus{outline:none;border-color:#fff;color:#fff}
+#bar{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;gap:12px;align-items:center;
+padding:12px 16px;background:rgba(0,0,0,.75)}
+#bar button{font-family:inherit;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointer}
+#bar button:hover,#bar button:focus{outline:3px solid #fff;outline-offset:2px}
 #bar .sp{flex:1}
-#bar .st{font-size:9px;letter-spacing:.28em;color:#8d8d8d;text-transform:uppercase}
+#bar .n{font-size:13px;color:#ccc;letter-spacing:.14em;text-transform:uppercase}
 
-#spin{
-  position:absolute;inset:0;z-index:15;display:none;
-  align-items:center;justify-content:center;background:#000;
-  font-size:11px;letter-spacing:.5em;text-transform:uppercase;
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .cols{grid-template-columns:repeat(3,1fr)}
+  h1{font-size:38px}
 }
-#spin.on{display:flex}
-#spin span{animation:b 1.9s ease-in-out infinite}
-@keyframes b{0%,100%{opacity:.35}50%{opacity:1}}
-
-#toast{
-  position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:40;
-  padding:8px 16px;background:#000;border:1px solid #fff;
-  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;
-}
-#toast.show{opacity:1}
-
 @media(max-width:600px){
-  #letter{font-size:15.5px;line-height:1.9}
-  #page{padding:56px 20px}
+  .grid{grid-template-columns:1fr}
+  .cols{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:30px}
 }
 </style>
 </head>
 <body>
 
 <div id="bg"></div>
-<div id="lift"></div>
-<div id="beam"></div>
 <div id="veil"></div>
-<div id="fog"></div>
-<div id="grain"></div>
 
-<div id="page">
-  <article id="letter">
-    <div class="mark">Sátántangó · 1994</div>
+<div class="wrap">
+  <header>
+    <div class="brand"><div class="cross"></div><b>XCODE</b></div>
+  </header>
 
-    <p class="salute">Dear colleague,</p>
+  <main>
+    <h1>El catálogo del abismo.</h1>
+    <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin prisa. Entrá y elegí.</p>
 
-    <p>Le escribo desde un pueblo que ya no existe, aunque siga en los mapas. Llueve desde antes de que yo naciera y nadie ha pensado en detenerlo.</p>
+    <h2 class="sec">Disponible ahora</h2>
+    <div class="grid">
 
-    <p>Aquí el tiempo no avanza: se acumula. Los hombres esperan un dinero que nunca llega, las mujeres esperan a los hombres, y los perros esperan a cualquiera. Yo filmo la espera porque es lo único honesto que queda: el barro, el viento, un caballo que camina sin destino, una niña que envenena a un gato y no llora.</p>
+      <button class="card" data-play="sat">
+        <img class="poster" loading="lazy" decoding="async" alt="Sátántángó"
+        src="https://m.media-amazon.com/images/M/MV5BM2U1ZGYwNTItMjcwMS00ZTdjLWE2OWUtNDI5M2JlNjdmMTZlXkEyXkFqcGc@._V1_.jpg">
+        <div class="body">
+          <div class="t">Sátántangó</div>
+          <div class="m">1994 · Béla Tarr · 7 h 19 min</div>
+          <span class="tag">1080p · subtítulos ES</span>
+        </div>
+      </button>
 
-    <p>No crea que la belleza consuela. Aquí la belleza es una forma del espanto. Cuando la luz cae sobre el lodo y todo se vuelve gris, uno entiende que el mundo no tiene argumento: solo tiene duración.</p>
+      <button class="card" data-play="ban">
+        <img class="poster" loading="lazy" decoding="async" alt="Bandersnatch"
+        src="https://m.media-amazon.com/images/M/MV5BMjM5MzgzMjM3OF5BMl5BanBnXkFtZTgwMzQ2MzQwNzM@._V1_.jpg">
+        <div class="body">
+          <div class="t">Black Mirror: Bandersnatch</div>
+          <div class="m">2018 · David Slade · interactivo</div>
+          <span class="tag">1080p · subtítulos ES</span>
+        </div>
+      </button>
 
-    <p>Usted querrá saber qué significa. No significa nada, y ahí está su fuerza. El que busca un sentido en siete horas de lluvia termina encontrándose a sí mismo, y casi siempre sale peor.</p>
+      <div class="card" style="cursor:default">
+        <div class="soon"><span>Espacio disponible<br>para otra<br>que viene pronto</span></div>
+        <div class="body">
+          <div class="t">—</div>
+          <div class="m">Próximamente</div>
+        </div>
+      </div>
 
-    <p>Véala de noche, solo, sin pausas. Si aguanta hasta el final, algo se le habrá movido de sitio para siempre. Si no, no importa: el abismo seguirá aquí, esperándole, sin rencor.</p>
-
-    <p class="close">Con fría estima,</p>
-
-    <img id="sign" alt="Béla Tarr"
-         src="https://upload.wikimedia.org/wikipedia/commons/0/07/B%C3%A9la_Tarr_signature.svg">
-
-    <p class="pd">P.D. Si llueve donde usted está, mejor.</p>
-  </article>
+    </div>
+  </main>
 </div>
 
-<button id="play" aria-label="Reproducir">
-  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-</button>
+<footer>
+  <div class="fwrap">
+    <div class="cols">
+      <div class="col">
+        <h3>Compañía</h3>
+        <a href="#">Sobre xcode</a><a href="#">Historia</a><a href="#">Empleo</a>
+        <a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a>
+      </div>
+      <div class="col">
+        <h3>Catálogo</h3>
+        <a href="#">Películas</a><a href="#">Series</a><a href="#">Documentales</a>
+        <a href="#">Cine de culto</a><a href="#">Interactivos</a><a href="#">Próximos estrenos</a>
+      </div>
+      <div class="col">
+        <h3>Ayuda</h3>
+        <a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a>
+        <a href="#">Facturación</a><a href="#">Reportar un error</a><a href="#">Estado del servicio</a>
+      </div>
+      <div class="col">
+        <h3>Legal</h3>
+        <a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a>
+        <a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a>
+      </div>
+      <div class="col">
+        <h3>Regiones</h3>
+        <a href="#">España</a><a href="#">México</a><a href="#">Argentina</a>
+        <a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a>
+      </div>
+      <div class="col">
+        <h3>Recursos</h3>
+        <a href="#">API</a><a href="#">Desarrolladores</a><a href="#">Kit de prensa</a>
+        <a href="#">Blog</a><a href="#">Comunidad</a><a href="#">Contacto</a>
+      </div>
+    </div>
+
+    <div class="legal">
+      <p>xcode es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; xcode no aloja los archivos ni reclama su titularidad. Sátántangó (1994), dirigida por Béla Tarr, se exhibe desde un espejo público. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce mediante el reproductor interactivo de código abierto BandersnatchInteractive y requiere que el usuario aporte su propio archivo de video con una duración exacta de 5 h 12 min 14 s.</p>
+      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad de reproducción depende del ancho de banda del usuario, del dispositivo y de la fuente. Los subtítulos en español latinoamericano se ofrecen según disponibilidad de cada obra y pueden requerir selección manual en el reproductor.</p>
+      <p>Este sitio no utiliza cookies de seguimiento ni perfiles de usuario. El progreso y las preferencias se guardan localmente en el dispositivo. Ninguna recomendación es automática: el orden del catálogo es editorial y puede cambiar por criterio curatorial.</p>
+      <p>Marcas, títulos, carteles y nombres comerciales pertenecen a sus respectivos titulares y se emplean con fines informativos. Las imágenes de portada provienen de bases de datos públicas de metadatos.</p>
+      <p>xcode opera de forma independiente y sin fines comerciales. No se ofrece soporte telefónico. Las consultas se atienden por correo y con demora variable.</p>
+    </div>
+
+    <div class="copy">
+      <span>© 2026 xcode. Todos los derechos reservados.</span>
+      <span>Hecho en el abismo · versión 1.0</span>
+    </div>
+  </div>
+</footer>
 
 <div id="film">
   <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
   <div id="bar">
     <button id="back">← Volver</button>
-    <button id="next">Otra copia</button>
     <span class="sp"></span>
-    <span class="st" id="st"></span>
+    <span class="n" id="now"></span>
   </div>
-  <div id="spin"><span>Descendiendo</span></div>
-  <div id="toast"></div>
 </div>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 
-const F=[
-  {u:"https://ok.ru/videoembed/7513547082408", n:"completa · 1080p vose"},
-  {u:"https://ok.ru/videoembed/1989433952888", n:"parte 1/3"},
-  {u:"https://ok.ru/videoembed/1989534681720", n:"parte 2/3"},
-  {u:"https://ok.ru/videoembed/1989597530744", n:"parte 3/3"}
-];
-let i=0;
-
-function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2400);}
-
-function load(k){
-  i=k;
-  $("spin").classList.add("on");
-  $("st").textContent=F[k].n;
-  $("frame").src=F[k].u;
-  setTimeout(()=>$("spin").classList.remove("on"),1600);
-}
-
-$("play").onclick=()=>{
-  $("film").classList.add("on");
-  document.body.style.overflow="hidden";
-  load(0);
+const SRC={
+  sat:{u:"https://ok.ru/videoembed/7513547082408", n:"Sátántangó · 1080p"},
+  ban:{u:"https://cybershadow.github.io/BandersnatchInteractive/", n:"Bandersnatch · interactivo"}
 };
-$("next").onclick=()=>{load((i+1)%F.length);toast(F[(i+1)%F.length].n);};
-$("back").onclick=()=>{
+
+document.querySelectorAll("[data-play]").forEach(c=>{
+  c.addEventListener("click",()=>{
+    const k=c.dataset.play, s=SRC[k];
+    $("now").textContent=s.n;
+    $("frame").src=s.u;
+    $("film").classList.add("on");
+    $("back").focus();
+    document.body.style.overflow="hidden";
+  });
+});
+
+$("back").addEventListener("click",()=>{
   $("frame").src="about:blank";
   $("film").classList.remove("on");
   document.body.style.overflow="";
-};
-addEventListener("keydown",e=>{
-  if(!$("film").classList.contains("on"))return;
-  if(e.key==="Escape")$("back").click();
-  if(e.key==="n")$("next").click();
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && $("film").classList.contains("on")) $("back").click();
 });
 </script>
 </body>
