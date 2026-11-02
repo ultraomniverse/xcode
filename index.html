@@ -1,586 +1,478 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en-US">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PSICOSIS DE LA MUERTE — PSYCHOTIC</title>
-<link rel="preconnect" href="https://archive.org">
-<link rel="preconnect" href="https://ia600203.us.archive.org">
-<link rel="preconnect" href="https://upload.wikimedia.org">
+<title>EFFED UP MOVIES Watch The Most Fucked Up Controversial Movies Online</title>
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/plugins/content-views-query-and-display-post-page/public/assets/css/cv.css">
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/themes/sydney/inc/modules/hf-builder/assets/css/sydney-shfb.min.css">
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/themes/sydney/css/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/fonts/1c1038d2d0552781e7654c6e2b06a92c.css">
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/themes/sydney/css/free/styles.min.css">
+<link rel="stylesheet" href="https://www.effedupmovies.com/wp-content/themes/sydney/style.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: #050505; }
-
-  .pd {
-    position: relative;
-    width: 100%;
-    background: #050505;
-    color: #ddd6c8;
-    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    overflow: hidden;
-    border: 1px solid #1a1a1a;
+  .header-image { background-image: url("https://www.effedupmovies.com/wp-content/uploads/2025/09/header.jpg"); display: block; height: 300px; background-size: cover; }
+  @media only screen and (max-width: 1024px) {
+    .header-inner { display: block; }
+    .header-image { background-image: none; height: auto !important; }
   }
-
-  /* ---------- fondo cementerio ---------- */
-  .pd-bg {
-    position: absolute; inset: 0; z-index: 0; overflow: hidden;
-    background: #08080a;
-  }
-  .pd-bg img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%; object-fit: cover;
-    filter: grayscale(1) contrast(1.45) brightness(.42);
-    transform: scale(1.06);
-    animation: drift 42s ease-in-out infinite alternate;
-  }
-  @keyframes drift { from { transform: scale(1.06) translate3d(-1%,-1%,0); } to { transform: scale(1.14) translate3d(1%,1.5%,0); } }
-
-  .pd-bg .fog {
-    position: absolute; inset: -20%;
-    background:
-      radial-gradient(45% 30% at 20% 70%, rgba(200,205,215,.16), transparent 70%),
-      radial-gradient(50% 34% at 78% 40%, rgba(190,195,210,.13), transparent 70%),
-      radial-gradient(60% 40% at 50% 95%, rgba(150,155,170,.18), transparent 70%);
-    animation: fogm 26s ease-in-out infinite alternate;
-    mix-blend-mode: screen;
-  }
-  @keyframes fogm { from { transform: translate3d(-3%,0,0); } to { transform: translate3d(4%,-2%,0); } }
-
-  .pd-bg .grade {
-    position: absolute; inset: 0;
-    background:
-      linear-gradient(to bottom, rgba(5,5,6,.9) 0%, rgba(5,5,6,.42) 28%, rgba(5,5,6,.55) 62%, #050505 100%),
-      radial-gradient(85% 65% at 50% 42%, transparent 20%, rgba(0,0,0,.9) 100%);
-  }
-  .pd-bg .scan {
-    position: absolute; inset: 0; opacity: .35;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,.5) 0 1px, transparent 1px 3px);
-  }
-
-  .pd-in { position: relative; z-index: 2; }
-
-  /* ---------- barra ---------- */
-  .pd-top {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding: 11px 15px;
-    border-bottom: 1px solid #26221c;
-    background: rgba(0,0,0,.66);
-    font-size: 9px; letter-spacing: .26em; text-transform: uppercase; color: #8d8271;
-  }
-  .pd-top b { color: #b8412b; }
-  .pd-top .psy { color: #e5dece; letter-spacing: .3em; }
-
-  /* ---------- hero ---------- */
-  .pd-hero { padding: 40px 22px 30px; text-align: center; }
-  .pd-kick { font-size: 9px; letter-spacing: .42em; text-transform: uppercase; color: #a2957f; margin-bottom: 12px; }
-  .pd-h1 {
-    font-family: 'Cinzel', serif; font-weight: 900;
-    font-size: 40px; line-height: .98; letter-spacing: .04em; text-transform: uppercase;
-    color: #f3ecdc;
-    text-shadow: 0 0 30px rgba(184,65,43,.45), 0 0 90px rgba(0,0,0,.9);
-  }
-  .pd-h1 span { display: block; font-size: 15px; letter-spacing: .5em; color: #b8412b; margin: 10px 0 6px; font-weight: 700; }
-  .pd-tag { margin-top: 14px; font-size: 11px; letter-spacing: .1em; color: #a2957f; }
-
-  .pd-cta {
-    margin-top: 22px; display: inline-flex; align-items: center; gap: 9px;
-    padding: 13px 26px; cursor: pointer;
-    background: #7e1c10; color: #fff3e6;
-    border: 1px solid #c04a2c;
-    font-family: inherit; font-size: 11px; font-weight: 500; letter-spacing: .28em; text-transform: uppercase;
-    box-shadow: 0 0 34px rgba(184,65,43,.35), 0 0 0 1px rgba(0,0,0,.6) inset;
-    transition: background .15s, box-shadow .2s, transform .12s;
-  }
-  .pd-cta:hover { background: #a52915; box-shadow: 0 0 54px rgba(200,80,50,.55); transform: translateY(-1px); }
-
-  /* ---------- simbología ---------- */
-  .pd-sym {
-    display: flex; align-items: center; justify-content: center;
-    gap: 16px; flex-wrap: wrap;
-    padding: 16px 12px; margin: 22px 0 0;
-    border-top: 1px solid #221e19; border-bottom: 1px solid #221e19;
-    background: rgba(0,0,0,.5);
-  }
-  .pd-sym svg { width: 26px; height: 26px; stroke: #b3a58d; fill: none; stroke-width: 1.2; opacity: .85; transition: stroke .2s, opacity .2s, transform .2s; }
-  .pd-sym svg:hover { stroke: #d95a35; opacity: 1; transform: translateY(-2px); }
-
-  /* ---------- reproductor ---------- */
-  .pd-cine { display: none; border-bottom: 1px solid #221e19; background: #000; }
-  .pd-cine.on { display: block; }
-
-  .pd-stage { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; }
-  .pd-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
-  .pd-stage:fullscreen { aspect-ratio: auto; height: 100vh; }
-  .pd-stage .grain { position: absolute; inset: 0; pointer-events: none; z-index: 3; opacity: .3;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,.55) 0 1px, transparent 1px 3px); }
-
-  .pd-cc {
-    position: absolute; left: 5%; right: 5%; bottom: 58px; z-index: 4; text-align: center;
-    font-size: 14px; line-height: 1.35; color: #fff; pointer-events: none;
-    text-shadow: 0 2px 5px #000, 0 0 3px #000, 0 0 16px rgba(0,0,0,.95);
-    opacity: 0; transition: opacity .12s;
-  }
-  .pd-cc.on { opacity: 1; }
-
-  .pd-lab {
-    position: absolute; top: 9px; left: 9px; z-index: 5;
-    font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
-    color: #d3c8b4; background: rgba(0,0,0,.72); border: 1px solid #332c24; padding: 4px 7px;
-  }
-  .pd-lab.rec::before { content: '● '; color: #b8412b; }
-
-  .pd-gate {
-    position: absolute; inset: 0; z-index: 9; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 12px; text-align: center;
-    background: radial-gradient(60% 60% at 50% 50%, rgba(10,8,6,.72), rgba(0,0,0,.94));
-    padding: 18px;
-  }
-  .pd-gate.off { display: none; }
-  .pd-gate h4 { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: .16em; text-transform: uppercase; color: #f0e8d8; }
-  .pd-gate p { font-size: 10px; letter-spacing: .16em; color: #a2957f; text-transform: uppercase; }
-  .pd-gate .big {
-    width: 62px; height: 62px; border-radius: 50%; cursor: pointer;
-    background: rgba(126,28,16,.85); border: 1px solid #c04a2c; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 40px rgba(184,65,43,.5);
-    transition: transform .15s, background .15s;
-  }
-  .pd-gate .big:hover { transform: scale(1.06); background: #a52915; }
-  .pd-gate .big svg { width: 22px; height: 22px; fill: currentColor; }
-
-  .pd-buf {
-    position: absolute; inset: 0; z-index: 8; display: none;
-    align-items: center; justify-content: center; flex-direction: column; gap: 9px;
-    background: rgba(0,0,0,.85); font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: #b9ad98;
-  }
-  .pd-buf.on { display: flex; }
-  .pd-buf .r { width: 24px; height: 24px; border: 2px solid #2c2620; border-top-color: #b8412b; border-radius: 50%; animation: sp .8s linear infinite; }
-  @keyframes sp { to { transform: rotate(360deg); } }
-
-  /* controles */
-  .pd-ctrl { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; padding: 8px 9px; background: #0a0908; border-top: 1px solid #221e19; }
-  .pd-ctrl button {
-    font-family: inherit; cursor: pointer; background: #16130f; color: #c9bfab;
-    border: 1px solid #2e2820; padding: 7px 10px;
-    font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-    display: inline-flex; align-items: center; gap: 5px; transition: .13s;
-  }
-  .pd-ctrl button:hover { background: #221c16; border-color: #4a3d30; color: #fff; }
-  .pd-ctrl button.act { background: #7e1c10; border-color: #b8412b; color: #fff3e6; }
-  .pd-ctrl svg { width: 12px; height: 12px; fill: currentColor; }
-
-  .pd-bar { flex: 1; min-width: 90px; height: 20px; display: flex; align-items: center; cursor: pointer; }
-  .pd-bar .rail { width: 100%; height: 3px; background: #2a2520; position: relative; }
-  .pd-bar .fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: #b8412b; }
-  .pd-bar.lock { cursor: not-allowed; }
-  .pd-bar.lock .fill { background: #5e2a1f; }
-  .pd-bar .ch { position: absolute; top: 50%; width: 1px; height: 7px; background: #574a3a; transform: translate(-50%,-50%); }
-  .pd-clock { font-size: 9px; color: #7a7060; min-width: 74px; text-align: right; }
-
-  .pd-movs { padding: 12px; border-top: 1px solid #221e19; background: #070706; }
-  .pd-movs .h { font-size: 8px; letter-spacing: .3em; text-transform: uppercase; color: #7a7060; margin-bottom: 9px; }
-  .pd-movs .grid { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pd-movs button {
-    font-family: inherit; cursor: pointer; background: #12100d; color: #b3a58d;
-    border: 1px solid #2a241d; padding: 6px 9px; font-size: 9px; letter-spacing: .1em;
-    transition: .13s;
-  }
-  .pd-movs button:hover { background: #241d16; border-color: #5b4a39; color: #f0e8d8; }
-  .pd-movs button b { color: #b8412b; }
-
-  /* ---------- altares ---------- */
-  .pd-alt { padding: 34px 20px 8px; background: linear-gradient(to bottom, #060606, #080706); border-top: 1px solid #1e1a15; }
-  .pd-sec-h { text-align: center; margin-bottom: 22px; }
-  .pd-sec-h h2 { font-family: 'Cinzel', serif; font-size: 21px; letter-spacing: .22em; text-transform: uppercase; color: #efe6d4; }
-  .pd-sec-h p { margin-top: 8px; font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: #8d8271; }
-
-  .pd-altars { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  @media (min-width: 620px) { .pd-altars { grid-template-columns: 1fr 1fr 1fr; } }
-
-  .pd-altar {
-    position: relative; padding: 22px 14px 18px; text-align: center;
-    background: linear-gradient(to bottom, rgba(30,22,16,.9), rgba(8,7,6,.96));
-    border: 1px solid #2e2620; overflow: hidden;
-  }
-  .pd-altar::before {
-    content: ''; position: absolute; left: 50%; top: 0; width: 120%; height: 60%;
-    transform: translateX(-50%);
-    background: radial-gradient(50% 60% at 50% 0%, rgba(214,110,60,.22), transparent 70%);
-    pointer-events: none;
-  }
-  .pd-altar svg.sig { width: 54px; height: 54px; stroke: #c9642f; fill: none; stroke-width: 1.1; margin: 0 auto 10px; display: block; filter: drop-shadow(0 0 10px rgba(201,100,47,.5)); }
-  .pd-altar h3 { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #f0e5d0; margin-bottom: 8px; }
-  .pd-altar p { font-size: 10px; line-height: 1.75; color: #9c9081; }
-  .pd-altar .of { margin-top: 12px; font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: #6d6355; border-top: 1px solid #241f19; padding-top: 9px; }
-  .pd-candles { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
-  .pd-candles i { display: block; width: 3px; height: 14px; background: #d8cbb2; position: relative; }
-  .pd-candles i::after {
-    content: ''; position: absolute; left: 50%; top: -8px; width: 6px; height: 8px;
-    transform: translateX(-50%);
-    background: radial-gradient(circle at 50% 70%, #ffd27a, #e06a1e 55%, transparent 72%);
-    border-radius: 50% 50% 45% 45%;
-    animation: fl 1.6s ease-in-out infinite alternate;
-  }
-  .pd-candles i:nth-child(2)::after { animation-delay: .4s; }
-  .pd-candles i:nth-child(3)::after { animation-delay: .9s; }
-  @keyframes fl { from { opacity: .7; transform: translateX(-50%) scaleY(.85); } to { opacity: 1; transform: translateX(-50%) scaleY(1.15); } }
-
-  /* ---------- manifiesto ---------- */
-  .pd-man { padding: 30px 26px; text-align: center; background: #060606; border-top: 1px solid #1e1a15; }
-  .pd-man p { max-width: 520px; margin: 0 auto 12px; font-size: 12px; line-height: 1.9; color: #a89c8b; }
-  .pd-man .rune { font-family: 'Cinzel', serif; color: #b8412b; font-size: 16px; letter-spacing: .5em; margin-bottom: 14px; }
-
-  /* ---------- pie ---------- */
-  .pd-foot { padding: 18px 15px 24px; text-align: center; background: #040404; border-top: 1px solid #17130f; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: #5d554a; line-height: 2.1; }
-  .pd-foot .psy { color: #b8412b; font-weight: 500; letter-spacing: .34em; }
-  .pd-foot .tiny { font-size: 8px; letter-spacing: .1em; text-transform: none; color: #3c3730; margin-top: 7px; }
-  .pd-foot a { color: #6f6658; }
+  body.custom-background { background-color: #000; }
+  .page-wrap { padding-top: 83px; padding-bottom: 100px; }
+  body, .widget, .main-navigation, input, textarea, button, select { font-family: "Germania One", cursive !important; }
+  .entry-content, .entry-content p, .entry-content *, .wpd-comment-text, .wpd-comment-text p { font-family: Merriweather, serif !important; font-weight: 400 !important; }
+  .pt-cv-title, .pt-cv-title a { font-family: "Germania One", cursive !important; }
+  #gpt-rating-box { text-align: center; margin: 45px 0; padding: 25px 0; border-top: 1px solid #555; border-bottom: 1px solid #555; }
+  .gpt-drops { font-size: 25px; line-height: 1; user-select: none; }
+  .gpt-drop { display: inline-block; cursor: pointer; color: #555; opacity: .18; }
+  .gpt-drop.active { color: #b40303; opacity: 1; }
 </style>
 </head>
-<body>
 
-<div class="pd">
-  <div class="pd-bg" aria-hidden="true">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Cemetery_Fog_%28198805729%29.jpeg/1280px-Cemetery_Fog_%28198805729%29.jpeg" alt="">
-    <div class="fog"></div>
-    <div class="grade"></div>
-    <div class="scan"></div>
+<body class="home blog custom-background wp-theme-sydney has-hero has-header_layout_2 menu-inline offcanvas-effect-slide offcanvas-direction-left has-shfb-builder">
+
+<div class="preloader disable"><div class="spinner"><div class="pre-bounce1"></div><div class="pre-bounce2"></div></div></div>
+<span id="toptarget"></span>
+
+<div id="page" class="hfeed site">
+  <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+  <header class="shfb shfb-header shfb-desktop">
+    <div class="shfb-rows">
+      <div class="shfb-row-wrapper shfb-above_header_row">
+        <div class="container">
+          <div class="shfb-row shfb-cols-1 shfb-cols-layout-equal-desktop shfb-cols-layout-equal-tablet">
+            <div class="shfb-column shfb-column-1">
+              <div class="shfb-builder-item shfb-component-logo" data-component-id="logo">
+                <div class="site-branding">
+                  <div>
+                    <h1 class="site-title"><a href="#" rel="home">EFFED UP MOVIES</a></h1>
+                    <p class="site-description">Sharing The Sickness</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="shfb-row-wrapper shfb-main_header_row">
+        <div class="container">
+          <div class="shfb-row shfb-cols-1 shfb-cols-layout-equal-desktop shfb-cols-layout-equal-tablet">
+            <div class="shfb-column shfb-column-1">
+              <div class="shfb-builder-item shfb-component-menu" data-component-id="menu">
+                <nav id="site-navigation" class="sydney-dropdown main-navigation with-hover-delay">
+                  <div class="menu-prime-container">
+                    <ul id="primary-menu" class="sydney-dropdown-ul menu nav-menu">
+                      <li class="menu-item menu-item-home sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Home</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Language/Country</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM Titles</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM  Archive</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM Suggests</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Lists</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Creative Writing</a></li>
+                    </ul>
+                  </div>
+                </nav>
+              </div>
+              <div class="shfb-builder-item shfb-component-search" data-component-id="search">
+                <a href="#" class="header-search" title="Search for a product">
+                  <i class="sydney-svg-icon icon-search active"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></i>
+                  <i class="sydney-svg-icon icon-cancel"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41L12.59 0Z"></path></svg></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-search-form header-search-form-row">
+      <form role="search" method="get" class="search-form" action="#">
+        <label><span class="screen-reader-text">Search for:</span>
+          <input type="search" class="search-field" placeholder="Search …" value="" name="s">
+        </label>
+        <input type="submit" class="search-submit" value="Search">
+      </form>
+    </div>
+  </header>
+
+  <header class="shfb shfb-header shfb-mobile">
+    <div class="shfb-rows">
+      <div class="shfb-row-wrapper shfb-main_header_row">
+        <div class="container">
+          <div class="shfb-row shfb-cols-3 shfb-cols-layout-equal-desktop shfb-cols-layout-equal-tablet">
+            <div class="shfb-column shfb-column-1">
+              <div class="shfb-builder-item shfb-component-mobile_hamburger" data-component-id="mobile_hamburger">
+                <a href="#" class="menu-toggle" title="Open mobile offcanvas menu">
+                  <i class="sydney-svg-icon"><svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect width="16" height="1"></rect><rect y="5" width="16" height="1"></rect><rect y="10" width="16" height="1"></rect></svg></i>
+                </a>
+              </div>
+            </div>
+            <div class="shfb-column shfb-column-2">
+              <div class="shfb-builder-item shfb-component-logo" data-component-id="logo">
+                <div class="site-branding">
+                  <div>
+                    <p class="site-title"><a href="#" rel="home">EFFED UP MOVIES</a></p>
+                    <p class="site-description">Sharing The Sickness</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="shfb-column shfb-column-3">
+              <div class="shfb-builder-item shfb-component-search" data-component-id="search">
+                <a href="#" class="header-search" title="Search for a product">
+                  <i class="sydney-svg-icon icon-search active"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></i>
+                  <i class="sydney-svg-icon icon-cancel"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41L12.59 0Z"></path></svg></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-search-form header-search-form-row">
+      <form role="search" method="get" class="search-form" action="#">
+        <label><span class="screen-reader-text">Search for:</span>
+          <input type="search" class="search-field" placeholder="Search …" value="" name="s">
+        </label>
+        <input type="submit" class="search-submit" value="Search">
+      </form>
+    </div>
+  </header>
+
+  <div class="search-overlay"></div>
+
+  <div class="shfb shfb-mobile_offcanvas sydney-offcanvas-menu">
+    <a class="mobile-menu-close" href="#" title="Close mobile menu">
+      <i class="sydney-svg-icon icon-cancel"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41L12.59 0Z"></path></svg></i>
+    </a>
+    <div class="shfb-mobile-offcanvas-rows">
+      <div class="container">
+        <div class="shfb-row shfb-cols-1">
+          <div class="shfb-column shfb-mobile-offcanvas-col">
+            <div class="shfb-builder-item shfb-component-mobile_offcanvas_menu">
+              <div class="mobile-offcanvas-menu-content">
+                <nav id="mainnav" class="sydney-dropdown main-navigation">
+                  <div class="menu-prime-container">
+                    <ul id="mobile-menu" class="sydney-dropdown-ul menu">
+                      <li class="menu-item menu-item-home sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Home</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Language/Country</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM Titles</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM  Archive</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">EUM Suggests</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Lists</a></li>
+                      <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Creative Writing</a></li>
+                    </ul>
+                  </div>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="pd-in">
-
-    <div class="pd-top">
-      <span class="psy"><b>✚</b> PSYCHOTIC</span>
-      <span>cine oscuro · 1080p</span>
+  <div class="sydney-hero-area">
+    <div class="header-image">
+      <div class="overlay"></div>
+      <img class="header-inner" src="https://www.effedupmovies.com/wp-content/uploads/2025/09/header.jpg" width="1920" alt="EFFED UP MOVIES" title="EFFED UP MOVIES">
     </div>
-
-    <div class="pd-hero">
-      <div class="pd-kick">plataforma de cine de ultratumba</div>
-      <h1 class="pd-h1">Psicosis<span>de la muerte</span></h1>
-      <div class="pd-tag">Cruces, pentagramas, filos. Y una aldea que espera a un muerto.</div>
-      <button class="pd-cta" id="go">
-        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Entrar al cine
-      </button>
-    </div>
-
-    <div class="pd-sym" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="M12 2v20M6 8h12M9 14h6"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 22V4M8 20h8M6 10h12"/><path d="M12 4l-2.2 3M12 4l2.2 3"/></svg>
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 3.4l2.6 8h8.4l-6.8 4.9 2.6 8-6.8-4.9-6.8 4.9 2.6-8L1 11.4h8.4z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M4 20L20 4M4 20l3.2-1M4 20l1-3.2"/><path d="M14 3.6l6.4 6.4-2.6 2.6L11.4 6.2z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M3 20c5-1 7-6 7-11a3 3 0 016 0c0 5 2 10 5 11"/><path d="M12 6v6"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 3 2 4.5 2 7v3h10v-3c0-2.5 2-4 2-7a7 7 0 00-7-7z"/><circle cx="9" cy="9" r="1.4"/><circle cx="15" cy="9" r="1.4"/><path d="M9 21h6"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 3c-4 0-6 3-6 7v4l-2 2v2h16v-2l-2-2v-4c0-4-2-7-6-7z"/><path d="M12 3V1"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M6 3h12l-2 9-4 9-4-9z"/><path d="M6 3l6 9 6-9"/></svg>
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 7.6V2M12 16.4V22M7.6 12H2M16.4 12H22"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.4 1 6.6L12 17l-5.5 3 1-6.6L3 9l6-1z"/><path d="M12 9.5v4"/></svg>
-    </div>
-
-    <!-- cine -->
-    <div class="pd-cine" id="cine">
-      <div class="pd-stage" id="stage">
-        <video id="v" playsinline preload="auto" disablepictureinpicture
-               src="https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4#t=0"></video>
-        <div class="grain"></div>
-        <div class="pd-cc" id="cc"></div>
-        <div class="pd-lab rec" id="lab">Sátántangó · 1994 · 1080p</div>
-
-        <div class="pd-gate" id="gate">
-          <h4>Sátántangó</h4>
-          <p>Béla Tarr · 1994 · 7 h 19 min · húngaro con subtítulos</p>
-          <div class="big" id="gateBtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <p style="color:#7c7264">pulsa para empezar · 12 movimientos</p>
-        </div>
-
-        <div class="pd-buf" id="buf"><div class="r"></div><span>cargando la aldea</span></div>
-      </div>
-
-      <div class="pd-ctrl">
-        <button id="play" title="Play / pausa"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <button id="lock" title="Bloquear el salto">
-          <svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm0 2a3 3 0 013 3v3H9V7a3 3 0 013-3z"/></svg>
-          <span id="lockTxt">libre</span>
-        </button>
-        <div class="pd-bar" id="bar"><div class="rail"><div class="fill" id="fill"></div><div id="chs"></div></div></div>
-        <span class="pd-clock" id="clock">00:00:00</span>
-        <button id="ccBtn" class="act" title="Subtítulos">CC</button>
-        <button id="qual" title="Calidad">1080p</button>
-        <button id="restart" title="Reiniciar"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></svg></button>
-        <button id="full" title="Pantalla completa"><svg viewBox="0 0 24 24"><path d="M3 3h7v2H5v5H3zm18 0v7h-2V5h-5V3zM3 21v-7h2v5h5v2zm18 0h-7v-2h5v-5h2z"/></svg></button>
-      </div>
-
-      <div class="pd-movs">
-        <div class="h">Movimientos · salta a cualquier parte de la noche</div>
-        <div class="grid" id="movs"></div>
-      </div>
-    </div>
-
-    <!-- altares -->
-    <div class="pd-alt">
-      <div class="pd-sec-h">
-        <h2>Los altares</h2>
-        <p>tres mesas · tres deudas</p>
-      </div>
-
-      <div class="pd-altars">
-        <div class="pd-altar">
-          <svg class="sig" viewBox="0 0 60 60"><path d="M30 6v48M30 20c-8 4-14 10-16 20M30 20c8 4 14 10 16 20"/><circle cx="30" cy="20" r="4"/><path d="M22 50c4-4 12-4 16 0"/></svg>
-          <h3>Altar I<br>El Carnero</h3>
-          <p>Para lo que se entrega sin pedir nada. Se enciende de espaldas y no se sopla: se deja morir.</p>
-          <div class="of">ofrenda · sal negra</div>
-          <div class="pd-candles"><i></i><i></i><i></i></div>
-        </div>
-
-        <div class="pd-altar">
-          <svg class="sig" viewBox="0 0 60 60"><circle cx="30" cy="30" r="21"/><path d="M30 10l5.4 16.6h17.5L38.7 37.4l5.4 16.6L30 44.3 15.9 54l5.4-16.6L7.1 26.6h17.5z"/></svg>
-          <h3>Altar II<br>El Pentagrama</h3>
-          <p>Cinco puntas, cinco deudas. Se dibuja en el suelo con ceniza de una casa que ya no existe.</p>
-          <div class="of">ofrenda · ceniza y hierro</div>
-          <div class="pd-candles"><i></i><i></i><i></i></div>
-        </div>
-
-        <div class="pd-altar">
-          <svg class="sig" viewBox="0 0 60 60"><path d="M14 8h32l-6 20-10 24-10-24z"/><path d="M14 8l16 20 16-20"/><path d="M30 28v16"/></svg>
-          <h3>Altar III<br>El Filo</h3>
-          <p>Para lo que hay que cortar. La hoja se deja boca arriba toda la noche y se afila al amanecer.</p>
-          <div class="of">ofrenda · sangre y cobre</div>
-          <div class="pd-candles"><i></i><i></i><i></i></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pd-man">
-      <div class="rune">✚ ✚ ✚</div>
-      <p>Una aldea sin fábrica, bajo la lluvia, esperando el dinero de nadie. Un hombre al que todos dieron por muerto vuelve a caminar entre ellos y les promete una granja, una comunidad, un futuro.</p>
-      <p>La película dura siete horas. No hay prisa: aquí nadie te va a adelantar.</p>
-      <p style="color:#7c7264;font-size:10px;letter-spacing:.2em;text-transform:uppercase">Sátántangó · Béla Tarr · 1994 · 1722×1080</p>
-    </div>
-
-    <div class="pd-foot">
-      <div class="psy">PSYCHOTIC</div>
-      <div>Corporación independiente de software y entretenimiento</div>
-      <div class="tiny">Película servida por Internet Archive · foto de fondo: «Cemetery Fog», Benjamin Réthoré (CC BY 3.0) · símbolos dibujados en SVG</div>
-    </div>
-
   </div>
+
+  <div id="content" class="page-wrap">
+    <div class="content-wrapper container">
+      <div class="row">
+
+        <div id="primary" class="content-area archive-wrapper sidebar-right layout3 col-md-9">
+          <main id="main" class="post-wrap" role="main">
+            <div class="posts-layout">
+              <div class="row">
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Cat Sick Blues (2015)"><img width="270" height="385" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/catsickblues.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt=""></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-10-31T20:29:16+01:00">October 31, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">26 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Cat Sick Blues (2015)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Desperate Hours (1990)"><img width="270" height="399" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/desphours.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt=""></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published" datetime="2026-10-30T19:02:34+01:00">October 30, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">39 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Desperate Hours (1990)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Shock 2000 (2000)"><img width="270" height="406" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/shock200.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt=""></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-10-27T13:56:18+01:00">October 27, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">19 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Shock 2000 (2000)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Heavenly Creatures (1994)"><img width="270" height="409" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/heavencreatures.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-10-27T13:56:10+01:00">October 27, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">15 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Heavenly Creatures (1994)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="My Little Princess (2011)"><img width="270" height="405" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/mylittleprincess.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published" datetime="2026-10-18T05:56:44+01:00">October 18, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">38 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">My Little Princess (2011)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Drugstore Cowboy (1989)"><img width="270" height="335" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/drugstorecowboy.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-10-18T05:56:38+01:00">October 18, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">53 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Drugstore Cowboy (1989)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Family That Eats Soil (2005)"><img width="270" height="383" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/soil2005.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published" datetime="2026-10-11T09:40:36+01:00">October 11, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">49 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Family That Eats Soil (2005)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="My Name Is ‘A’ By Anonymous (2012)"><img width="270" height="360" src="https://www.effedupmovies.com/wp-content/uploads/2026/10/anony2012.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-10-09T09:29:54+01:00">October 9, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">18 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">My Name Is ‘A’ By Anonymous (2012)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Mother (2009)"><img width="270" height="405" src="https://www.effedupmovies.com/wp-content/uploads/2026/09/mother2009.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-09-26T05:55:38+01:00">September 26, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">63 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Mother (2009)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Jet Boy (2001)"><img width="270" height="382" src="https://www.effedupmovies.com/wp-content/uploads/2026/09/jetboy.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published updated" datetime="2026-09-26T05:55:34+01:00">September 26, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">44 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Jet Boy (2001)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Appropriate Adult (2011)"><img width="270" height="378" src="https://www.effedupmovies.com/wp-content/uploads/2026/09/appropadults.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published" datetime="2026-09-19T09:42:50+01:00">September 19, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">26 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Appropriate Adult (2011)</a></h2></header>
+                  </div>
+                </article>
+
+                <article class="post type-post has-post-thumbnail hentry post-align-left post-vertical-align-middle col-lg-6 col-md-6">
+                  <div class="content-inner">
+                    <div class="entry-thumb">
+                      <a href="#" title="Riki-Oh (1991)"><img width="270" height="313" src="https://www.effedupmovies.com/wp-content/uploads/2026/09/rikioh.jpg" class="attachment-sydney-large-thumb size-sydney-large-thumb wp-post-image" alt="" loading="lazy"></a>
+                    </div>
+                    <div class="entry-meta above-title delimiter-dot">
+                      <span class="posted-on"><a href="#" rel="bookmark"><time class="entry-date published" datetime="2026-09-14T09:24:44+01:00">September 14, 2026</time></a></span>
+                      <span class="comments-link"><a href="#comments">30 comments</a></span>
+                    </div>
+                    <header class="entry-header"><h2 class="title-post entry-title"><a href="#" rel="bookmark">Riki-Oh (1991)</a></h2></header>
+                  </div>
+                </article>
+
+              </div>
+            </div>
+
+            <nav class="navigation pagination" aria-label="Posts pagination">
+              <div class="nav-links">
+                <span aria-current="page" class="page-numbers current">1</span>
+                <a class="page-numbers" href="#">2</a>
+                <span class="page-numbers dots">…</span>
+                <a class="page-numbers" href="#">98</a>
+                <a class="next page-numbers" href="#">&gt;</a>
+              </div>
+            </nav>
+          </main>
+        </div>
+
+        <div id="secondary" class="widget-area col-md-3" role="complementary">
+          <aside class="widget widget_custom_html">
+            <div class="textwidget custom-html-widget"><div><button>Random Post</button></div></div>
+          </aside>
+          <aside class="widget widget_categories">
+            <h3 class="widget-title">Genres</h3>
+            <ul>
+              <li class="cat-item"><a href="#">Anime-Animation</a></li>
+              <li class="cat-item"><a href="#">Anthology-Short</a></li>
+              <li class="cat-item"><a href="#">Based on a True Story</a></li>
+              <li class="cat-item"><a href="#">BDSM-Roleplay</a></li>
+              <li class="cat-item"><a href="#">Bizarre-Surreal</a></li>
+              <li class="cat-item"><a href="#">Cannibalism</a></li>
+              <li class="cat-item"><a href="#">Captivity-Kidnapping</a></li>
+              <li class="cat-item"><a href="#">Clown-Mask</a></li>
+              <li class="cat-item"><a href="#">Courtroom Drama</a></li>
+              <li class="cat-item"><a href="#">Cult-Commune</a></li>
+              <li class="cat-item"><a href="#">Detective-Mystery-Cops</a></li>
+              <li class="cat-item"><a href="#">Dolls-Toys</a></li>
+              <li class="cat-item"><a href="#">Domestic Abuse</a></li>
+              <li class="cat-item"><a href="#">Drugs</a></li>
+              <li class="cat-item"><a href="#">Dwarf</a></li>
+              <li class="cat-item"><a href="#">Gangster</a></li>
+              <li class="cat-item"><a href="#">Gay-CrossDressing-Transsexual</a></li>
+              <li class="cat-item"><a href="#">Gore-Gruesome-Splatter</a></li>
+              <li class="cat-item"><a href="#">Home Invasion</a></li>
+              <li class="cat-item"><a href="#">Horror</a></li>
+              <li class="cat-item"><a href="#">Incest</a></li>
+              <li class="cat-item"><a href="#">Infidelity</a></li>
+              <li class="cat-item"><a href="#">Insects-Small Animals</a></li>
+              <li class="cat-item"><a href="#">Internet Culture</a></li>
+              <li class="cat-item"><a href="#">Lesbian</a></li>
+              <li class="cat-item"><a href="#">Mass Killings-Rage Against</a></li>
+              <li class="cat-item"><a href="#">Medical</a></li>
+              <li class="cat-item"><a href="#">Military</a></li>
+              <li class="cat-item"><a href="#">Misc Paraphilias</a></li>
+              <li class="cat-item"><a href="#">Misery-Depressing-Mental Illness</a></li>
+              <li class="cat-item"><a href="#">Nazism-Fascism</a></li>
+              <li class="cat-item"><a href="#">Necrophilia</a></li>
+              <li class="cat-item"><a href="#">Nuns-Nunsploitation</a></li>
+              <li class="cat-item"><a href="#">Obesity/Eating-related</a></li>
+              <li class="cat-item"><a href="#">Older-Younger Relationships</a></li>
+              <li class="cat-item"><a href="#">Pissing</a></li>
+              <li class="cat-item"><a href="#">Porno-Themed</a></li>
+              <li class="cat-item"><a href="#">Psychological Thrillers</a></li>
+              <li class="cat-item"><a href="#">Puking</a></li>
+              <li class="cat-item"><a href="#">Racism</a></li>
+              <li class="cat-item"><a href="#">Related To Animals</a></li>
+              <li class="cat-item"><a href="#">Religion</a></li>
+              <li class="cat-item"><a href="#">Revenge</a></li>
+              <li class="cat-item"><a href="#">Satanism-Occult</a></li>
+              <li class="cat-item"><a href="#">Scars-Body Modification</a></li>
+              <li class="cat-item"><a href="#">Scat</a></li>
+              <li class="cat-item"><a href="#">Sci-Fi</a></li>
+              <li class="cat-item"><a href="#">SelfHarm-Suicide</a></li>
+              <li class="cat-item"><a href="#">Serial Killers-Killers</a></li>
+              <li class="cat-item"><a href="#">Sexual-Violence Against Men</a></li>
+              <li class="cat-item"><a href="#">Sexual-Violence Against Women</a></li>
+              <li class="cat-item"><a href="#">Shockumentary-Documentary</a></li>
+              <li class="cat-item"><a href="#">Siblings-Family</a></li>
+              <li class="cat-item"><a href="#">Snuff</a></li>
+              <li class="cat-item"><a href="#">Teen-Childhood</a></li>
+              <li class="cat-item"><a href="#">Thai Cinema</a></li>
+              <li class="cat-item"><a href="#">Time Travel</a></li>
+              <li class="cat-item"><a href="#">Torture</a></li>
+              <li class="cat-item"><a href="#">Trafficking-Prostitution</a></li>
+              <li class="cat-item"><a href="#">Unsimulated Sex</a></li>
+              <li class="cat-item"><a href="#">Vampires-Witches-Werewolves</a></li>
+              <li class="cat-item"><a href="#">Voyeur-Stalking</a></li>
+              <li class="cat-item"><a href="#">Zombies-Humanlike Creatures</a></li>
+            </ul>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer id="colophon" class="shfb shfb-footer shfb-desktop">
+    <div class="shfb-rows">
+      <div class="shfb-row-wrapper shfb-above_footer_row">
+        <div class="container">
+          <div class="shfb-row shfb-cols-1 shfb-cols-layout-equal">
+            <div class="shfb-column shfb-column-1">
+              <div class="shfb-builder-item shfb-component-widget1" data-component-id="widget1">
+                <div class="footer-widget">
+                  <div class="widget-column">
+                    <aside class="widget widget_nav_menu">
+                      <div class="menu-footer-container">
+                        <ul id="menu-footer" class="menu">
+                          <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">About</a></li>
+                          <li class="menu-item sydney-dropdown-li"><a href="#" class="sydney-dropdown-link">Contact</a></li>
+                        </ul>
+                      </div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
 </div>
 
-<script>
-(function () {
-  const V1080 = "https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
-  const VVHS  = "https://archive.org/download/satantangosub/Satantango%20Sub.mp4";
+<a href="#toptarget" aria-label="Back to top" class="go-top visibility-all position-right">
+  <i class="sydney-svg-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke-width="3" stroke-linejoin="round"></path></svg></i>
+</a>
 
-  const v=document.getElementById('v'), go=document.getElementById('go'), cine=document.getElementById('cine'),
-        stage=document.getElementById('stage'), gate=document.getElementById('gate'), gateBtn=document.getElementById('gateBtn'),
-        playBtn=document.getElementById('play'), lockBtn=document.getElementById('lock'), lockTxt=document.getElementById('lockTxt'),
-        bar=document.getElementById('bar'), fill=document.getElementById('fill'), clock=document.getElementById('clock'),
-        ccBtn=document.getElementById('ccBtn'), cc=document.getElementById('cc'), qualBtn=document.getElementById('qual'),
-        restart=document.getElementById('restart'), full=document.getElementById('full'), buf=document.getElementById('buf'),
-        lab=document.getElementById('lab'), chs=document.getElementById('chs'), movs=document.getElementById('movs');
-
-  /* movimientos (aprox.) */
-  const MOVS = [
-    ['I','La noticia de que vienen',0],
-    ['II','Resucitaremos',2200],
-    ['III','Saber algo',4400],
-    ['IV','La red del trabajo del diablo',6600],
-    ['V','Futuro',8800],
-    ['VI','El trabajo de Irimiás',11000],
-    ['VII','La cabecera',13200],
-    ['VIII','La mirada del doctor',15400],
-    ['IX','El niño idiota',17600],
-    ['X','Los dos',19800],
-    ['XI','La sombra',22000],
-    ['XII','El círculo se cierra',24200]
-  ];
-
-  /* subtítulos (español latino) */
-  const C = [
-    [8,14,'(Las vacas se alejan entre la lluvia.)'],
-    [30,37,'— Se acabó. Ya no hay trabajo.'],
-    [40,47,'— La fábrica cerró en octubre.'],
-    [58,65,'— Nos deben cuatro meses.'],
-    [70,78,'— Vendrán. Vendrán y traerán el dinero.'],
-    [92,99,'— ¿Y si no vienen?'],
-    [103,110,'— Van a venir.'],
-    [128,135,'(Una puerta golpea con el viento.)'],
-    [160,168,'— Futaki se fue otra vez con la vecina.'],
-    [172,180,'— Futaki siempre se va.'],
-    [196,204,'— Hay que aguantar hasta que lleguen.'],
-    [240,248,'— Si se van todos, esto se cae.'],
-    [255,262,'— Ya se cayó.'],
-    [300,308,'(Alguien toca un acordeón desafinado.)'],
-    [330,338,'— Bebe. Se te va a enfriar.'],
-    [352,360,'— Dicen que Irimiás está muerto.'],
-    [366,374,'— Irimiás no se muere.'],
-    [420,428,'— Yo lo vi caer.'],
-    [432,440,'— Viste lo que quisiste ver.'],
-    [470,478,'(Un perro ladra en la parte de atrás.)'],
-    [520,528,'— El dinero llega el jueves.'],
-    [532,540,'— Todos los jueves.'],
-    [600,608,'— ¿Y el niño?'],
-    [612,620,'— Ahí está, con el gato.'],
-    [660,668,'— Se le murió la madre y no habla.'],
-    [672,680,'— Nunca habló.'],
-    [740,748,'(Se oye un camión en el camino.)'],
-    [760,768,'— ¡Es él! ¡Es Irimiás!'],
-    [780,790,'— Tranquilos. Tranquilos.'],
-    [800,812,'— Vengo con un plan. Una granja.'],
-    [816,826,'— Una comunidad. Todos juntos.'],
-    [840,850,'— ¿Y el dinero?'],
-    [856,868,'— El dinero es lo de menos.'],
-    [900,910,'— ¿Quién te manda?'],
-    [914,924,'— Nadie me manda.'],
-    [960,970,'— Irimiás tiene papeles.'],
-    [980,992,'— Hay que firmar. Todo el mundo firma.'],
-    [1020,1032,'— ¿Y si no firmamos?'],
-    [1040,1052,'— Entonces te quedas aquí, con la lluvia.'],
-    [1100,1112,'— Petrina, tú firmas primero.'],
-    [1130,1142,'(El bolígrafo tiembla sobre el papel.)'],
-    [1180,1192,'— Mañana salimos. Al amanecer.'],
-    [1240,1252,'— Lleva abrigo.'],
-    [1400,1412,'(La lluvia no para en toda la noche.)'],
-    [1500,1512,'— ¿Dónde está Futaki?'],
-    [1520,1532,'— Contando el dinero. Otra vez.'],
-    [1620,1632,'— Ese dinero no es suyo.'],
-    [1700,1712,'— Nada es de nadie aquí.'],
-    [1900,1912,'(Se apagan las lámparas una a una.)'],
-    [2200,2212,'— El que se queda, se queda solo.'],
-    [2400,2412,'— Firmé. Ya está. Firmé.'],
-    [2700,2712,'— No hay camión.'],
-    [2760,2772,'— Esperen. Tiene que venir.'],
-    [3000,3012,'— Nunca vino nadie por nosotros.'],
-    [3300,3312,'(Un carro se aleja cargado de bultos.)'],
-    [3600,3612,'— Cuida el gato.'],
-    [3900,3912,'— El gato se muere solo.'],
-    [4400,4412,'(Un hombre escribe en un cuaderno.)'],
-    [4700,4712,'— Anoto todo. Para que no se pierda.'],
-    [5000,5012,'— ¿Y quién va a leer eso?'],
-    [5300,5312,'— Nadie.'],
-    [5700,5712,'(La puerta de la casa se abre sola.)'],
-    [6200,6212,'— Aquí vivía gente.'],
-    [6700,6712,'— Ya no vive nadie.'],
-    [7200,7212,'— La granja era mentira.'],
-    [7700,7712,'— Todo era mentira.'],
-    [8300,8312,'(Un pueblo vacío bajo la niebla.)'],
-    [9000,9012,'— Irimiás escribió una carta.'],
-    [9600,9612,'— No dice nada.'],
-    [10300,10312,'(Alguien toca la campana tres veces.)'],
-    [11000,11012,'— El círculo se cierra.'],
-    [12000,12012,'(Silencio. Solo el viento.)'],
-    [13000,13012,'— Nosotros también nos iremos.'],
-    [14000,14012,'(Un tren pasa lejos.)'],
-    [15000,15012,'— ¿Queda alguien?'],
-    [16000,16012,'— Quedamos nosotros.'],
-    [17000,17012,'(La niebla entra por la ventana rota.)'],
-    [18000,18012,'— Cierra eso.'],
-    [19000,19012,'— Da igual.'],
-    [20000,20012,'(Un perro cruza el patio.)'],
-    [21000,21012,'— Se acabó el dinero.'],
-    [22000,22012,'— Se acabó todo.'],
-    [23000,23012,'(El doctor mira por la ventana.)'],
-    [24000,24012,'— Escribo porque si no, no pasó.'],
-    [25000,25012,'(Se apaga la luz del cuarto.)'],
-    [25800,25812,'— Buenas noches.'],
-    [26200,26220,'(Fin.)']
-  ];
-
-  const S = { lock:false, cc:true, started:false, warmIdx:0, warms:[] };
-  for (let i=0;i<3;i++){ const w=document.createElement('video'); w.preload='auto'; w.muted=true; w.playsInline=true; S.warms.push(w); }
-  const warm = t => { const w=S.warms[S.warmIdx++%3]; try{ w.src=(S.src||V1080)+'#t='+Math.max(0,Math.floor(t)); w.load(); }catch(e){} };
-  S.src = V1080;
-
-  const p2 = n => String(Math.floor(n)).padStart(2,'0');
-  const fmt = s => p2(s/3600)+':'+p2((s%3600)/60)+':'+p2(s%60);
-
-  function tick(){
-    const d = isFinite(v.duration)?v.duration:0;
-    clock.textContent = fmt(v.currentTime);
-    fill.style.width = d ? (v.currentTime/d*100)+'%' : '0%';
-    if (S.cc){
-      const t=v.currentTime; let line='';
-      for (let i=0;i<C.length;i++){ if(t>=C[i][0]&&t<=C[i][1]){ line=C[i][2]; break; } }
-      if (line){ cc.textContent=line; cc.classList.add('on'); } else cc.classList.remove('on');
-    } else cc.classList.remove('on');
-  }
-
-  function seek(t){
-    buf.classList.add('on');
-    v.currentTime = t;
-    const p = v.play(); if (p&&p.catch) p.catch(()=>{});
-  }
-
-  go.addEventListener('click', ()=>{
-    cine.classList.add('on');
-    cine.scrollIntoView({behavior:'smooth', block:'start'});
-  });
-
-  gateBtn.addEventListener('click', ()=>{
-    gate.classList.add('off');
-    if (!S.started){ S.started=true; }
-    seek(0);
-  });
-
-  playBtn.addEventListener('click', ()=>{ if(v.paused) v.play().catch(()=>{}); else v.pause(); });
-  v.addEventListener('waiting', ()=>buf.classList.add('on'));
-  v.addEventListener('playing', ()=>buf.classList.remove('on'));
-  v.addEventListener('canplay', ()=>buf.classList.remove('on'));
-  v.addEventListener('timeupdate', tick);
-  v.addEventListener('loadedmetadata', tick);
-
-  lockBtn.addEventListener('click', ()=>{
-    S.lock=!S.lock;
-    lockBtn.classList.toggle('act',S.lock);
-    bar.classList.toggle('lock',S.lock);
-    lockTxt.textContent = S.lock?'bloqueado':'libre';
-    lab.textContent = S.lock?'reproducción obligatoria':'Sátántangó · 1994 · 1080p';
-  });
-
-  bar.addEventListener('click', e=>{
-    if (S.lock || !isFinite(v.duration)) return;
-    const r=bar.getBoundingClientRect();
-    seek(((e.clientX-r.left)/r.width)*v.duration);
-  });
-
-  ccBtn.addEventListener('click', ()=>{ S.cc=!S.cc; ccBtn.classList.toggle('act',S.cc); if(!S.cc) cc.classList.remove('on'); });
-
-  qualBtn.addEventListener('click', ()=>{
-    const vhs = qualBtn.textContent.trim()==='1080p';
-    qualBtn.textContent = vhs ? 'VHS' : '1080p';
-    const t = v.currentTime;
-    S.src = vhs ? VVHS : V1080;
-    v.src = S.src + '#t=' + Math.floor(t);
-    v.load(); v.play().catch(()=>{});
-    lab.textContent = vhs ? 'copia VHS · 386p' : 'Sátántangó · 1994 · 1080p';
-  });
-
-  restart.addEventListener('click', ()=>seek(0));
-  full.addEventListener('click', ()=>{
-    if (document.fullscreenElement) document.exitFullscreen();
-    else stage.requestFullscreen && stage.requestFullscreen().catch(()=>{});
-  });
-
-  MOVS.forEach(([n,titulo,t])=>{
-    const b=document.createElement('button');
-    b.innerHTML='<b>'+n+'</b> '+titulo;
-    b.addEventListener('click', ()=>seek(t));
-    b.addEventListener('mouseenter', ()=>warm(t));
-    movs.appendChild(b);
-    const m=document.createElement('div'); m.className='ch';
-    m.style.left=(t/26349*100)+'%'; chs.appendChild(m);
-  });
-
-  document.addEventListener('keydown', e=>{
-    if (!S.started) return;
-    if ((e.key==='ArrowRight'||e.key==='ArrowLeft') && !S.lock) v.currentTime += e.key==='ArrowRight'?10:-10;
-    if (e.key===' '){ e.preventDefault(); if(v.paused) v.play().catch(()=>{}); else v.pause(); }
-  });
-
-  warm(0); warm(2200);
-})();
-</script>
+<script src="https://www.effedupmovies.com/wp-includes/js/jquery/jquery.min.js"></script>
+<script src="https://www.effedupmovies.com/wp-includes/js/jquery/jquery-migrate.min.js"></script>
+<script src="https://www.effedupmovies.com/wp-content/themes/sydney/js/free/functions.min.js"></script>
 </body>
 </html>
