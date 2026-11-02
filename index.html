@@ -7,9 +7,8 @@
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23e8e4d8' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
 <title>SÁTÁNTANGÓ · EL ABISMO</title>
-<link rel="preconnect" href="https://dn600303.us.archive.org" crossorigin>
-<link rel="dns-prefetch" href="//dn600303.us.archive.org">
-<link rel="preconnect" href="https://archive.org" crossorigin>
+<link rel="preconnect" href="https://ok.ru" crossorigin>
+<link rel="dns-prefetch" href="//ok.ru">
 <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/abyssal-horrors" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/spectre" media="print" onload="this.media='all'">
@@ -55,7 +54,6 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 .acts button:active::before{transform:translateY(0)}
 .acts .ghost{border-color:rgba(232,228,216,.22);color:#bdbab1;font-size:13px;letter-spacing:.26em;padding:12px 34px}
 .acts .ghost:hover{border-color:var(--bone);color:var(--bone);box-shadow:none}
-#res[hidden]{display:none}
 .acts small{display:block;font-size:10px;letter-spacing:.28em;color:#b8b5ac;margin-top:5px}
 
 #strip{position:absolute;left:0;right:0;bottom:0;z-index:9;display:flex;flex-wrap:wrap;justify-content:center;border-top:1px solid rgba(232,228,216,.14);background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.4) 65%,transparent);pointer-events:none}
@@ -64,47 +62,31 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 #strip b{color:var(--bone);font-weight:500}
 #strip .cred{color:#a9a69e;letter-spacing:.18em}
 
-/* REPRODUCTOR OPTIMIZADO */
+/* ===== reproductor ===== */
 #film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
 #film.on{visibility:visible}
-#v{width:100%;height:100%;background:#000;object-fit:contain;display:block}
-#v::cue{background:rgba(0,0,0,.9);color:#e8e4d8;font-family:var(--f);font-size:18px;line-height:1.4;text-shadow:0 1px 2px #000}
+#frame{width:100%;height:100%;border:0;background:#000;display:block}
 
-/* Buffering optimizado */
-#spin{position:absolute;inset:0;z-index:35;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
+#bar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);opacity:0;transition:opacity .3s}
+#film:hover #bar,#bar:focus-within{opacity:1}
+#bar button{padding:9px 16px;border:1px solid rgba(232,228,216,.28);background:rgba(0,0,0,.6);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#cfccc3;transition:.2s}
+#bar button:hover,#bar button:focus{outline:none;border-color:var(--bone);color:var(--bone)}
+#bar .sp{flex:1}
+#bar .st{font-size:9px;letter-spacing:.3em;color:#8e8b83;text-transform:uppercase}
+
+#spin{position:absolute;inset:0;z-index:15;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
 #spin.on{display:flex}
-#spin .txt{font-family:var(--g);font-size:clamp(15px,2.6vw,26px);letter-spacing:.28em;text-transform:uppercase;color:var(--bone);animation:breathe 1.8s ease-in-out infinite}
-#spin .bar{width:min(280px,60vw);height:1px;background:rgba(232,228,216,.18);overflow:hidden}
-#spin .bar i{display:block;height:100%;width:35%;background:var(--bone);animation:slide 1.15s ease-in-out infinite}
+#spin .txt{font-family:var(--g);font-size:clamp(15px,2.6vw,26px);letter-spacing:.28em;text-transform:uppercase;animation:breathe 1.8s ease-in-out infinite}
+#spin .bar2{width:min(280px,60vw);height:1px;background:rgba(232,228,216,.18);overflow:hidden}
+#spin .bar2 i{display:block;height:100%;width:35%;background:var(--bone);animation:slide 1.15s ease-in-out infinite}
 @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(320%)}}
 @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 
-/* Controles flotantes */
-#controls{position:absolute;bottom:0;left:0;right:0;padding:20px 30px 40px;background:linear-gradient(to top,rgba(0,0,0,.95),transparent);z-index:20;opacity:0;transition:opacity .3s;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-#film:hover #controls{opacity:1}
-#progress{flex:1;height:3px;background:rgba(255,255,255,.2);cursor:pointer;position:relative}
-#progress-bar{height:100%;width:0%;background:var(--bone);transition:width .1s}
-#time{font-family:monospace;font-size:12px;color:var(--dim);min-width:100px}
-#sub-controls{display:flex;gap:10px}
-#sub-controls button{padding:6px 12px;background:rgba(0,0,0,.6);border:1px solid rgba(232,228,216,.3);color:var(--bone);font-size:10px;letter-spacing:.1em;cursor:pointer;transition:all .2s}
-#sub-controls button:hover{border-color:var(--bone);background:rgba(232,228,216,.1)}
-#back-btn{position:absolute;top:20px;left:20px;z-index:30;padding:10px 20px;background:rgba(0,0,0,.6);border:1px solid rgba(232,228,216,.3);color:var(--bone);font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s}
-#back-btn:hover{border-color:var(--bone);background:rgba(232,228,216,.1)}
-
-/* Toast */
-#toast{position:absolute;top:3.5%;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;background:#000;border:1px solid var(--bone);font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;background:#000;border:1px solid var(--bone);font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center}
 #toast.show{opacity:1}
 
-/* Error */
-#err{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.98);text-align:center;padding:24px}
-#err.on{display:flex}
-#err .big{font-family:var(--g);font-size:clamp(24px,5vw,46px);letter-spacing:.06em;text-transform:uppercase}
-#err p{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#a9a69e;margin:0;max-width:420px}
-#err button{padding:13px 30px;border:1px solid #38352f;letter-spacing:.22em;font-size:13px;text-transform:uppercase;cursor:pointer;background:transparent;color:var(--bone);transition:all .2s}
-#err button:hover{border-color:var(--bone)}
-
 @media (max-width:560px){#strip span{padding:9px 10px;font-size:9px;letter-spacing:.14em}#seal .tag{display:none}h1{font-size:clamp(21px,6.6vw,34px)}h2{font-size:clamp(13px,3.6vw,17px)}.acts button{font-size:15px;letter-spacing:.26em}}
-@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after,#spin .txt,#spin .bar i{animation:none}}
+@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after,#spin .txt,#spin .bar2 i{animation:none}}
 </style>
 </head>
 <body>
@@ -118,322 +100,90 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
     <h2>7 horas de puro dolor y sufrimiento para el que la ve.</h2>
     <div class="acts">
       <button id="go">Descender<small>entrar al pozo</small></button>
-      <button id="res" class="ghost" hidden>Continuar<small id="resT"></small></button>
     </div>
   </div>
   <div id="strip"><span><b>1080p</b> bluray</span><span>7 h 19 min</span><span>blanco y negro</span><span>húngaro</span><span>subtítulos español latino</span><span class="cred">xcode · by UltraOmniverse</span></div>
 </main>
 
 <div id="film">
-  <button id="back-btn">← Volver</button>
-  <video id="v" playsinline preload="metadata"></video>
-  
-  <div id="spin"><div class="txt">Descendiendo</div><div class="bar"><i></i></div></div>
-  
-  <div id="controls">
-    <span id="time">0:00:00 / 7:19:00</span>
-    <div id="progress"><div id="progress-bar"></div></div>
-    <div id="sub-controls">
-      <button onclick="shiftSubs(-0.5)">[ -0.5s</button>
-      <button onclick="shiftSubs(0.5)">+0.5s ]</button>
-      <button onclick="resetSubs()">Reset</button>
-    </div>
+  <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
+  <div id="bar">
+    <button id="back">← Volver</button>
+    <button id="next">Otra copia</button>
+    <span class="sp"></span>
+    <span class="st" id="st">fuente 1 / 2 · vose</span>
   </div>
-  
+  <div id="spin"><div class="txt">Descendiendo</div><div class="bar2"><i></i></div></div>
   <div id="toast"></div>
-  
-  <div id="err">
-    <div class="big">EL POZO NO RESPONDE</div>
-    <p>El archivo de archive.org no está disponible. Intenta de nuevo más tarde.</p>
-    <button onclick="location.reload()">Reintentar</button>
-  </div>
 </div>
 
 <script>
-// CONFIGURACIÓN - Nodo CDN directo de archive.org (más rápido)
-const VIDEO_URL = 'https://dn600303.us.archive.org/0/items/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.ia.mp4';
-// URL de respaldo
-const BACKUP_URL = 'https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.ia.mp4';
-
-// Subtítulos ES-419 incrustados (primeros 30 minutos como ejemplo - expandir según necesidad)
-const SUBTITULOS_SRT = `1
-00:00:01,000 --> 00:00:05,000
-SÁTÁNTANGÓ
-
-2
-00:00:06,000 --> 00:00:10,000
-Basada en la novela de László Krasznahorkai
-
-3
-00:00:12,000 --> 00:00:16,000
-Primeras noticias de la llegada
-
-4
-00:00:18,000 --> 00:00:22,000
-El rumor sobre el que llega
-
-5
-00:00:25,000 --> 00:00:30,000
-y el que se va, se extendió por todo el pueblo.`;
-
-const $ = id => document.getElementById(id);
-const v = $('v');
-const KP = 'sat.pos', KO = 'sat.off';
-let off = parseFloat(localStorage.getItem(KO)) || 0;
-let booted = false, currentSource = 0;
-
-// Precarga optimizada
-function warmConnection(){
-  fetch(VIDEO_URL, {method: 'HEAD', mode: 'no-cors'}).catch(()=>{});
-}
-
-// Iniciar precarga al cargar la página
-warmConnection();
-
-// Fondos de cementerio
-const PHOTOS = [
- 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRfPMIsGFz-ZbaGpQbhHB1g-xpFQfCLou2xtvme6490BiAztsR4_XS6BM&s=10',
- 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1920px-Orthodox_cemetery_vilnius_by_night.JPG',
- 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG'
+"use strict";
+const $=id=>document.getElementById(id);
+const FRAMES=[
+  "https://ok.ru/videoembed/7513547082408",
+  "https://ok.ru/videoembed/2058564078154"
 ];
+const NAMES=["fuente 1 / 2 · vose","fuente 2 / 2 · hd"];
+const LBL=["vose subtitulado","hd sin subtítulos"];
+let i=0,booted=false;
 
-// Cargar fondo
-(function loadPhoto(i){
-  if(i >= PHOTOS.length) return;
-  const img = new Image();
-  img.onload = () => {
-    $('photo').style.backgroundImage = `url('${PHOTOS[i]}')`;
-    $('photo').classList.add('on');
-  };
-  img.onerror = () => loadPhoto(i+1);
-  img.src = PHOTOS[i];
-})(0);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2600);}
 
-// Lluvia
-const cv = $('rain'), cx = cv.getContext('2d');
-let W, H, drops = [], run = true;
-
-function resize(){
-  const d = Math.min(devicePixelRatio||1, 2);
-  W = cv.clientWidth; H = cv.clientHeight;
-  cv.width = W*d; cv.height = H*d;
-  cx.setTransform(d,0,0,d,0,0);
-  drops = Array(Math.min(150, W/9|0)).fill().map(() => ({
-    x: Math.random()*W, y: Math.random()*H,
-    l: 9+Math.random()*34, v: .7+Math.random()*1.6,
-    o: .05+Math.random()*.2, w: Math.random()<.2?1:.6
-  }));
+function load(k){
+  i=k;
+  $("spin").classList.add("on");
+  $("st").textContent=NAMES[k];
+  $("frame").src=FRAMES[k];
+  setTimeout(()=>$("spin").classList.remove("on"),1800);
+  try{localStorage.setItem("sat.f",k);}catch{}
 }
-addEventListener('resize', resize);
-resize();
 
-(function rainLoop(){
-  if(!run) return;
+/* fondo */
+const PHOTOS=[
+ "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRfPMIsGFz-ZbaGpQbhHB1g-xpFQfCLou2xtvme6490BiAztsR4_XS6BM&s=10",
+ "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1920px-Orthodox_cemetery_vilnius_by_night.JPG",
+ "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"
+];
+(function ph(n){if(n>=PHOTOS.length)return;const im=new Image();im.onload=()=>{const e=$("photo");e.style.backgroundImage="url('"+PHOTOS[n]+"')";e.classList.add("on");};im.onerror=()=>ph(n+1);im.src=PHOTOS[n];})(0);
+
+/* lluvia + paralaje */
+const cv=$("rain"),cx=cv.getContext("2d");let W,H,dr=[],run=true,tx=0,ty=0,px=0,py=0;
+function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);
+  dr=Array.from({length:Math.min(150,W/9|0)},()=>({x:Math.random()*W,y:Math.random()*H,l:9+Math.random()*34,v:.7+Math.random()*1.6,o:.05+Math.random()*.2,w:Math.random()<.2?1:.6}));}
+addEventListener("resize",size);size();
+addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5;},{passive:true});
+(function loop(){
+  if(!run)return;
   cx.clearRect(0,0,W,H);
-  for(const d of drops){
-    cx.strokeStyle = `rgba(232,228,216,${d.o})`;
-    cx.lineWidth = d.w;
-    cx.beginPath();
-    cx.moveTo(d.x, d.y);
-    cx.lineTo(d.x-1, d.y+d.l);
-    cx.stroke();
-    d.y += d.v; d.x -= .22;
-    if(d.y > H+40){d.y = -40; d.x = Math.random()*W;}
-    if(d.x < -10) d.x = W+10;
-  }
-  requestAnimationFrame(rainLoop);
+  for(const d of dr){cx.strokeStyle="rgba(232,228,216,"+d.o+")";cx.lineWidth=d.w;cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1,d.y+d.l);cx.stroke();
+    d.y+=d.v;d.x-=.22;if(d.y>H+40){d.y=-40;d.x=Math.random()*W;}if(d.x<-10)d.x=W+10;}
+  px+=(tx-px)*.04;py+=(ty-py)*.04;
+  $("core").style.transform="translate("+(-px*14)+"px,"+(-py*10)+"px)";
+  requestAnimationFrame(loop);
 })();
 
-// Utilidades
-const fmt = t => {
-  t = Math.max(0, Math.floor(t||0));
-  return `${t/3600|0}:${String(t%3600/60|0).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
+/* arranque */
+$("go").onclick=()=>{
+  if(booted)return;booted=true;
+  let k=0;try{k=+localStorage.getItem("sat.f")||0;}catch{}
+  load(k);
+  $("home").classList.add("out");
+  $("film").classList.add("on");
+  run=false;
+  setTimeout(()=>{$("home").style.display="none";},1000);
 };
-
-const showToast = m => {
-  const t = $('toast');
-  t.textContent = m; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2400);
+$("next").onclick=()=>{load((i+1)%FRAMES.length);toast("Cambiando a "+LBL[(i+1)%FRAMES.length]);};
+$("back").onclick=()=>{
+  $("frame").src="about:blank";
+  $("film").classList.remove("on");
+  $("home").style.display="";
+  setTimeout(()=>{$("home").classList.remove("out");booted=false;run=true;loop();},50);
 };
-
-// Convertir SRT a WebVTT
-function srtToVtt(srt, offset){
-  return 'WEBVTT\n\n' + srt
-    .replace(/^\uFEFF/, '')
-    .replace(/\r/g, '')
-    .replace(/(\d{2}):(\d{2}):(\d{2}),(\d{3})/g, (_,h,m,s,ms) => {
-      const t = Math.max(0, ((+h*60+ +m)*60+ +s)*1000 + +ms + offset*1000);
-      return `${String(t/3600000|0).padStart(2,'0')}:${String(t%3600000/60000|0).padStart(2,'0')}:${String(t%60000/1000|0).padStart(2,'0')}.${String(t%1000).padStart(3,'0')}`;
-    });
-}
-
-// Cargar subtítulos
-function loadSubs(){
-  if(!SUBTITULOS_SRT) return;
-  const track = document.createElement('track');
-  track.kind = 'captions';
-  track.label = 'Español (Latino)';
-  track.srclang = 'es';
-  track.default = true;
-  track.src = URL.createObjectURL(new Blob([srtToVtt(SUBTITULOS_SRT, off)], {type: 'text/vtt'}));
-  v.appendChild(track);
-  
-  track.addEventListener('load', () => {
-    track.track.mode = 'showing';
-  });
-}
-
-// Ajustar subtítulos
-window.shiftSubs = d => {
-  off += d;
-  localStorage.setItem(KO, off);
-  // Recargar track
-  v.querySelectorAll('track').forEach(t => t.remove());
-  loadSubs();
-  showToast(`Subs: ${off>0?'+':''}${off}s`);
-};
-
-window.resetSubs = () => {
-  off = 0;
-  localStorage.setItem(KO, 0);
-  v.querySelectorAll('track').forEach(t => t.remove());
-  loadSubs();
-  showToast('Subs reseteados');
-};
-
-// Configurar video con optimizaciones
-function setupVideo(){
-  // Usar URL directa del nodo CDN (más rápida)
-  v.src = currentSource === 0 ? VIDEO_URL : BACKUP_URL;
-  v.preload = 'metadata';
-  
-  // Precargar primer fragmento para inicio rápido
-  fetch(v.src, {
-    method: 'GET',
-    headers: { 'Range': 'bytes=0-524288' }, // Primer 512KB
-    mode: 'no-cors'
-  }).catch(()=>{});
-  
-  const savedPos = parseFloat(localStorage.getItem(KP)) || 0;
-  
-  v.addEventListener('loadedmetadata', () => {
-    $('spin').classList.remove('on');
-    if(savedPos > 60 && !booted){
-      v.currentTime = savedPos;
-    }
-    loadSubs();
-  });
-  
-  v.addEventListener('waiting', () => $('spin').classList.add('on'));
-  v.addEventListener('playing', () => $('spin').classList.remove('on'));
-  v.addEventListener('canplay', () => $('spin').classList.remove('on'));
-  
-  v.addEventListener('error', () => {
-    if(currentSource === 0){
-      currentSource = 1;
-      v.src = BACKUP_URL;
-      v.load();
-      showToast('Usando servidor de respaldo...');
-    } else {
-      $('err').classList.add('on');
-    }
-  });
-  
-  // Actualizar progreso
-  v.addEventListener('timeupdate', () => {
-    const pct = (v.currentTime / v.duration) * 100;
-    $('progress-bar').style.width = pct + '%';
-    $('time').textContent = `${fmt(v.currentTime)} / ${fmt(v.duration||26340)}`;
-  });
-  
-  // Guardar progreso cada 5 segundos
-  setInterval(() => {
-    if(!v.paused && v.currentTime > 5){
-      localStorage.setItem(KP, v.currentTime);
-    }
-  }, 5000);
-  
-  // Click en barra de progreso
-  $('progress').addEventListener('click', e => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    v.currentTime = pct * v.duration;
-  });
-}
-
-// Iniciar
-setupVideo();
-
-// Botón Descender
-$('go').addEventListener('click', () => {
-  if(booted) return;
-  booted = true;
-  
-  $('home').classList.add('out');
-  $('film').classList.add('on');
-  run = false;
-  
-  setTimeout(() => {
-    $('home').style.display = 'none';
-    v.play().catch(() => {
-      // Autoplay bloqueado, esperar interacción
-    });
-  }, 1000);
-});
-
-// Botón Continuar
-const saved = parseFloat(localStorage.getItem(KP)) || 0;
-if(saved > 60){
-  $('res').hidden = false;
-  $('resT').textContent = `desde ${fmt(saved)}`;
-  $('res').addEventListener('click', () => {
-    if(booted) return;
-    booted = true;
-    $('home').classList.add('out');
-    $('film').classList.add('on');
-    run = false;
-    setTimeout(() => {
-      $('home').style.display = 'none';
-      v.currentTime = saved;
-      v.play();
-    }, 1000);
-  });
-}
-
-// Volver
-$('back-btn').addEventListener('click', () => {
-  v.pause();
-  $('film').classList.remove('on');
-  $('home').style.display = '';
-  setTimeout(() => {
-    $('home').classList.remove('out');
-    booted = false;
-    run = true;
-    rainLoop();
-  }, 50);
-});
-
-// Wake lock
-async function lockScreen(){
-  try {
-    if(navigator.wakeLock){
-      await navigator.wakeLock.request('screen');
-    }
-  } catch(e){}
-}
-v.addEventListener('play', lockScreen);
-
-// Atajos
-document.addEventListener('keydown', e => {
-  if(!$('film').classList.contains('on')) return;
-  if(e.code === 'Space'){e.preventDefault(); v.paused ? v.play() : v.pause();}
-  if(e.code === 'ArrowLeft') v.currentTime -= 10;
-  if(e.code === 'ArrowRight') v.currentTime += 10;
-  if(e.key === 'f') {
-    if(document.fullscreenElement) document.exitFullscreen();
-    else v.requestFullscreen();
-  }
-  if(e.key === 'Escape') $('back-btn').click();
+addEventListener("keydown",e=>{
+  if(!$("film").classList.contains("on"))return;
+  if(e.key==="Escape")$("back").click();
+  if(e.key==="n")$("next").click();
 });
 </script>
 </body>
