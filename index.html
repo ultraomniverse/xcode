@@ -7,8 +7,10 @@
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23e8e4d8' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
 <title>SÁTÁNTANGÓ · EL ABISMO</title>
-<link rel="preconnect" href="https://ok.ru" crossorigin>
-<link rel="dns-prefetch" href="//ok.ru">
+<link rel="preconnect" href="https://dn600303.us.archive.org" crossorigin>
+<link rel="dns-prefetch" href="//dn600303.us.archive.org">
+<link rel="preconnect" href="https://archive.org" crossorigin>
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/abyssal-horrors" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/spectre" media="print" onload="this.media='all'">
@@ -65,28 +67,35 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 /* ===== reproductor ===== */
 #film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
 #film.on{visibility:visible}
-#frame{width:100%;height:100%;border:0;background:#000;display:block}
+#v{width:100%;height:100%;background:#000;object-fit:contain;display:block}
+#v::cue{background:rgba(0,0,0,.86);color:#fff;font-family:Spectre,Georgia,serif;font-weight:500;font-size:clamp(15px,2.2vw,24px);line-height:1.32;text-shadow:0 1px 4px #000,0 0 12px #000}
 
-#bar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);opacity:0;transition:opacity .3s}
-#film:hover #bar,#bar:focus-within{opacity:1}
-#bar button{padding:9px 16px;border:1px solid rgba(232,228,216,.28);background:rgba(0,0,0,.6);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#cfccc3;transition:.2s}
-#bar button:hover,#bar button:focus{outline:none;border-color:var(--bone);color:var(--bone)}
-#bar .sp{flex:1}
-#bar .st{font-size:9px;letter-spacing:.3em;color:#8e8b83;text-transform:uppercase}
-
-#spin{position:absolute;inset:0;z-index:15;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
+#spin{position:absolute;inset:0;z-index:35;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
 #spin.on{display:flex}
 #spin .txt{font-family:var(--g);font-size:clamp(15px,2.6vw,26px);letter-spacing:.28em;text-transform:uppercase;animation:breathe 1.8s ease-in-out infinite}
-#spin .bar2{width:min(280px,60vw);height:1px;background:rgba(232,228,216,.18);overflow:hidden}
-#spin .bar2 i{display:block;height:100%;width:35%;background:var(--bone);animation:slide 1.15s ease-in-out infinite}
+#spin .bar{width:min(280px,60vw);height:1px;background:rgba(232,228,216,.18);overflow:hidden}
+#spin .bar i{display:block;height:100%;width:35%;background:var(--bone);animation:slide 1.15s ease-in-out infinite}
 @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(320%)}}
 @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 
-#toast{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;background:#000;border:1px solid var(--bone);font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center}
+#bar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);opacity:0;transition:opacity .3s}
+#film:hover #bar,#bar:focus-within{opacity:1}
+#bar button{padding:9px 14px;border:1px solid rgba(232,228,216,.28);background:rgba(0,0,0,.6);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#cfccc3;transition:.2s}
+#bar button:hover,#bar button:focus{outline:none;border-color:var(--bone);color:var(--bone)}
+#bar .sp{flex:1}
+#bar .st{font-size:9px;letter-spacing:.28em;color:#8e8b83;text-transform:uppercase}
+
+#toast{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;background:#000;border:1px solid var(--bone);font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:88%}
 #toast.show{opacity:1}
 
+#subs{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);z-index:22;display:flex;gap:8px;opacity:0;transition:opacity .3s;flex-wrap:wrap;justify-content:center}
+#film:hover #subs{opacity:1}
+#subs button{padding:8px 13px;border:1px solid rgba(232,228,216,.25);background:rgba(0,0,0,.7);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#cfccc3}
+#subs button:hover,#subs button:focus{outline:none;border-color:var(--bone);color:var(--bone)}
+#file{display:none}
+
 @media (max-width:560px){#strip span{padding:9px 10px;font-size:9px;letter-spacing:.14em}#seal .tag{display:none}h1{font-size:clamp(21px,6.6vw,34px)}h2{font-size:clamp(13px,3.6vw,17px)}.acts button{font-size:15px;letter-spacing:.26em}}
-@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after,#spin .txt,#spin .bar2 i{animation:none}}
+@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after,#spin .txt,#spin .bar i{animation:none}}
 </style>
 </head>
 <body>
@@ -106,38 +115,58 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 </main>
 
 <div id="film">
-  <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
+  <video id="v" playsinline preload="metadata" crossorigin="anonymous"></video>
   <div id="bar">
     <button id="back">← Volver</button>
     <button id="next">Otra copia</button>
     <span class="sp"></span>
-    <span class="st" id="st">fuente 1 / 2 · vose</span>
+    <span class="st" id="st">1080p · subtitulado</span>
   </div>
-  <div id="spin"><div class="txt">Descendiendo</div><div class="bar2"><i></i></div></div>
+  <div id="subs">
+    <button id="s0">Subs ON/OFF</button>
+    <button id="sm">[ −0.5s</button>
+    <button id="sr">reset</button>
+    <button id="sp2">+0.5s ]</button>
+    <button id="pick">Cargar .srt</button>
+  </div>
+  <div id="spin"><div class="txt">Descendiendo</div><div class="bar"><i></i></div></div>
   <div id="toast"></div>
+  <input id="file" type="file" accept=".srt,.vtt,text/vtt">
 </div>
 
 <script>
 "use strict";
-const $=id=>document.getElementById(id);
-const FRAMES=[
-  "https://ok.ru/videoembed/7513547082408",
-  "https://ok.ru/videoembed/2058564078154"
+const $=id=>document.getElementById(id),v=$("v");
+const ITEM="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
+const BASE="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT";
+const NODO="dn600303.us.archive.org";
+const DIR="/0/items/"+ITEM+"/"+BASE;
+
+/* 1080p real (1722x1080). .ia.mp4 es el derivado con índice de streaming. */
+const MP4S=[
+  "https://"+NODO+DIR+".ia.mp4",
+  "https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4",
+  "https://"+NODO+DIR+".mp4"
 ];
-const NAMES=["fuente 1 / 2 · vose","fuente 2 / 2 · hd"];
-const LBL=["vose subtitulado","hd sin subtítulos"];
-let i=0,booted=false;
+const OKEMBED=["https://ok.ru/videoembed/7513547082408"];
+
+const SUB_SOURCES=[
+  "https://raw.githubusercontent.com/ultraomniverse/xcode/HEAD/satantango.es-419.srt",
+  "satantango.es-419.srt"
+];
+
+const KP="sat.pos2",KO="sat.off2",KS="sat.src";
+const num=k=>{try{return +localStorage.getItem(k)||0;}catch{return 0;}};
+const put=(k,x)=>{try{localStorage.setItem(k,x);}catch{}};
+const p2=n=>String(n).padStart(2,"0"),p3=n=>String(n).padStart(3,"0");
+const fmt=t=>{t=Math.max(0,Math.floor(t||0));return (t/3600|0)+":"+p2(t%3600/60|0)+":"+p2(t%60);};
+
+let off=num(KO),src=0,mode="mp4",srt=null,booted=false,kick=false,watch=0,spinT=0;
+const pos=num(KP);
 
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2600);}
-
-function load(k){
-  i=k;
-  $("spin").classList.add("on");
-  $("st").textContent=NAMES[k];
-  $("frame").src=FRAMES[k];
-  setTimeout(()=>$("spin").classList.remove("on"),1800);
-  try{localStorage.setItem("sat.f",k);}catch{}
-}
+function play(){const p=v.play();if(p&&p.catch)p.catch(()=>{});}
+function spin(on){clearTimeout(spinT);if(on)$("spin").classList.add("on");else spinT=setTimeout(()=>$("spin").classList.remove("on"),180);}
 
 /* fondo */
 const PHOTOS=[
@@ -163,26 +192,126 @@ addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/inner
   requestAnimationFrame(loop);
 })();
 
-/* arranque */
+/* ---------- subtítulos ---------- */
+function toVtt(src,o){
+  return "WEBVTT\n\n"+src.replace(/^\uFEFF/,"").replace(/\r/g,"").replace(/(\d{2}):(\d{2}):(\d{2}),(\d{3})/g,(m,h,mi,s,ms)=>{
+    const t=Math.max(0,Math.round(((+h*60+ +mi)*60+ +s)*1000+ +ms+o*1000));
+    return p2(t/3600000|0)+":"+p2(t%3600000/60000|0)+":"+p2(t%60000/1000|0)+"."+p3(t%1000);});
+}
+async function grab(u){
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),9000);
+  try{const r=await fetch(u,{signal:ac.signal});if(!r.ok)throw 0;const x=await r.text();if(x.indexOf("-->")<0)throw 0;return x;}
+  finally{clearTimeout(to);}
+}
+function attach(){
+  if(!srt)return;
+  v.querySelectorAll("track").forEach(t=>t.remove());
+  const tk=document.createElement("track");
+  tk.kind="captions";tk.label="Español (Latino)";tk.srclang="es";tk.default=true;
+  tk.src=URL.createObjectURL(new Blob([toVtt(srt,off)],{type:"text/vtt"}));
+  v.appendChild(tk);
+  const on=()=>{try{tk.track.mode="showing";}catch{}};
+  tk.addEventListener("load",on);setTimeout(on,300);setTimeout(on,1200);
+}
+(async()=>{
+  for(const u of SUB_SOURCES){try{srt=await grab(u);break;}catch{}}
+  if(srt){attach();toast("Subtítulos español cargados");}
+  else toast("Sin subtítulos: cargalos con el botón .srt");
+})();
+
+$("s0").onclick=()=>{
+  const tr=v.textTracks&&v.textTracks[0];if(!tr)return;
+  tr.mode=tr.mode==="showing"?"hidden":"showing";
+  toast("Subtítulos "+(tr.mode==="showing"?"ON":"OFF"));
+};
+function shift(d){
+  const tr=v.textTracks&&v.textTracks[0];if(!tr||!tr.cues)return;
+  for(const c of tr.cues){c.startTime=Math.max(0,c.startTime+d);c.endTime=Math.max(.1,c.endTime+d);}
+  off=Math.round((off+d)*10)/10;put(KO,off);toast("Subs "+(off>0?"+":"")+off.toFixed(1)+" s");
+}
+$("sm").onclick=()=>shift(-.5);
+$("sp2").onclick=()=>shift(.5);
+$("sr").onclick=()=>{off=0;put(KO,0);v.querySelectorAll("track").forEach(t=>t.remove());attach();toast("Subs reseteados");};
+$("pick").onclick=()=>$("file").click();
+$("file").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{const x=String(r.result);if(x.indexOf("-->")<0){toast("Sin marcas de tiempo");return;}srt=x;attach();toast("Subtítulos cargados");};
+  r.readAsText(f,"utf-8");};
+
+/* ---------- video ---------- */
+function setMp4(i,t){
+  mode="mp4";src=i;v.style.display="";$("frame")&&$("frame").remove();
+  v.src=MP4S[i];v.load();
+  if(t>1)v.addEventListener("loadedmetadata",()=>{try{v.currentTime=t;}catch{}},{once:true});
+  clearTimeout(watch);
+  watch=setTimeout(()=>{
+    if(v.readyState>=1)return;
+    if(i<MP4S.length-1)setMp4(i+1,0);
+    else setOk();
+  },18000);
+}
+function setOk(){
+  mode="ok";clearTimeout(watch);
+  v.removeAttribute("src");v.load();v.style.display="none";
+  let f=$("frame");
+  if(!f){f=document.createElement("iframe");f.id="frame";f.allow="autoplay; fullscreen; encrypted-media";f.allowFullscreen=true;f.referrerPolicy="no-referrer";$("film").insertBefore(f,$("film").firstChild);}
+  f.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;z-index:1";
+  f.src=OKEMBED[0];
+  $("st").textContent="ok.ru · vose";
+  setTimeout(()=>spin(false),1500);
+  toast("Usando espejo ok.ru");
+}
+
+v.addEventListener("loadedmetadata",()=>{clearTimeout(watch);spin(false);});
+v.addEventListener("canplay",()=>{if(kick&&v.paused)play();});
+v.addEventListener("playing",()=>{kick=false;spin(false);});
+v.addEventListener("waiting",()=>{if($("film").classList.contains("on"))spin(true);});
+v.addEventListener("error",()=>{
+  if(mode!=="mp4"||!v.getAttribute("src"))return;
+  if(src<MP4S.length-1)setMp4(src+1,0);
+  else setOk();
+});
+
+/* calentar conexión del nodo elegido */
+setTimeout(()=>{try{fetch(MP4S[0],{mode:"no-cors",headers:{Range:"bytes=0-131071"}}).catch(()=>{});}catch{}},400);
+
+/* ---------- arranque ---------- */
 $("go").onclick=()=>{
   if(booted)return;booted=true;
-  let k=0;try{k=+localStorage.getItem("sat.f")||0;}catch{}
-  load(k);
   $("home").classList.add("out");
   $("film").classList.add("on");
-  run=false;
-  setTimeout(()=>{$("home").style.display="none";},1000);
+  run=false;setTimeout(()=>{$("home").style.display="none";},1000);
+  spin(true);
+  setMp4(0,pos>60?pos:0);
+  kick=true;setTimeout(play,900);
+  v.focus({preventScroll:true});
+  if(off)setTimeout(()=>toast("Ajuste de subs guardado: "+(off>0?"+":"")+off.toFixed(1)+" s"),1600);
 };
-$("next").onclick=()=>{load((i+1)%FRAMES.length);toast("Cambiando a "+LBL[(i+1)%FRAMES.length]);};
 $("back").onclick=()=>{
-  $("frame").src="about:blank";
+  try{v.pause();}catch{}
+  v.removeAttribute("src");v.load();
+  const f=$("frame");if(f)f.remove();
+  v.style.display="";
   $("film").classList.remove("on");
   $("home").style.display="";
   setTimeout(()=>{$("home").classList.remove("out");booted=false;run=true;loop();},50);
 };
+$("next").onclick=()=>{
+  if(mode==="mp4"&&src<MP4S.length-1)setMp4(src+1,v.currentTime||0);
+  else setOk();
+};
+
+setInterval(()=>{if(!v.paused&&v.currentTime>5)put(KP,v.currentTime);},5000);
+
+async function lock(){try{if(navigator.wakeLock){await navigator.wakeLock.request("screen");}}catch{}}
+v.addEventListener("play",lock);
+
 addEventListener("keydown",e=>{
   if(!$("film").classList.contains("on"))return;
   if(e.key==="Escape")$("back").click();
+  if(e.key==="[")shift(-.5);
+  if(e.key==="]")shift(.5);
+  if(e.key==="s")$("s0").click();
   if(e.key==="n")$("next").click();
 });
 </script>
