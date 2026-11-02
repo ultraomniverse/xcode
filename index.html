@@ -125,16 +125,35 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
 #bar .n{font-size:11px;color:#bbb;letter-spacing:.18em;text-transform:uppercase}
 
 #veil{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;
-  justify-content:center;gap:14px;background:rgba(0,0,0,.9);text-align:center;padding:20px}
+  justify-content:center;gap:14px;background:rgba(0,0,0,.92);text-align:center;padding:20px}
 #veil.on{display:flex}
 #veil h2{font-size:13px;letter-spacing:.44em;text-transform:uppercase;font-weight:normal}
-#veil p{font-size:11px;letter-spacing:.3em;color:#8a8a8a;text-transform:uppercase}
-#retry{display:none;padding:12px 26px;border:1px solid #666;font-family:inherit;font-size:11px;
-  letter-spacing:.3em;text-transform:uppercase;color:#fff;background:#000;cursor:pointer}
-#retry.on{display:block}
+#veil p{font-size:11px;letter-spacing:.3em;color:#8a8a8a;text-transform:uppercase;max-width:520px;word-break:break-all}
 .spin{width:26px;height:26px;border:1px solid #333;border-top-color:#fff;border-radius:50%;
   animation:sp .9s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* boton de play si el autoplay se bloquea */
+#play{position:absolute;inset:0;z-index:35;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.35);cursor:pointer}
+#play.on{display:flex}
+#play span{width:86px;height:86px;border:3px solid #fff;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:26px;padding-left:6px;background:rgba(0,0,0,.5)}
+
+/* diagnostico */
+#diag{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;background:#000;padding:0}
+#diag.on{display:flex}
+#diag .head{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:2px solid #fff}
+#diag .head b{font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+#diag .head .sp{flex:1}
+#diag button{font-family:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  padding:8px 12px;background:#000;color:#fff;border:1px solid #666;cursor:pointer}
+#diag button:hover{outline:2px solid #fff;outline-offset:2px}
+#log{flex:1;overflow:auto;padding:12px 14px;font-size:12px;line-height:1.6;color:#bdbdbd}
+#log div{padding:3px 0;border-bottom:1px solid #141414;word-break:break-all}
+#log .e{color:#ff6b6b}
+#log .w{color:#ffd166}
+#log .k{color:#7ee0a2}
 
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.cols{grid-template-columns:repeat(2,1fr)}
@@ -199,11 +218,11 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
     </div>
     <div class="legal">
       <p>XCODE es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; XCODE no aloja los archivos ni reclama su titularidad. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
-      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad depende del ancho de banda, del dispositivo y de la fuente. Los subtítulos se ofrecen según disponibilidad de cada obra.</p>
+      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad depende del ancho de banda, del dispositivo y de la fuente.</p>
       <p>Este sitio no utiliza cookies de seguimiento. Las decisiones tomadas y el estado narrativo se guardan localmente en el dispositivo.</p>
       <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos.</p>
     </div>
-    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.1</span></div>
+    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.2</span></div>
   </div>
 </footer>
 
@@ -213,10 +232,12 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
       <track id="trk" kind="subtitles" srclang="es" label="Español" default>
     </video>
     <div id="dim"></div>
+    <div id="play"><span>▶</span></div>
     <div id="ov"><div id="tb"><i></i><i></i></div><div id="q">Elegí</div></div>
     <div id="bar">
       <button id="back">← Volver</button>
       <button id="restart">Reiniciar</button>
+      <button id="diagBtn">Diag</button>
       <span class="sp"></span>
       <span class="n">Bandersnatch · interactivo</span>
       <button id="fs">Pantalla</button>
@@ -225,7 +246,11 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
       <div class="spin"></div>
       <h2 id="vt">Cargando</h2>
       <p id="vp">preparando la cinta</p>
-      <button id="retry">Reintentar</button>
+    </div>
+    <div id="diag">
+      <div class="head"><b>Diagnóstico</b><span class="sp"></span>
+        <button id="copy">Copiar</button><button id="closeDiag">Cerrar</button></div>
+      <div id="log"></div>
     </div>
   </div>
 </div>
@@ -234,13 +259,45 @@ footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;mar
 "use strict";
 const $=id=>document.getElementById(id);
 const film=$("film"), stage=$("stage"), v=$("video"), ov=$("ov"), dim=$("dim"), veil=$("veil"),
-      vt=$("vt"), vp=$("vp"), retry=$("retry"), bar=$("bar"), tb=$("tb"), q=$("q"), trk=$("trk");
+      vt=$("vt"), vp=$("vp"), bar=$("bar"), tb=$("tb"), q=$("q"), trk=$("trk"),
+      playBtn=$("play"), diag=$("diag"), logEl=$("log");
 
 const H1="https://ia800103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
 const H2="https://ia600103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4";
 const BASE="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/";
 const VTT=BASE+"subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
 
+/* ---------- log visible ---------- */
+function log(msg,cls){
+  const d=document.createElement("div");
+  if(cls)d.className=cls;
+  const t=new Date().toISOString().slice(11,19);
+  d.textContent=t+"  "+msg;
+  logEl.appendChild(d);
+  logEl.scrollTop=logEl.scrollHeight;
+}
+function showDiag(){diag.classList.add("on");bar.classList.add("on");film.classList.remove("cur");}
+$("diagBtn").onclick=()=>{diag.classList.contains("on")?diag.classList.remove("on"):showDiag();};
+$("closeDiag").onclick=()=>diag.classList.remove("on");
+$("copy").onclick=()=>{
+  const txt=[...logEl.children].map(c=>c.textContent).join("\n");
+  navigator.clipboard?.writeText(txt).then(()=>log("log copiado","k"),()=>log("no se pudo copiar","w"));
+};
+
+/* ---------- errores de media ---------- */
+const ME=["","cancelado por el usuario","error de red","error de decodificación","formato no soportado o URL rota"];
+function mediaError(){
+  const e=v.error;
+  const code=e?e.code:0;
+  const txt=e?(e.message||ME[code]||"desconocido"):"desconocido";
+  log("ERROR DE VIDEO · código "+code+" · "+txt,"e");
+  log("src actual: "+(v.currentSrc||v.src||"(vacío)"),"e");
+  veil.classList.add("on");vt.textContent="Error "+code;vp.textContent=txt;
+  showDiag();
+}
+v.addEventListener("error",mediaError);
+
+/* ---------- datos ---------- */
 const D={"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
 "accept":"ACEPTAR","reject":"RECHAZAR","yes":"SÍ","no":"NO","throw tea over computer":"TIRAR TÉ EN LA COMPUTADORA",
 "throw tea":"TIRAR TÉ EN LA COMPUTADORA","shout at dad":"GRITARLE AL PADRE","phaedra":"PHAEDRA",
@@ -258,17 +315,30 @@ const tr=s=>{const k=String(s||"").trim().toLowerCase();return D[k]||String(s||"
 
 let SEGS=[],SEG={},MOM={},SG={},PREC={},ready=false,cur=null,shown=false,lock=false,openM=null,tId=0;
 
-function loadJS(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
-
+function loadJS(src){
+  return new Promise((ok,no)=>{
+    log("cargando script: "+src);
+    const s=document.createElement("script");
+    s.src=src;
+    s.onload=()=>{log("script ok","k");ok();};
+    s.onerror=()=>{log("FALLO script: "+src,"e");no(new Error("script "+src));};
+    document.head.appendChild(s);
+  });
+}
 function build(){
+  if(!window.bandersnatch)throw new Error("bandersnatch.js no dejó el objeto global");
+  if(!window.SegmentMap)throw new Error("SegmentMap.js no dejó el objeto global");
   const V=window.bandersnatch.videos["80988062"].interactiveVideoMoments.value;
   MOM=V.momentsBySegment||{};SG=V.segmentGroups||{};PREC=V.preconditions||{};
   const SM=window.SegmentMap.segments;
+  let n=0;
   for(const id in SM){
     SEG[id]={s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext};
     SEGS.push({id,s:SM[id].startTimeMs,e:SM[id].endTimeMs,d:SM[id].defaultNext});
+    n++;
   }
   SEGS.sort((a,b)=>a.s-b.s);ready=true;
+  log("datos ok · "+n+" segmentos · "+Object.keys(MOM).length+" segmentos con momentos","k");
 }
 function condOk(c){
   if(c===undefined||c===null||c===true)return true;
@@ -298,9 +368,11 @@ function impression(d){
 function segAt(ms){for(const s of SEGS)if(ms>=s.s&&(!s.e||ms<s.e))return s.id;return null;}
 
 function jump(id){
-  const s=SEG[id];if(!s)return false;
+  const s=SEG[id];
+  if(!s){log("salto a segmento inexistente: "+id,"e");return false;}
+  log("salto → "+id+" @"+(s.s/1000).toFixed(2)+"s");
   lock=true;cur=id;shown=false;closeOv();
-  try{v.currentTime=s.s/1000;}catch(e){}
+  try{v.currentTime=s.s/1000;}catch(e){log("no se pudo saltar: "+e.message,"e");}
   setTimeout(()=>{lock=false;},380);
   return true;
 }
@@ -311,12 +383,13 @@ function advance(prev,idx){
     nxt=c.segmentId||(c.sg?resolveSG(c.sg):null);
   }
   if(!nxt&&prev&&SEG[prev]&&SEG[prev].d){nxt=SEG[SEG[prev].d]?SEG[prev].d:resolveSG(SEG[prev].d);}
-  if(nxt)jump(nxt);else closeOv();
+  if(nxt)jump(nxt);else{log("sin destino, cierro overlay","w");closeOv();}
 }
 
 function showOv(m){
   if(shown)return;
   shown=true;openM=m;q.textContent="Elegí";
+  log("decisión en segmento "+cur+" · "+m.choices.length+" opciones");
   ov.querySelectorAll(".opt").forEach(n=>n.remove());
   const def=Math.min(m.defaultChoiceIndex??1,m.choices.length-1);
   m.choices.forEach((c,i)=>{
@@ -356,10 +429,10 @@ function loop(ts){
   if(ts-lastT<100)return;lastT=ts;
   if(lock||v.paused||v.ended||v.readyState<2)return;
   const ms=Math.round(v.currentTime*1000);
-  const id=segAt(ms);if(!id)return;
-  if(id!==cur){cur=id;}
-  const arr=MOM[id]||[];
-  for(const m of arr){
+  const id=segAt(ms);
+  if(!id)return;
+  if(id!==cur)cur=id;
+  for(const m of (MOM[id]||[])){
     if(!m.choices)continue;
     const from=m.uiDisplayMS??m.startMs,to=m.uiHideMS??m.endMs;
     if(ms>=from&&ms<to&&!shown&&(!m.precondition||condOk(m.precondition))){showOv(m);return;}
@@ -373,13 +446,13 @@ requestAnimationFrame(loop);
 
 let hideT=0;
 function wake(){bar.classList.add("on");film.classList.remove("cur");clearTimeout(hideT);
-  hideT=setTimeout(()=>{bar.classList.remove("on");film.classList.add("cur");},3500);}
+  hideT=setTimeout(()=>{if(!diag.classList.contains("on")){bar.classList.remove("on");film.classList.add("cur");}},3500);}
 stage.addEventListener("pointermove",wake);
 stage.addEventListener("touchstart",wake,{passive:true});
 
 document.addEventListener("keydown",e=>{
   if(!film.classList.contains("on"))return;
-  if(e.key==="Escape")close();
+  if(e.key==="Escape"){diag.classList.contains("on")?diag.classList.remove("on"):close();}
   if(!shown)return;
   const b=[...ov.querySelectorAll(".opt")];if(!b.length)return;
   if(e.key==="ArrowRight")b[(b.indexOf(document.activeElement)+1+b.length)%b.length].focus();
@@ -390,56 +463,88 @@ document.addEventListener("keydown",e=>{
 function open(){film.classList.add("on");document.body.style.overflow="hidden";wake();}
 function close(){
   film.classList.remove("on","cur");bar.classList.remove("on");
-  try{v.pause();}catch(e){}
+  try{v.pause();}catch(e){log("pause falló: "+e.message,"w");}
   v.removeAttribute("src");v.load();
-  closeOv();veil.classList.remove("on");retry.classList.remove("on");
+  closeOv();veil.classList.remove("on");diag.classList.remove("on");playBtn.classList.remove("on");
   document.body.style.overflow="";ready=false;cur=null;shown=false;
+  log("reproductor cerrado");
 }
 $("back").onclick=close;
-$("fs").onclick=()=>{document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.();};
+$("fs").onclick=()=>{
+  try{ document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.(); }
+  catch(e){ log("pantalla completa falló: "+e.message,"e"); }
+};
+playBtn.onclick=()=>{playBtn.classList.remove("on");v.play().then(()=>log("play manual ok","k")).catch(e=>log("play manual falló: "+e.message,"e"));};
 
+/* ---------- arranque ---------- */
 async function start(){
-  open();
-  veil.classList.add("on");vt.textContent="Cargando";vp.textContent="preparando la cinta";retry.classList.remove("on");
+  open();logEl.innerHTML="";
+  log("arranque · UA: "+navigator.userAgent);
+  veil.classList.add("on");vt.textContent="Cargando";vp.textContent="preparando la cinta";
+
   if(!ready){
     try{
       await loadJS(BASE+"assets/SegmentMap.js");
       await loadJS(BASE+"assets/bandersnatch.js");
       build();
     }catch(e){
-      vt.textContent="No se pudo cargar";vp.textContent="revisá la conexión";retry.classList.add("on");return;
+      log("no se pudieron cargar los datos: "+e.message,"e");
+      veil.classList.add("on");vt.textContent="Faltan los datos";vp.textContent=e.message;
+      showDiag();return;
     }
     try{
+      log("bajando subtítulos: "+VTT);
       const r=await fetch(VTT,{cache:"force-cache"});
+      if(!r.ok)throw new Error("HTTP "+r.status);
       const t=await r.text();
       trk.src=URL.createObjectURL(new Blob([t],{type:"text/vtt"}));
-      setTimeout(()=>{try{trk.track.mode="showing";}catch(e){}},250);
+      setTimeout(()=>{try{trk.track.mode="showing";log("subtítulos activados","k");}catch(e){log("track no disponible: "+e.message,"w");}},250);
       setTimeout(()=>{try{trk.track.mode="showing";}catch(e){}},1100);
-    }catch(e){}
+    }catch(e){ log("subtítulos fallaron: "+e.message,"e"); }
   }
+
+  log("asignando video: "+H1);
   v.src=H1;v.load();
-  const go=()=>{veil.classList.remove("on");cur=null;shown=false;lock=false;v.play().catch(()=>{});};
-  if(v.readyState>=2)go();else v.addEventListener("canplay",go,{once:true});
 
-  const t=setTimeout(()=>{if(v.readyState<2){vt.textContent="El nodo no responde";vp.textContent="probá la otra copia";retry.classList.add("on");}},12000);
-  v.addEventListener("playing",()=>{clearTimeout(t);veil.classList.remove("on");retry.classList.remove("on");},{once:true});
-  retry.onclick=()=>{retry.classList.remove("on");veil.classList.add("on");
-    vt.textContent="Reintentando";vp.textContent="otra copia";
-    v.src=v.src.indexOf("ia800103")>-1?H2:H1;v.load();};
+  const t=setTimeout(()=>{
+    if(v.readyState<2){
+      log("TIMEOUT 12s sin readyState>=2 (actual "+v.readyState+")","e");
+      veil.classList.add("on");vt.textContent="El nodo no responde";
+      vp.textContent="readyState "+v.readyState+" · "+H1;
+      showDiag();
+    }
+  },12000);
+  v.addEventListener("playing",()=>{clearTimeout(t);veil.classList.remove("on");log("reproduciendo","k");},{once:true});
+  v.addEventListener("loadedmetadata",()=>log("metadata ok · duración "+v.duration.toFixed(1)+"s","k"),{once:true});
 }
-v.addEventListener("waiting",()=>{if(shown)return;veil.classList.add("on");vt.textContent="Cargando";vp.textContent="un momento";});
-v.addEventListener("error",()=>{veil.classList.add("on");vt.textContent="Se cortó la cinta";vp.textContent="reintentá el punto";retry.classList.add("on");});
+v.addEventListener("waiting",()=>{log("waiting (buffering) en "+v.currentTime.toFixed(1)+"s","w");if(!shown)veil.classList.add("on");});
+v.addEventListener("stalled",()=>log("stalled","w"));
+v.addEventListener("canplay",()=>{if(veil.classList.contains("on"))veil.classList.remove("on");});
+v.addEventListener("abort",()=>log("abort","w"));
+v.addEventListener("ended",()=>log("fin del video","k"));
+v.addEventListener("play",()=>{
+  const p=v.play();
+  if(p&&p.catch)p.catch(e=>{
+    log("autoplay bloqueado: "+e.name,"w");
+    playBtn.classList.add("on");veil.classList.remove("on");
+  });
+},{once:true});
 
-$("restart").onclick=()=>{localStorage.clear();close();setTimeout(start,120);};
+$("restart").onclick=()=>{
+  log("reinicio pedido","w");
+  localStorage.clear();
+  close();setTimeout(start,150);
+};
 document.querySelectorAll("[data-play]").forEach(c=>c.addEventListener("click",start));
 
+/* ---------- fondo con respaldo y log ---------- */
 const PH=["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1600px-Orthodox_cemetery_vilnius_by_night.JPG",
 "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1600px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"];
 (function bg(i){
-  if(i>=PH.length)return;
+  if(i>=PH.length){log("FONDO: ninguna imagen cargó","e");return;}
   const im=new Image();
   im.onload=()=>{$("bg").style.backgroundImage='url("'+PH[i]+'")';$("bg2").style.backgroundImage='url("'+PH[i]+'")';};
-  im.onerror=()=>bg(i+1);
+  im.onerror=()=>{log("fondo falló: "+PH[i],"w");bg(i+1);};
   im.src=PH[i];
 })(0);
 </script>
