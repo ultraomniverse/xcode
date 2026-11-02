@@ -2,153 +2,202 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
 <title>xcode</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Cpath d='M14 5h4v9h9v4h-9v9h-4v-9H5v-4h9z' fill='%23fff'/%3E%3C/svg%3E">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bone:#ece8de;--dim:#6b6860;--line:#1e1e1e;--f:Arial,Helvetica,sans-serif}
-html,body{background:#000;color:var(--bone);font-family:var(--f);-webkit-font-smoothing:antialiased}
-body{overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-button{font-family:var(--f);background:none;border:0;color:inherit;cursor:pointer}
-::selection{background:#fff;color:#000}
+html{background:#1b1b1b}
+body{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#1b1b1b;font-size:18px;line-height:1.6}
 
-#top{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:26px;
-  padding:16px 4vw;background:linear-gradient(#000 20%,transparent);pointer-events:none}
-#top>*{pointer-events:auto}
-#logo{display:flex;align-items:center;gap:10px;letter-spacing:.42em;font-size:13px;font-weight:bold}
-#logo svg{width:17px;height:17px;fill:#fff}
-#top nav{display:flex;gap:20px;font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
-#top nav a:hover{color:#fff}
+#bg{position:fixed;inset:0;z-index:0;
+background:#2a2a2a url("https://previews.123rf.com/images/gillcopeland/gillcopeland1903/gillcopeland190300003/119540271-an-english-grave-yard-in-the-mist-in-the-foreground-the-head-stones-are-in-the-shape-of-christian.jpg") center/cover no-repeat;
+filter:grayscale(1) contrast(1.3) brightness(1.45)}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+background:
+  radial-gradient(ellipse 75% 60% at 50% 42%,rgba(0,0,0,.30),rgba(0,0,0,.52) 60%,rgba(0,0,0,.82) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.25) 40%,rgba(0,0,0,.6))}
+#screen{position:fixed;inset:0;z-index:1;pointer-events:none;background:#fff;mix-blend-mode:screen;opacity:.07}
 
-#home{position:relative;min-height:100vh;overflow:hidden}
-#photo{position:absolute;inset:0;z-index:0;background:#000 center/cover no-repeat;opacity:0;
-  filter:grayscale(1) contrast(1.12) brightness(.46);transition:opacity 1.4s;
-  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 74%,rgba(0,0,0,.3));
-  mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 74%,rgba(0,0,0,.3))}
-#photo.on{opacity:1}
-#home::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 200px 60px #000}
-#cross{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:1;
-  width:min(30vh,230px);opacity:.2;pointer-events:none;
-  filter:drop-shadow(0 0 20px rgba(255,255,255,.9)) drop-shadow(0 0 70px rgba(255,255,255,.5))}
-#cross svg{display:block;width:100%;fill:#fff}
+.wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 28px}
+header{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
+.brand{display:flex;align-items:center;gap:14px}
+.cross{width:26px;height:34px;position:relative}
+.cross::before,.cross::after{content:"";position:absolute;background:#fff}
+.cross::before{left:11px;top:0;width:4px;height:34px}
+.cross::after{left:0;top:9px;width:26px;height:4px}
+.brand b{font-size:30px;letter-spacing:.16em;font-weight:700}
 
-#letter{position:relative;z-index:5;max-width:620px;margin:0 auto;min-height:100vh;
-  display:flex;flex-direction:column;justify-content:center;padding:120px 7vw 140px;text-align:left}
-#letter .kicker{font-size:9px;letter-spacing:.5em;color:var(--dim);text-transform:uppercase;margin-bottom:26px}
-#letter h1{font-size:clamp(26px,4vw,40px);font-weight:normal;line-height:1.18;letter-spacing:-.01em;margin-bottom:22px}
-#letter p{font-size:15px;line-height:1.72;color:#c9c5bb;margin-bottom:16px}
-#letter .sign{margin-top:34px;font-size:12px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
-#letter .sign b{display:block;font-size:15px;letter-spacing:.12em;color:#fff;margin-bottom:4px}
-#go{margin-top:38px;align-self:flex-start;padding:16px 40px;border:1px solid #3a382f;
-  font-size:11px;letter-spacing:.34em;text-transform:uppercase;transition:.2s}
-#go:hover,#go:focus{outline:none;background:#fff;color:#000;border-color:#fff}
+main{padding:60px 0 20px}
+h1{font-size:52px;line-height:1.1;font-weight:700;margin-bottom:14px;letter-spacing:-.01em}
+.sub{font-size:19px;color:#d4d4d4;margin-bottom:52px;max-width:640px}
 
-#cat{position:relative;z-index:5;padding:0 4vw 90px;border-top:1px solid var(--line)}
-#cat h2{font-size:10px;letter-spacing:.42em;color:var(--dim);text-transform:uppercase;padding:38px 0 22px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.card{position:relative;aspect-ratio:2/3;border:1px solid #1a1a1a;overflow:hidden;background:#050505;
-  display:flex;flex-direction:column;justify-content:space-between;padding:16px;transition:.25s}
-.card:hover,.card:focus{outline:none;border-color:#fff;transform:translateY(-3px)}
-.card .yr{font-size:9px;letter-spacing:.3em;color:var(--dim)}
-.card .tt{font-size:17px;line-height:1.2}
-.card .mt{font-size:9px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
-.card .mk{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.05;pointer-events:none}
-.card .mk svg{width:56%;fill:#fff}
-.card:hover .mk{opacity:.12}
-.card.soon{opacity:.42;cursor:default;border-style:dashed}
-.card.soon:hover{transform:none;border-color:#1a1a1a}
+h2.sec{font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:#cfcfcf;
+margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
 
-footer{border-top:1px solid var(--line);padding:60px 4vw 40px;font-size:11px;color:var(--dim);line-height:1.9}
-.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:34px;max-width:1200px}
-.cols h3{font-size:9px;letter-spacing:.34em;color:#fff;text-transform:uppercase;margin-bottom:12px}
-.cols a{display:block}
-.cols a:hover{color:#fff}
-.legal{max-width:1200px;margin-top:52px;padding-top:22px;border-top:1px solid #141414;
-  display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;font-size:9px;letter-spacing:.22em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:70px}
+
+.card{display:block;background:#111;border:1px solid rgba(255,255,255,.28);
+text-decoration:none;color:#fff;padding:0;cursor:pointer;text-align:left;font-family:inherit}
+.card:hover,.card:focus{outline:3px solid #fff;outline-offset:3px;background:#000}
+.poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#222}
+.card .body{padding:14px 16px 18px}
+.card .t{font-size:20px;font-weight:700;line-height:1.25;margin-bottom:6px}
+.card .m{font-size:13px;color:#bcbcbc;letter-spacing:.06em;text-transform:uppercase}
+.tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.18em;
+text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 9px;color:#e2e2e2}
+
+.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;
+border:1px dashed rgba(255,255,255,.45);background:rgba(0,0,0,.45);text-align:center;padding:24px}
+.soon span{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:#d8d8d8}
+
+footer{position:relative;z-index:2;background:#0b0b0b;border-top:1px solid #333;margin-top:40px}
+.fwrap{max-width:1100px;margin:0 auto;padding:52px 28px 34px}
+.cols{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-bottom:44px}
+.col h3{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:14px}
+.col a{display:block;font-size:13px;color:#9d9d9d;text-decoration:none;padding:5px 0;line-height:1.4}
+.col a:hover{color:#fff;text-decoration:underline}
+.legal{border-top:1px solid #2a2a2a;padding-top:26px;font-size:12px;color:#7d7d7d;line-height:1.75}
+.legal p{margin-bottom:14px}
+.copy{margin-top:26px;padding-top:20px;border-top:1px solid #2a2a2a;
+font-size:12px;color:#6f6f6f;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 #film{position:fixed;inset:0;z-index:100;background:#000;display:none}
 #film.on{display:block}
 #stage{position:absolute;inset:0;overflow:hidden;background:#000}
 #frame{position:absolute;top:50%;left:50%;width:100%;height:100%;border:0;transform:translate(-50%,-50%)}
-#bn{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-#bar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:8px;padding:12px 3vw;
-  background:linear-gradient(#000 40%,transparent);opacity:0;transition:.25s;pointer-events:none}
+#bn{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:none}
+#bar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:10px;align-items:center;
+padding:12px 20px;background:linear-gradient(#000,rgba(0,0,0,.65) 60%,transparent);
+opacity:0;transition:.2s;pointer-events:none}
 #bar.on{opacity:1;pointer-events:auto}
-#bar button{padding:9px 16px;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#b9b5ac;border:1px solid transparent}
-#bar button:hover,#bar button:focus{outline:none;color:#fff;border-color:#3a382f}
+#bar button{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointer}
+#bar button:hover,#bar button:focus{outline:3px solid #fff;outline-offset:2px}
 #bar .sp{flex:1}
+#bar .n{font-size:13px;color:#ccc;letter-spacing:.14em;text-transform:uppercase}
 
-@media (max-width:560px){#letter{padding:100px 6vw 110px}}
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .cols{grid-template-columns:repeat(3,1fr)}
+  h1{font-size:38px}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .cols{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:30px}
+}
 </style>
 </head>
 <body>
 
-<header id="top">
-  <a id="logo" href="#"><svg viewBox="0 0 32 32"><path d="M14 2h4v12h12v4H18v12h-4V18H2v-4h12z"/></svg>XCODE</a>
-  <nav><a href="#cat">Catálogo</a><a href="#foot">Info</a></nav>
-</header>
+<div id="bg"></div>
+<div id="veil"></div>
+<div id="screen"></div>
 
-<main id="home">
-  <div id="photo"></div>
-  <div id="cross"><svg viewBox="0 0 100 140"><path d="M42 0h16v48h42v16H58v76H42V64H0V48h42z"/></svg></div>
-  <section id="letter">
-    <div class="kicker">Carta abierta · 1994</div>
-    <h1>Dear colleague,</h1>
-    <p>Hay una película que dura siete horas y empieza con diez minutos de vacas caminando bajo la lluvia. No pasa nada urgente en ella, y sin embargo todo lo que vino después del cine europeo está ahí adentro.</p>
-    <p>La puse en este sitio porque no encontré un lugar donde verla completa, con subtítulos decentes y sin que un algoritmo me la corte en pedazos. Acá no hay recomendaciones. Hay dos cosas y una silla.</p>
-    <p>Poné play, apagá el teléfono, y no adelantes. En esta casa no se adelanta.</p>
-    <div class="sign"><b>Béla Tarr</b>Budapest</div>
-    <button id="go">Descender</button>
-  </section>
-</main>
+<div class="wrap">
+  <header>
+    <div class="brand"><div class="cross"></div><b>XCODE</b></div>
+  </header>
 
-<section id="cat">
-  <h2>En cartelera</h2>
-  <div class="grid">
-    <a class="card" href="#s" data-play="sat">
-      <span class="yr">1994 · 7 h 19 min</span><span class="tt">Sátántangó</span>
-      <span class="mt">Béla Tarr · 1080p · subtítulos</span>
-      <span class="mk"><svg viewBox="0 0 100 140"><path d="M42 0h16v48h42v16H58v76H42V64H0V48h42z"/></svg></span>
-    </a>
-    <a class="card" href="#b" data-play="bn">
-      <span class="yr">2018 · 5 h 12 min</span><span class="tt">Bandersnatch</span>
-      <span class="mt">Interactivo · subtítulos</span>
-      <span class="mk"><svg viewBox="0 0 100 140"><path d="M42 0h16v48h42v16H58v76H42V64H0V48h42z"/></svg></span>
-    </a>
-    <div class="card soon">
-      <span class="yr">— · —</span><span class="tt">Próximamente</span><span class="mt">hueco reservado</span>
-      <span class="mk"><svg viewBox="0 0 100 140"><path d="M42 0h16v48h42v16H58v76H42V64H0V48h42z"/></svg></span>
+  <main>
+    <h1>El catálogo del abismo.</h1>
+    <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin prisa. Entrá y elegí.</p>
+
+    <h2 class="sec">Disponible ahora</h2>
+    <div class="grid">
+
+      <button class="card" data-play="sat">
+        <img class="poster" loading="lazy" decoding="async" alt="Sátántangó"
+        src="https://m.media-amazon.com/images/M/MV5BM2U1ZGYwNTItMjcwMS00ZTdjLWE2OWUtNDI5M2JlNjdmMTZlXkEyXkFqcGc@._V1_.jpg">
+        <div class="body">
+          <div class="t">Sátántangó</div>
+          <div class="m">1994 · Béla Tarr · 7 h 19 min</div>
+          <span class="tag">1080p · subtítulos ES</span>
+        </div>
+      </button>
+
+      <button class="card" data-play="ban">
+        <img class="poster" loading="lazy" decoding="async" alt="Bandersnatch"
+        src="https://m.media-amazon.com/images/M/MV5BMjM5MzgzMjM3OF5BMl5BanBnXkFtZTgwMzQ2MzQwNzM@._V1_.jpg">
+        <div class="body">
+          <div class="t">Black Mirror: Bandersnatch</div>
+          <div class="m">2018 · David Slade · interactivo</div>
+          <span class="tag">1080p · decisiones en español</span>
+        </div>
+      </button>
+
+      <div class="card" style="cursor:default">
+        <div class="soon"><span>Espacio disponible<br>para otra<br>que viene pronto</span></div>
+        <div class="body">
+          <div class="t">—</div>
+          <div class="m">Próximamente</div>
+        </div>
+      </div>
+
     </div>
-  </div>
-</section>
+  </main>
+</div>
 
-<footer id="foot">
-  <div class="cols">
-    <div><h3>xcode</h3><a href="#">Catálogo</a><a href="#">En cartelera</a><a href="#">Próximamente</a><a href="#">Archivo</a></div>
-    <div><h3>Películas</h3><a href="#s">Sátántangó</a><a href="#b">Bandersnatch</a><a href="#">Trilogía</a><a href="#">Cortos</a></div>
-    <div><h3>Reproducción</h3><a href="#">Calidad 1080p</a><a href="#">Subtítulos</a><a href="#">Interactivo</a><a href="#">Fuentes</a></div>
-    <div><h3>Comunidad</h3><a href="#">UltraOmniverse</a><a href="#">GitHub</a><a href="#">Discord</a><a href="#">Contacto</a></div>
-    <div><h3>Legal</h3><a href="#">Términos</a><a href="#">Privacidad</a><a href="#">Cookies</a><a href="#">Aviso de derechos</a></div>
-  </div>
-  <div class="legal">
-    <span>© 2026 xcode · todos los derechos reservados</span>
-    <span>Hecho en el abismo · v2.3</span>
-    <span>Sin backend · un solo archivo</span>
+<footer>
+  <div class="fwrap">
+    <div class="cols">
+      <div class="col">
+        <h3>Compañía</h3>
+        <a href="#">Sobre xcode</a><a href="#">Historia</a><a href="#">Empleo</a>
+        <a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a>
+      </div>
+      <div class="col">
+        <h3>Catálogo</h3>
+        <a href="#">Películas</a><a href="#">Series</a><a href="#">Documentales</a>
+        <a href="#">Cine de culto</a><a href="#">Interactivos</a><a href="#">Próximos estrenos</a>
+      </div>
+      <div class="col">
+        <h3>Ayuda</h3>
+        <a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a>
+        <a href="#">Facturación</a><a href="#">Reportar un error</a><a href="#">Estado del servicio</a>
+      </div>
+      <div class="col">
+        <h3>Legal</h3>
+        <a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a>
+        <a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a>
+      </div>
+      <div class="col">
+        <h3>Regiones</h3>
+        <a href="#">España</a><a href="#">México</a><a href="#">Argentina</a>
+        <a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a>
+      </div>
+      <div class="col">
+        <h3>Recursos</h3>
+        <a href="#">Fuentes de video</a><a href="#">Datos de ramificación</a><a href="#">Subtítulos</a>
+        <a href="#">Estado de nodos</a><a href="#">API pública</a><a href="#">Contacto</a>
+      </div>
+    </div>
+    <div class="legal">
+      <p>xcode es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; xcode no aloja los archivos ni reclama su titularidad. Sátántangó (1994), dirigida por Béla Tarr, se exhibe desde un espejo público. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
+      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad de reproducción depende del ancho de banda, del dispositivo y de la fuente. Los subtítulos se ofrecen según disponibilidad de cada obra. La duración total del archivo interactivo es de 5 h 12 min 14 s.</p>
+      <p>Este sitio no utiliza cookies de seguimiento. El progreso y las decisiones tomadas se guardan localmente en el dispositivo. Ninguna recomendación es automática: el orden del catálogo es editorial.</p>
+      <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos. Las imágenes de portada provienen de bases de datos públicas de metadatos.</p>
+      <p>xcode opera de forma independiente y sin fines comerciales. No se ofrece soporte telefónico. Las consultas se atienden por correo y con demora variable.</p>
+    </div>
+    <div class="copy">
+      <span>© 2026 xcode. Todos los derechos reservados.</span>
+      <span>Hecho en el abismo · versión 2.4</span>
+    </div>
   </div>
 </footer>
 
 <div id="film">
   <div id="stage">
-    <iframe id="frame" allow="autoplay; fullscreen; encrypted-media" allowfullscreen="true" referrerpolicy="no-referrer" style="display:none"></iframe>
-    <iframe id="bn" allow="autoplay; fullscreen" allowfullscreen="true" style="display:none"></iframe>
+    <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" style="display:none"></iframe>
+    <iframe id="bn" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
     <div id="bar">
       <button id="back">← Volver</button>
       <button id="restart">Reiniciar</button>
       <span class="sp"></span>
+      <span class="n" id="now"></span>
       <button id="fs">Pantalla</button>
     </div>
   </div>
@@ -157,7 +206,7 @@ footer{border-top:1px solid var(--line);padding:60px 4vw 40px;font-size:11px;col
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const film=$("film"), fr=$("frame"), bn=$("bn"), bar=$("bar");
+const film=$("film"), fr=$("frame"), bn=$("bn"), bar=$("bar"), now=$("now");
 
 const OK="https://ok.ru/videoembed/7513547082408";
 const MP4="https://ia800103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.Web-DL.x264.AAC-PTerWEB.mp4";
@@ -165,7 +214,27 @@ const MP4B="https://ia600103.us.archive.org/9/items/black.-mirror.-bandersnatch.
 const BASE="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/";
 const VTT=BASE+"subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
 
-/* documento del reproductor: motor, datos y estilo originales, con el video ya puesto */
+/* diccionario de decisiones: inglés -> español */
+const D={
+"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES",
+"thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
+"accept":"ACEPTAR","reject":"RECHAZAR","yes":"SÍ","no":"NO",
+"throw tea over computer":"TIRAR TÉ EN LA COMPUTADORA","throw tea":"TIRAR TÉ EN LA COMPUTADORA",
+"shout at dad":"GRITARLE AL PADRE","phaedra":"PHAEDRA","bermuda triangle":"EL TRIÁNGULO DE LAS BERMUDAS",
+"follow colin":"SEGUIR A COLIN","back off":"ECHARSE ATRÁS","netflix":"NETFLIX","white bear":"WHITE BEAR",
+"pick up the book":"TOMAR EL LIBRO","pick up book":"TOMAR EL LIBRO","go back to sleep":"VOLVER A DORMIR",
+"flush them":"DESCARGARLOS","leave them":"DEJARLOS","pax":"PAX",
+"destroy the computer":"DESTRUIR LA COMPUTADORA","smash the computer":"ROMPER LA COMPUTADORA",
+"cut up the photo":"CORTAR LA FOTO","leave it":"DEJARLA","take the job":"ACEPTAR EL TRABAJO",
+"refuse the job":"RECHAZAR EL TRABAJO","toy":"JUGUETE","call mum":"LLAMAR A MAMÁ","call mom":"LLAMAR A MAMÁ",
+"go back":"VOLVER","continue":"CONTINUAR","restart":"REINICIAR","talk to colin":"HABLAR CON COLIN",
+"work":"TRABAJAR","sleep":"DORMIR","drink":"BEBER","visit colin":"VISITAR A COLIN",
+"open the door":"ABRIR LA PUERTA","knock":"GOLPEAR","follow him":"SEGUIRLO","stay":"QUEDARSE",
+"read the book":"LEER EL LIBRO","play the tape":"PONER LA CINTA","watch the tape":"VER LA CINTA",
+"burn it":"QUEMARLO","keep it":"GUARDARLO","start over":"EMPEZAR DE NUEVO","give up":"RENDIRSE"
+};
+
+/* documento del reproductor: motor, datos y estilo originales, con video ya puesto y traducción */
 const DOC=`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <link rel="stylesheet" href="${BASE}assets/styles.css">
 <style>
@@ -173,10 +242,10 @@ html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
 #file-selector,#fileinput,#interactionZones,#nextSegments,#nextSegment{display:none!important}
 #c,#wrapper-video,video{width:100%!important;height:100%!important;display:block}
 video{object-fit:contain;background:#000;cursor:none}
-video::-webkit-media-controls{display:none!important}
 .controls{bottom:0}
 #choices li a{font-size:clamp(13px,1.6vw,20px);letter-spacing:.1em;text-transform:uppercase}
 #progress{height:4px;background:#9a9a9a}
+#choiceCaption{font-size:clamp(11px,1.1vw,14px);letter-spacing:.28em;text-transform:uppercase;color:#bbb}
 </style></head><body>
 <div id="c"><section>
 <div id="file-selector"></div><input id="fileinput" type="file">
@@ -192,6 +261,22 @@ video::-webkit-media-controls{display:none!important}
 <script>
 function askReset(){reset();}
 var v=document.getElementById("video");
+var D=${JSON.stringify(D)};
+var list=document.getElementById("choices");
+var busy=false;
+function fix(){
+  if(busy) return; busy=true;
+  var as=list.querySelectorAll("a");
+  for(var i=0;i<as.length;i++){
+    var a=as[i], raw=a.textContent, lead=raw.charAt(0)==="[", trail=raw.charAt(raw.length-1)==="]";
+    var core=raw.replace(/^\\[|\\]$/g,"").trim();
+    var n=D[core.toLowerCase()]||core;
+    if(lead) n="["+n+"]";
+    if(a.textContent!==n) a.textContent=n;
+  }
+  busy=false;
+}
+new MutationObserver(fix).observe(list,{childList:true,subtree:true,characterData:true});
 fetch("${VTT}").then(function(r){return r.text();}).then(function(t){
   var u=URL.createObjectURL(new Blob([t],{type:"text/vtt"}));
   var tr=document.getElementById("es"); tr.src=u;
@@ -202,10 +287,8 @@ v.addEventListener("error",function(){
   var s=document.getElementById("video-source");
   if(s.src.indexOf("ia800103")>-1){ s.src="${MP4B}"; v.load(); v.play(); }
 },{once:true});
-v.addEventListener("click",function(){ if(v.paused) v.play(); else v.pause(); });
 <\/script></body></html>`;
 
-/* barra efímera */
 let hideT=0;
 function wake(){
   bar.classList.add("on"); clearTimeout(hideT);
@@ -214,14 +297,13 @@ function wake(){
 $("stage").addEventListener("pointermove",wake);
 $("stage").addEventListener("touchstart",wake,{passive:true});
 
-function open(){ film.classList.add("on"); document.body.style.overflow="hidden"; }
+function open(){ film.classList.add("on"); document.body.style.overflow="hidden"; wake(); }
 function close(){
   film.classList.remove("on"); bar.classList.remove("on");
   fr.style.display="none"; fr.src="about:blank";
   bn.style.display="none"; bn.removeAttribute("srcdoc"); bn.src="about:blank";
-  document.body.style.overflow="";
+  document.body.style.overflow=""; now.textContent="";
 }
-
 $("back").onclick=close;
 $("fs").onclick=()=>{ document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.(); };
 $("restart").onclick=()=>{
@@ -232,7 +314,7 @@ $("restart").onclick=()=>{
 };
 
 function startSAT(){
-  open(); bar.classList.remove("on");
+  open(); now.textContent="Sátántangó · 1080p";
   bn.style.display="none"; fr.style.display="block";
   const fit=()=>{
     const R=1722/1080, w=innerWidth, h=innerHeight;
@@ -242,28 +324,15 @@ function startSAT(){
   fit(); addEventListener("resize",fit);
   fr.src=OK;
 }
-
 function startBN(){
-  open(); bar.classList.remove("on");
+  open(); now.textContent="Bandersnatch · interactivo";
   fr.style.display="none"; fr.src="about:blank";
   bn.style.display="block";
   bn.srcdoc=DOC;
 }
-
-document.querySelectorAll("[data-play]").forEach(el=>{
-  el.onclick=e=>{ e.preventDefault(); el.dataset.play==="sat"?startSAT():startBN(); };
+document.querySelectorAll("[data-play]").forEach(c=>{
+  c.addEventListener("click",()=>{ c.dataset.play==="sat"?startSAT():startBN(); });
 });
-
-/* fondo */
-const PH=["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1920px-Orthodox_cemetery_vilnius_by_night.JPG",
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"];
-(function bg(i){
-  if(i>=PH.length) return;
-  const im=new Image();
-  im.onload=()=>{ $("photo").style.backgroundImage='url("'+PH[i]+'")'; $("photo").classList.add("on"); };
-  im.onerror=()=>bg(i+1);
-  im.src=PH[i];
-})(0);
 </script>
 </body>
 </html>
