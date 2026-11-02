@@ -7,8 +7,12 @@
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23e8e4d8' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
 <title>SÁTÁNTANGÓ · EL ABISMO</title>
+<link rel="preconnect" href="https://dn600303.us.archive.org" crossorigin>
+<link rel="dns-prefetch" href="//dn600303.us.archive.org">
 <link rel="preconnect" href="https://archive.org" crossorigin>
+<link rel="preconnect" href="https://encrypted-tbn0.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/abyssal-horrors" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/spectre" media="print" onload="this.media='all'">
 <style>
@@ -19,8 +23,8 @@ body{font:400 16px/1.5 var(--f);-webkit-font-smoothing:antialiased;letter-spacin
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
 ::selection{background:var(--bone);color:#000}
 
-#home{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#000;transition:opacity 1.1s,transform 1.1s,filter 1.1s}
-#home.out{opacity:0;transform:scale(1.32) translateY(4%);filter:blur(12px) brightness(.35);pointer-events:none}
+#home{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#000;transition:opacity 1s,transform 1s,filter 1s}
+#home.out{opacity:0;transform:scale(1.3) translateY(3%);filter:blur(12px) brightness(.35);pointer-events:none}
 #photo{position:absolute;inset:0;z-index:0;background:#000 center/cover no-repeat;opacity:0;transition:opacity 1.6s}
 #photo.on{opacity:1}
 .fog{position:absolute;left:-25%;right:-25%;height:70%;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 42% at 30% 60%,rgba(220,218,208,.1),transparent 70%),radial-gradient(ellipse 50% 38% at 72% 45%,rgba(220,218,208,.08),transparent 72%);filter:blur(14px);animation:fog 46s linear infinite}
@@ -62,10 +66,21 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 #strip b{color:var(--bone);font-weight:500}
 #strip .cred{color:#a9a69e;letter-spacing:.18em}
 
+/* ===== reproductor a pantalla completa ===== */
 #film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
 #film.on{visibility:visible}
 #v{width:100%;height:100%;background:#000;object-fit:contain;display:block}
 #v::cue{background:rgba(0,0,0,.84);color:#fff;font-family:Spectre,Georgia,serif;font-weight:500;line-height:1.34;text-shadow:0 1px 4px #000}
+
+/* indicador mientras entra el primer fotograma */
+#spin{position:absolute;inset:0;z-index:35;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
+#spin.on{display:flex}
+#spin .txt{font-family:var(--g);font-size:clamp(15px,2.6vw,26px);letter-spacing:.28em;text-transform:uppercase;color:var(--bone);animation:breathe 1.8s ease-in-out infinite}
+#spin .bar{width:min(280px,60vw);height:1px;background:rgba(232,228,216,.18);overflow:hidden}
+#spin .bar i{display:block;height:100%;width:35%;background:var(--bone);animation:slide 1.15s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(320%)}}
+@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+
 #toast{position:absolute;top:3.5%;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;background:#000;border:1px solid var(--bone);font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;max-width:88%;text-align:center}
 #toast::before{content:"// "}
 #err{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.97);text-align:center;padding:24px}
@@ -81,7 +96,7 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 #alt iframe{flex:1;width:100%;border:0;background:#000}
 #file{display:none}
 @media (max-width:560px){#strip span{padding:9px 10px;font-size:9px;letter-spacing:.14em}#seal .tag{display:none}h1{font-size:clamp(21px,6.6vw,34px)}h2{font-size:clamp(13px,3.6vw,17px)}.acts button{font-size:15px;letter-spacing:.26em}}
-@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after{animation:none}}
+@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after,#spin .txt,#spin .bar i{animation:none}}
 </style>
 </head>
 <body>
@@ -103,6 +118,7 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 
 <div id="film">
   <video id="v" playsinline preload="auto" controls></video>
+  <div id="spin"><div class="txt">Descendiendo</div><div class="bar"><i></i></div></div>
   <div id="toast"></div>
   <div id="err">
     <div class="big">EL POZO NO RESPONDE</div>
@@ -117,10 +133,20 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 "use strict";
 const ITEM="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
 const BASE="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT";
-/* el original en 1080p va primero; la derivada .ia.mp4 solo es respaldo si el original no responde */
-const FUENTES=["https://archive.org/download/"+ITEM+"/"+BASE+".mp4","https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4"];
+const NODO="dn600303.us.archive.org";
+const DIR="/0/items/"+ITEM+"/"+BASE;
+/* El nodo directo evita la redirección de archive.org/download (que es lo que
+   metía los segundos de espera) y la derivada .ia.mp4 está indexada para
+   streaming, así que arranca sin recorrer el archivo entero. */
+const FUENTES=[
+  "https://"+NODO+DIR+".ia.mp4",
+  "https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4",
+  "https://"+NODO+DIR+".mp4",
+  "https://archive.org/download/"+ITEM+"/"+BASE+".mp4"
+];
 const SUBS=["satantango.es-419.srt","https://raw.githubusercontent.com/ultraomniverse/xcode/HEAD/satantango.es-419.srt"];
 const PHOTOS=[
+ "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRfPMIsGFz-ZbaGpQbhHB1g-xpFQfCLou2xtvme6490BiAztsR4_XS6BM&s=10",
  "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Orthodox_cemetery_vilnius_by_night.JPG/1920px-Orthodox_cemetery_vilnius_by_night.JPG",
  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"
 ];
@@ -129,38 +155,44 @@ const num=k=>{try{return +localStorage.getItem(k)||0;}catch{return 0;}};
 const put=(k,x)=>{try{localStorage.setItem(k,x);}catch{}};
 const p2=n=>String(n).padStart(2,"0"),p3=n=>String(n).padStart(3,"0");
 const fmt=t=>{t=Math.max(0,Math.floor(t||0));return (t/3600|0)+":"+p2(t%3600/60|0)+":"+p2(t%60);};
-let off=num(KO),wl=null,srt=null,booted=false,kick=false,fi=0,watch=0;
+let off=num(KO),wl=null,srt=null,booted=false,kick=false,fi=0,watch=0,spinT=0;
 const pos=num(KP);
 
 function toast(m){const t=$("toast");t.textContent=m;t.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.opacity=0,2400);}
 function play(){const p=v.play();if(p&&p.catch)p.catch(()=>{});}
+function spin(on){clearTimeout(spinT);if(on){$("spin").classList.add("on");}
+  else{spinT=setTimeout(()=>$("spin").classList.remove("on"),160);}}
 
 /* ---------- fondo ---------- */
 (function photo(i){if(i>=PHOTOS.length)return;const im=new Image();
   im.onload=()=>{const e=$("photo");e.style.backgroundImage="url('"+PHOTOS[i]+"')";e.classList.add("on");};
   im.onerror=()=>photo(i+1);im.src=PHOTOS[i];})(0);
 
-/* ---------- video: empieza a cargar apenas abre la página ---------- */
+/* ---------- vídeo: se pide desde el primer segundo de la página ---------- */
 function setSrc(i,t){
   fi=i;v.src=FUENTES[i];v.load();
   if(t>1)v.addEventListener("loadedmetadata",()=>{try{v.currentTime=t;}catch{}},{once:true});
   clearTimeout(watch);
-  watch=setTimeout(()=>{            /* sin metadatos tras 25 s → copia alterna */
+  watch=setTimeout(()=>{
     if(v.readyState>=1)return;
-    if(fi<FUENTES.length-1){toast("Servidor lento · probando copia alterna");setSrc(fi+1,0);}
-    else $("err").classList.add("on");
-  },25000);
+    if(fi<FUENTES.length-1){setSrc(fi+1,0);}
+    else{spin(false);$("err").classList.add("on");}
+  },20000);
 }
 setSrc(0,0);
 if(pos>60)v.addEventListener("loadedmetadata",()=>{try{v.currentTime=pos;}catch{}},{once:true});
 
+/* calentamiento: abre TLS y deja el primer bloque en caché antes del clic */
+try{fetch(FUENTES[0],{mode:"no-cors",credentials:"omit",headers:{Range:"bytes=0-131071"}}).catch(()=>{});}catch{}
+
 v.addEventListener("loadedmetadata",()=>clearTimeout(watch));
-v.addEventListener("canplay",()=>{if(kick&&v.paused)play();});   /* solo hasta el primer play: no anula una pausa tuya */
-v.addEventListener("playing",()=>{kick=false;$("err").classList.remove("on");});
+v.addEventListener("canplay",()=>{if(kick&&v.paused)play();});
+v.addEventListener("playing",()=>{kick=false;spin(false);$("err").classList.remove("on");});
+v.addEventListener("waiting",()=>{if(document.body.classList.contains("film"))spin(true);});
 v.addEventListener("error",()=>{
   if(!v.getAttribute("src"))return;
-  if(v.currentTime<1&&fi<FUENTES.length-1){setSrc(fi+1,0);if(kick)setTimeout(play,500);}
-  else $("err").classList.add("on");
+  if(v.currentTime<1&&fi<FUENTES.length-1){setSrc(fi+1,0);if(kick)setTimeout(play,400);}
+  else{spin(false);$("err").classList.add("on");}
 });
 
 /* ---------- subtítulos ---------- */
@@ -199,11 +231,11 @@ $("file").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
   r.onload=()=>{const x=String(r.result);if(x.indexOf("-->")<0){toast("Ese archivo no tiene marcas de tiempo");return;}srt=x;attach();toast("Subtítulos cargados");};
   r.readAsText(f,"utf-8");};
 
-/* ---------- lluvia y paralaje (solo en la portada) ---------- */
+/* ---------- lluvia y paralaje ---------- */
 const cv=$("rain"),cx=cv.getContext("2d");let W,H,dr=[],run=true,tx=0,ty=0,px=0,py=0;
 function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);
   dr=Array.from({length:Math.min(150,W/9|0)},()=>({x:Math.random()*W,y:Math.random()*H,l:9+Math.random()*34,v:.7+Math.random()*1.6,o:.05+Math.random()*.2,w:Math.random()<.2?1:.6}));}
-addEventListener("resize",()=>{if(run)size();});size();
+addEventListener("resize",size);size();
 addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5;},{passive:true});
 (function loop(){
   if(!run)return;
@@ -221,8 +253,9 @@ function start(resume){
   $("home").classList.add("out");
   if(!resume&&pos>60)try{v.currentTime=0;}catch{}
   $("film").classList.add("on");
-  run=false;setTimeout(()=>{$("home").style.display="none";},1200);
-  try{const f=$("film"),rf=f.requestFullscreen||f.webkitRequestFullscreen;const r=rf&&rf.call(f);if(r&&r.catch)r.catch(()=>{});}catch{}
+  document.body.classList.add("film");
+  run=false;setTimeout(()=>{$("home").style.display="none";},1000);
+  spin(true);
   kick=true;play();v.focus({preventScroll:true});
   if(off)setTimeout(()=>toast("Ajuste guardado: "+(off>0?"+":"")+off.toFixed(1)+" s"),1800);
 }
@@ -234,8 +267,8 @@ async function lock(){try{if(navigator.wakeLock&&!wl){wl=await navigator.wakeLoc
 v.addEventListener("play",lock);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!v.paused)lock();});
 
-$("retry").onclick=()=>{const t=v.currentTime||pos;$("err").classList.remove("on");kick=true;setSrc(0,t);setTimeout(play,700);};
-$("altb").onclick=()=>{$("altf").src="https://archive.org/embed/"+ITEM+"?autoplay=1";$("alt").classList.add("on");};
+$("retry").onclick=()=>{const t=v.currentTime||pos;$("err").classList.remove("on");kick=true;spin(true);setSrc(0,t);setTimeout(play,600);};
+$("altb").onclick=()=>{$("altf").src="https://archive.org/embed/"+ITEM+"?autoplay=1";$("alt").classList.add("on");spin(false);};
 $("altx").onclick=()=>{$("alt").classList.remove("on");$("altf").src="about:blank";};
 
 addEventListener("keydown",e=>{
