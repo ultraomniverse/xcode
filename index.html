@@ -61,9 +61,13 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
 #strip .cred{color:#a9a69e;letter-spacing:.18em}
 
 /* ===== reproductor ===== */
-#film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
+#film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10;overflow:hidden}
 #film.on{visibility:visible}
-#frame{width:100%;height:100%;border:0;background:#000;display:block}
+
+/* el iframe se sobredimensiona y se recorta el marco de ok.ru */
+#frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;
+transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--z,1));
+transform-origin:center center;transition:transform .15s}
 
 #spin{position:absolute;inset:0;z-index:15;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#000;pointer-events:none}
 #spin.on{display:flex}
@@ -108,6 +112,9 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
   <div id="bar">
     <button id="back">← Volver</button>
     <button id="next">Otra copia</button>
+    <button id="zo">−</button>
+    <button id="zr">ajustar</button>
+    <button id="zp">+</button>
     <span class="sp"></span>
     <span class="st" id="st">ok.ru · 1080p · subtitulado</span>
   </div>
@@ -164,6 +171,20 @@ addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/inner
   requestAnimationFrame(loop);
 })();
 
+/* ajuste de encuadre: ok.ru mete su marco, esto lo recorta */
+let z=1,dy=0;
+function apply(){
+  const f=$("frame");
+  f.style.setProperty("--z",z);
+  f.style.setProperty("--ty",dy+"px");
+  try{localStorage.setItem("sat.z",z);localStorage.setItem("sat.ty",dy);}catch{}
+}
+try{z=+localStorage.getItem("sat.z")||1;dy=+localStorage.getItem("sat.ty")||0;}catch{}
+$("zo").onclick=()=>{z=Math.max(1,Math.round((z-.1)*100)/100);apply();toast("Zoom "+Math.round(z*100)+"%");};
+$("zp").onclick=()=>{z=Math.min(2.2,Math.round((z+.1)*100)/100);apply();toast("Zoom "+Math.round(z*100)+"%");};
+$("zr").onclick=()=>{z=1.4;dy=26;apply();toast("Encuadre ajustado");};
+if(z!==1)apply();
+
 /* arranque */
 $("go").onclick=()=>{
   if(booted)return;booted=true;
@@ -186,6 +207,9 @@ addEventListener("keydown",e=>{
   if(!$("film").classList.contains("on"))return;
   if(e.key==="Escape")$("back").click();
   if(e.key==="n")$("next").click();
+  if(e.key==="+"||e.key==="=")$("zp").click();
+  if(e.key==="-")$("zo").click();
+  if(e.key==="0")$("zr").click();
 });
 </script>
 </body>
