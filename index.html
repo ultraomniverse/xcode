@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Psychotic Entertainment — Bandersnatch</title>
+<title>Psychotic Entertainment</title>
 <style>
 :root{
   --ink:#f4f4f4; --dim:#9a9a9a; --dim2:#6a6a6a;
@@ -57,40 +57,52 @@ main{position:relative;z-index:2}
   font-family:var(--f-mono);font-size:11px;letter-spacing:.22em;transition:.22s;background:#0006;backdrop-filter:blur(2px)}
 .cta:hover,.cta:focus-visible{background:#fff;color:#000;outline:none}
 
-.cartelera{padding:20px clamp(16px,4vw,54px) 70px}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #ffffff24;padding-bottom:12px;margin-bottom:30px}
+/* ---------- CATALOGO ---------- */
+.catalogo{padding:20px clamp(16px,4vw,54px) 70px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid #ffffff24;padding-bottom:12px;margin-bottom:30px}
 .sec-head h2{font-family:var(--f-head);font-weight:500;font-size:clamp(15px,2vw,20px);letter-spacing:.28em;text-shadow:0 2px 12px #000}
-.count{font-family:var(--f-mono);font-size:10px;color:#a5a5a5;letter-spacing:.2em}
+.count{font-family:var(--f-mono);font-size:10px;color:#a5a5a5;letter-spacing:.2em;text-align:right}
 
-.feature{display:grid;grid-template-columns:minmax(240px,330px) 1fr;gap:clamp(22px,4vw,52px);align-items:start}
-.poster{position:relative;aspect-ratio:2/3;background:#0b0b0b;border:1px solid #4a4a4a;overflow:hidden;
-  box-shadow:0 30px 70px #000c, inset 0 0 90px #000}
-.poster::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(#fff0 0 3px,#0000008c 3px 4px);opacity:.4}
-.maze{position:absolute;inset:0;display:grid;place-items:center;color:#242424}
-.maze svg{width:78%;height:78%}
-.poster-txt{position:absolute;inset:auto 0 0 0;padding:18px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(#0000,#000d 55%,#000)}
-.pt-tag{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.36em;color:#bdbdbd}
-.pt-title{font-family:var(--f-head);font-weight:700;font-size:clamp(26px,3.6vw,40px);line-height:.86;letter-spacing:.02em}
-.pt-meta{font-family:var(--f-mono);font-size:8px;letter-spacing:.16em;color:#8a8a8a;margin-top:6px}
-.poster-badge{position:absolute;top:12px;right:12px;background:#fff;color:#000;font-family:var(--f-mono);
-  font-size:9px;font-weight:700;letter-spacing:.2em;padding:5px 8px;transform:rotate(3deg)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2vw,24px);align-items:stretch}
 
-.info h3{font-family:var(--f-head);font-weight:700;font-size:clamp(26px,4vw,44px);letter-spacing:.03em;line-height:1;text-shadow:0 4px 24px #000}
-.sub{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;color:#b0b0b0;margin-top:10px}
-.tags{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}
-.tags span{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.16em;border:1px solid #ffffff3d;color:#e2e2e2;padding:5px 9px;background:#0005}
-.syn{color:#d5d5d5;font-weight:300;font-size:14.5px;line-height:1.75;max-width:640px;text-shadow:0 2px 12px #000}
-.warn{margin:20px 0;border-left:2px solid #fff;background:#0a0a0acc;padding:12px 16px;font-size:12.5px;color:#dcdcdc;line-height:1.6;font-weight:300}
-.warn strong{font-family:var(--f-mono);letter-spacing:.16em;font-size:10px}
-.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
-.play{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#000;border:1px solid #fff;
-  font-family:var(--f-mono);font-weight:700;font-size:12px;letter-spacing:.22em;padding:15px 30px;cursor:pointer;transition:.18s}
-.play svg{width:15px;height:15px}
+.slot{position:relative;display:flex;flex-direction:column;border:1px solid #ffffff26;background:#0a0a0ad9;
+  padding:clamp(14px,1.8vw,20px);transition:border-color .2s,transform .2s,background .2s;box-shadow:0 18px 40px #0007}
+.slot:hover,.slot:focus-within{border-color:#ffffff8a;background:#111111e6;transform:translateY(-3px)}
+.slot-top{display:flex;gap:14px;align-items:flex-start}
+.cover{position:relative;flex:0 0 auto;width:clamp(78px,9vw,104px);aspect-ratio:2/3;overflow:hidden;border:1px solid #4a4a4a;background:#0b0b0b}
+.cover img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.14) brightness(.94);transition:.35s;display:block}
+.slot:hover .cover img{filter:grayscale(1) contrast(1.2) brightness(1.04)}
+.cover::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(#fff0 0 3px,#0000008c 3px 4px);opacity:.32;pointer-events:none}
+.cover .badge{position:absolute;top:5px;right:5px;background:#fff;color:#000;font-family:var(--f-mono);
+  font-size:7.5px;font-weight:700;letter-spacing:.16em;padding:3px 5px;transform:rotate(3deg);z-index:2}
+.slot-info{min-width:0;display:flex;flex-direction:column;gap:7px}
+.slot-tag{font-family:var(--f-mono);font-size:8px;letter-spacing:.3em;color:#a8a8a8}
+.slot-title{font-family:var(--f-head);font-weight:700;font-size:clamp(17px,2.2vw,25px);line-height:.95;letter-spacing:.03em;text-shadow:0 3px 16px #000}
+.slot-meta{font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;color:#8e8e8e;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.chips span{font-family:var(--f-mono);font-size:7.5px;letter-spacing:.14em;border:1px solid #ffffff36;color:#dcdcdc;padding:3px 6px;background:#0006}
+.slot-syn{color:#c4c4c4;font-weight:300;font-size:12.5px;line-height:1.65;margin-top:14px}
+.slot-warn{margin-top:12px;border-left:2px solid #fff;background:#0a0a0acc;padding:9px 12px;font-size:11px;color:#d2d2d2;line-height:1.55;font-weight:300}
+.slot-warn strong{font-family:var(--f-mono);letter-spacing:.14em;font-size:9px}
+.slot-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:16px}
+.play{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1 1 auto;background:#fff;color:#000;
+  border:1px solid #fff;font-family:var(--f-mono);font-weight:700;font-size:10.5px;letter-spacing:.2em;padding:13px 18px;cursor:pointer;transition:.18s}
+.play svg{width:13px;height:13px}
 .play:hover,.play:focus-visible{background:#000;color:#fff;outline:none}
-.ghost{background:#0007;color:#fff;border:1px solid #ffffff45;font-family:var(--f-mono);font-size:11px;
-  letter-spacing:.2em;padding:15px 22px;cursor:pointer;transition:.18s}
-.ghost:hover,.ghost:focus-visible{border-color:#fff;background:#000b;outline:none}
-.src{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;color:#9a9a9a;margin-top:18px}
+.ghost{background:#0007;color:#fff;border:1px solid #ffffff45;font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.18em;padding:13px 14px;cursor:pointer;transition:.18s}
+.ghost:hover,.ghost:focus-visible{border-color:#fff;background:#000c;outline:none}
+.src{font-family:var(--f-mono);font-size:8px;letter-spacing:.1em;color:#8d8d8d;margin-top:12px}
+
+/* slot vacio */
+.slot.vacio{border-style:dashed;border-color:#ffffff33;background:#08080899;align-items:center;justify-content:center;text-align:center;min-height:210px}
+.slot.vacio:hover{border-color:#ffffff5c;background:#0c0c0cbf}
+.vacio-body{display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px}
+.plus{width:44px;height:44px;border:1px solid #ffffff3d;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--f-head);font-size:22px;color:#c9c9c9;line-height:1;transition:.2s}
+.slot.vacio:hover .plus{border-color:#fff;color:#fff}
+.vacio-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.32em;color:#a0a0a0}
+.vacio-meta{font-family:var(--f-mono);font-size:7.5px;letter-spacing:.16em;color:#5f5f5f;max-width:170px;line-height:1.7}
 
 .manifiesto,.acerca{padding:50px clamp(16px,4vw,54px);border-top:1px solid #ffffff1f;background:#05050599;backdrop-filter:blur(2px)}
 .manifiesto h2,.acerca h2{font-family:var(--f-head);font-weight:500;font-size:14px;letter-spacing:.3em;margin-bottom:22px;color:#e6e6e6}
@@ -173,9 +185,8 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
   border:1px solid #444;color:#ddd;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;padding:9px 16px}
 .toast[hidden]{display:none}
 
-@media (max-width:760px){
-  .feature{grid-template-columns:1fr}
-  .poster{max-width:290px}
+@media (max-width:860px){
+  .grid{grid-template-columns:1fr}
   .nav{display:none}
   .choice-row button{min-width:140px;font-size:12px;padding:13px 16px}
 }
@@ -233,7 +244,7 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
       </div>
     </div>
     <nav class="nav">
-      <a href="#cartelera">CARTELERA</a>
+      <a href="#catalogo">CATÁLOGO</a>
       <a href="#manifiesto">MANIFIESTO</a>
       <a href="#acerca">ACERCA</a>
     </nav>
@@ -241,55 +252,48 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
 
   <main>
     <section class="hero">
-      <p class="kicker">ARCHIVO · SERIE 01 · TRANSMISIÓN PERMANENTE</p>
+      <p class="kicker">ARCHIVO · TRANSMISIÓN PERMANENTE</p>
       <h1>CINE PARA<br><em>LOS QUE NO<br>DUERMEN BIEN.</em></h1>
       <p class="lede">Selección de películas incómodas, ramificadas y malditas. Sin cortes. Sin concesiones. El cementerio abre las 24 horas.</p>
-      <a class="cta" href="#cartelera">ENTRAR AL PANTEÓN ↓</a>
+      <a class="cta" href="#catalogo">ENTRAR AL PANTEÓN ↓</a>
     </section>
 
-    <section id="cartelera" class="cartelera">
+    <section id="catalogo" class="catalogo">
       <div class="sec-head">
-        <h2>AHORA EN CARTELERA</h2>
-        <span class="count">1 TÍTULO</span>
+        <h2>CATÁLOGO DEL PANTEÓN</h2>
+        <span class="count">01 TÍTULO · 03 LIBRES</span>
       </div>
 
-      <article class="feature">
-        <div class="poster" aria-hidden="true">
-          <div class="maze">
-            <svg viewBox="0 0 200 200">
-              <g fill="none" stroke="currentColor" stroke-width="1.4">
-                <rect x="14" y="14" width="172" height="172"/><rect x="30" y="30" width="140" height="140"/>
-                <rect x="46" y="46" width="108" height="108"/><rect x="62" y="62" width="76" height="76"/>
-                <rect x="78" y="78" width="44" height="44"/>
-              </g>
-              <path d="M14 186 H46 V46 H154 V154 H78 V78 H122" fill="none" stroke="currentColor" stroke-width="3"/>
-              <circle cx="100" cy="100" r="9" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="poster-txt">
-            <span class="pt-tag">BLACK MIRROR</span>
-            <span class="pt-title">BANDER<br>SNA TCH</span>
-            <span class="pt-meta">1984 · 1080p · 5:12:14 · INTERACTIVA</span>
-          </div>
-          <div class="poster-badge">ELIGE</div>
-        </div>
+      <div class="grid">
 
-        <div class="info">
-          <h3>BANDERSNATCH</h3>
-          <p class="sub">Black Mirror · 2018 · 90 min (variable) · Reino Unido</p>
-          <div class="tags">
-            <span>INTERACTIVA</span><span>PSICOLÓGICO</span><span>BUCLES</span><span>80s</span>
+        <!-- SLOT 1 · BANDERSNATCH -->
+        <article class="slot" id="slotBandersnatch">
+          <div class="slot-top">
+            <div class="cover">
+              <span class="badge">ELIGE</span>
+              <img src="https://image.tmdb.org/t/p/w780/fR0VZ0VE598zl1lrYf7IfBqEwQ2.jpg"
+                   alt="Portada de Black Mirror: Bandersnatch" loading="lazy">
+            </div>
+            <div class="slot-info">
+              <span class="slot-tag">BLACK MIRROR · INTERACTIVA</span>
+              <h3 class="slot-title">BANDERSNATCH</h3>
+              <p class="slot-meta">2018 · 90 min (variable) · Reino Unido<br>1080p · subtítulos ES</p>
+              <div class="chips"><span>PSICOLÓGICO</span><span>BUCLES</span><span>80s</span></div>
+            </div>
           </div>
-          <p class="syn">
+
+          <p class="slot-syn">
             Stefan Butler, programador de 19 años, adapta una novela de "elige tu propia aventura" a un videojuego.
             Tú decides por él. Y él empieza a darse cuenta de que alguien decide por él.
             Cada camino conduce al mismo lugar, y el mismo lugar ya lo conoces.
           </p>
-          <div class="warn">
+
+          <div class="slot-warn">
             <strong>AVISO:</strong> esta película se controla. Tendrás <b>15 segundos</b> para elegir en cada bifurcación.
             Si no eliges, el sistema elige por ti.
           </div>
-          <div class="actions">
+
+          <div class="slot-actions">
             <button class="play" id="startBtn">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>
               REPRODUCIR
@@ -297,8 +301,36 @@ kbd{border:1px solid #444;padding:2px 6px;font-family:var(--f-mono);font-size:9p
             <button class="ghost" id="howBtn">CÓMO FUNCIONA</button>
           </div>
           <p class="src">Fuente: Internet Archive · Subtítulos: español latino · Mejor en pantalla completa</p>
-        </div>
-      </article>
+        </article>
+
+        <!-- SLOT 2 -->
+        <article class="slot vacio">
+          <div class="vacio-body">
+            <div class="plus">+</div>
+            <span class="vacio-tag">DISPONIBLE</span>
+            <p class="vacio-meta">ESPACIO RESERVADO PARA PRÓXIMA PELÍCULA</p>
+          </div>
+        </article>
+
+        <!-- SLOT 3 -->
+        <article class="slot vacio">
+          <div class="vacio-body">
+            <div class="plus">+</div>
+            <span class="vacio-tag">DISPONIBLE</span>
+            <p class="vacio-meta">ESPACIO RESERVADO PARA PRÓXIMA PELÍCULA</p>
+          </div>
+        </article>
+
+        <!-- SLOT 4 -->
+        <article class="slot vacio">
+          <div class="vacio-body">
+            <div class="plus">+</div>
+            <span class="vacio-tag">DISPONIBLE</span>
+            <p class="vacio-meta">ESPACIO RESERVADO PARA PRÓXIMA PELÍCULA</p>
+          </div>
+        </article>
+
+      </div>
     </section>
 
     <section id="manifiesto" class="manifiesto">
