@@ -5,153 +5,185 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23ffffff' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23e8e4d8' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
 <title>SANTANTANGO · EL ABISMO</title>
 <link rel="preconnect" href="https://archive.org" crossorigin>
 <link rel="preconnect" href="https://dn600303.us.archive.org" crossorigin>
 <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
 <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/abyssal-horrors">
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/spectre">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
 <style>
 :root{
-  --bone:#ffffff;--ash:#d0d0d0;--dim:#7a7a7a;--line:#2a2a2a;--void:#000;
+  --bone:#e8e4d8;--ash:#c9c6bc;--dim:#6e6c65;--line:#242320;--void:#000;
   --f:Spectre,ui-serif,Georgia,"Times New Roman",serif;
-  --plyr-color-main:#ffffff;--plyr-video-background:#000;--plyr-control-radius:0;
-  --plyr-font-family:Spectre,serif;--plyr-menu-background:#050505;--plyr-menu-color:#d0d0d0;
+  --g:"Abyssal Horrors",Spectre,serif;
+  --plyr-color-main:#e8e4d8;--plyr-video-background:#000;--plyr-control-radius:0;
+  --plyr-font-family:Spectre,serif;--plyr-menu-background:#050505;--plyr-menu-color:#c9c6bc;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;color:var(--bone)}
 body{font:400 16px/1.5 var(--f);-webkit-font-smoothing:antialiased;cursor:default;letter-spacing:.02em}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
-::selection{background:#fff;color:#000}
+::selection{background:var(--bone);color:#000}
 
 /* ============================================================
-   PORTADA
+   PORTADA — CEMENTERIO
    ============================================================ */
 #home{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;
   justify-content:center;overflow:hidden;background:#000;
   transition:opacity 1.1s,transform 1.1s,filter 1.1s}
-#home.out{opacity:0;transform:scale(1.3) translateY(4%);filter:blur(10px) brightness(.4);pointer-events:none}
+#home.out{opacity:0;transform:scale(1.32) translateY(4%);filter:blur(12px) brightness(.35);pointer-events:none}
 
-/* la imagen, tal cual, sin filtro */
 #photo{position:absolute;inset:0;z-index:0;background:#000 center/cover no-repeat;opacity:0;
-  transition:opacity 1.4s ease}
+  transition:opacity 1.6s ease}
 #photo.on{opacity:1}
 
-/* velo negro SOLO detrás del texto, para que el blanco corte sobre el gris */
-#home::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:6;pointer-events:none;
-  background:radial-gradient(ellipse 62% 46% at 50% 50%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.6) 45%,rgba(0,0,0,.2) 72%,transparent 88%)}
+/* niebla que se arrastra */
+.fog{position:absolute;left:-25%;right:-25%;height:70%;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 55% 42% at 30% 60%,rgba(220,218,208,.1),transparent 70%),
+             radial-gradient(ellipse 50% 38% at 72% 45%,rgba(220,218,208,.08),transparent 72%);
+  filter:blur(14px);animation:fog 46s linear infinite}
+.fog.b{top:22%;animation-duration:67s;animation-direction:reverse;opacity:.7}
+@keyframes fog{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
 
-/* solo las líneas de escaneo, al mínimo */
+/* grano de película */
+#grain{position:absolute;inset:-50%;z-index:2;pointer-events:none;opacity:.16;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+  animation:grain .7s steps(3) infinite}
+@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}100%{transform:translate(0,0)}}
+
+/* viñeta y velo tras el texto */
+#home::before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:radial-gradient(ellipse 60% 44% at 50% 50%,rgba(0,0,0,.86) 0%,rgba(0,0,0,.64) 42%,rgba(0,0,0,.22) 70%,transparent 86%),
+             radial-gradient(ellipse 90% 70% at 50% 50%,transparent 45%,rgba(0,0,0,.62) 100%)}
+
 #home::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.09) 0 1px,transparent 1px 3px)}
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.14) 0 1px,transparent 1px 3px);
+  animation:flicker 7s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:1}47%{opacity:.94}49%{opacity:1}72%{opacity:.9}74%{opacity:1}}
 
-/* lluvia fina por encima */
 #rain{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
 
 /* ============ CABECERA ============ */
-#seal{position:absolute;left:0;right:0;top:0;z-index:9;height:58px;display:flex;align-items:center;gap:12px;
+#seal{position:absolute;left:0;right:0;top:0;z-index:9;height:56px;display:flex;align-items:center;gap:12px;
   padding:0 22px;pointer-events:none;
-  border-bottom:1px solid rgba(255,255,255,.1);background:linear-gradient(to bottom,rgba(0,0,0,.78),transparent)}
-#seal .wm{font-family:var(--f);font-size:17px;letter-spacing:.16em;color:#fff;
+  border-bottom:1px solid rgba(232,228,216,.09);background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent)}
+#seal .wm{font-family:var(--g);font-size:17px;letter-spacing:.14em;color:var(--bone);
   text-transform:uppercase;text-shadow:0 1px 8px #000}
-#seal .wm small{display:block;font-family:var(--f);font-size:8px;font-weight:400;
-  letter-spacing:.42em;color:#d0d0d0;margin-top:0}
+#seal .wm small{display:block;font-family:var(--f);font-size:8px;letter-spacing:.42em;color:#9c9a92;margin-top:1px}
 #seal .sp{flex:1}
-#seal .tag{font-family:var(--f);font-size:10px;letter-spacing:.32em;color:#eaeaea;text-transform:uppercase;
-  text-shadow:0 1px 6px #000}
+#seal .tag{font-family:var(--f);font-size:10px;letter-spacing:.3em;color:#b3b0a8;text-transform:uppercase}
 
-/* bloque central */
 .core{position:relative;z-index:7;display:flex;flex-direction:column;align-items:center;
-  gap:14px;text-align:center;padding:0 24px;max-width:1080px;will-change:transform}
-.kicker{font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:#fff;
-  text-shadow:0 1px 8px #000,0 0 20px #000,0 0 44px #000}
-.kicker b{color:#fff;font-weight:500}
+  gap:14px;text-align:center;padding:0 24px;max-width:1060px;will-change:transform}
+.kicker{font-family:var(--f);font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:var(--bone);
+  text-shadow:0 1px 8px #000,0 0 22px #000,0 0 48px #000}
+.kicker b{font-weight:500}
 
-/* EL TITULAR — Spectre, blanco puro sobre negro */
 h1{margin:0;font-family:var(--f);font-weight:500;
-  font-size:clamp(25px,5.4vw,72px);line-height:1.07;letter-spacing:.02em;color:#fff;
-  text-transform:none;text-wrap:balance;
-  text-shadow:0 2px 6px #000,0 4px 18px #000,0 0 40px #000,0 0 90px #000,0 0 160px #000}
+  font-size:clamp(25px,5.3vw,70px);line-height:1.06;letter-spacing:.02em;color:#fff;
+  text-wrap:balance;
+  text-shadow:0 2px 6px #000,0 4px 18px #000,0 0 40px #000,0 0 90px #000,0 0 170px #000}
 h2{margin:0;font-family:var(--f);font-weight:500;
-  font-size:clamp(15px,2.5vw,30px);line-height:1.24;letter-spacing:.035em;
-  color:#fff;text-wrap:balance;
-  text-shadow:0 2px 6px #000,0 0 22px #000,0 0 50px #000}
+  font-size:clamp(15px,2.4vw,29px);line-height:1.24;letter-spacing:.035em;
+  color:var(--bone);text-wrap:balance;
+  text-shadow:0 2px 6px #000,0 0 22px #000,0 0 54px #000}
 
-/* botones */
 .acts{display:flex;flex-direction:column;gap:11px;margin-top:24px;align-items:center}
 .acts button{font-family:var(--f);min-width:min(340px,78vw);padding:17px 42px;
-  border:1px solid rgba(255,255,255,.6);
-  background:rgba(0,0,0,.62);letter-spacing:.32em;font-size:16px;
-  text-transform:uppercase;color:#fff;transition:.28s;position:relative;overflow:hidden;
-  box-shadow:0 4px 24px rgba(0,0,0,.7)}
-.acts button::before{content:"";position:absolute;inset:0;background:#fff;
+  border:1px solid rgba(232,228,216,.5);background:rgba(0,0,0,.66);
+  letter-spacing:.32em;font-size:16px;text-transform:uppercase;color:var(--bone);
+  transition:.28s;position:relative;overflow:hidden;box-shadow:0 4px 26px rgba(0,0,0,.75)}
+.acts button::before{content:"";position:absolute;inset:0;background:var(--bone);
   transform:translateY(101%);transition:transform .28s;z-index:-1}
-.acts button:hover,.acts button:focus{outline:none;border-color:#fff;letter-spacing:.38em;
-  box-shadow:0 0 0 1px rgba(255,255,255,.4),0 0 60px rgba(255,255,255,.25)}
+.acts button:hover,.acts button:focus{outline:none;border-color:var(--bone);letter-spacing:.38em;
+  box-shadow:0 0 0 1px rgba(232,228,216,.35),0 0 64px rgba(232,228,216,.22)}
 .acts button:active{color:#000}
 .acts button:active::before{transform:translateY(0)}
-.acts .ghost{min-width:min(340px,78vw);border-color:rgba(255,255,255,.26);color:#e8e8e8;font-size:13px;
+.acts .ghost{min-width:min(340px,78vw);border-color:rgba(232,228,216,.22);color:#bdbab1;font-size:13px;
   letter-spacing:.26em;padding:12px 34px}
-.acts .ghost:hover{border-color:#fff;color:#fff;box-shadow:none}
+.acts .ghost:hover{border-color:var(--bone);color:var(--bone);box-shadow:none}
 #res[hidden]{display:none}
-.acts small{display:block;font-family:var(--f);font-size:10px;letter-spacing:.28em;color:#dcdcdc;margin-top:5px;
-  text-shadow:0 1px 6px #000}
+.acts small{display:block;font-family:var(--f);font-size:10px;letter-spacing:.28em;color:#b8b5ac;margin-top:5px}
 
-/* franja técnica */
 #strip{position:absolute;left:0;right:0;bottom:0;z-index:9;display:flex;flex-wrap:wrap;
-  justify-content:center;gap:0;border-top:1px solid rgba(255,255,255,.16);
-  background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.4) 65%,transparent);pointer-events:none}
-#strip span{font-family:var(--f);padding:11px 16px;font-size:11px;letter-spacing:.22em;color:#f0f0f0;
+  justify-content:center;border-top:1px solid rgba(232,228,216,.14);
+  background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.4) 65%,transparent);pointer-events:none}
+#strip span{font-family:var(--f);padding:11px 16px;font-size:11px;letter-spacing:.22em;color:#d8d5cc;
   text-transform:uppercase;text-shadow:0 1px 6px #000}
-#strip span+span{border-left:1px solid rgba(255,255,255,.16)}
-#strip b{color:#fff;font-weight:500}
-#strip .cred{color:#cfcfcf;letter-spacing:.18em}
+#strip span+span{border-left:1px solid rgba(232,228,216,.14)}
+#strip b{color:var(--bone);font-weight:500}
+#strip .cred{color:#a9a69e;letter-spacing:.18em}
 
 /* ============================================================
-   REPRODUCTOR (Plyr)
+   REPRODUCTOR
    ============================================================ */
 #film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
 #film.on{visibility:visible}
 #film .plyr,#film .plyr__video-wrapper,#film video{width:100%;height:100%}
 #film video{object-fit:contain;background:#000}
 .plyr{-webkit-font-smoothing:antialiased;font-family:var(--f)}
-.plyr__control{color:#e2e2e2}
-.plyr__control:hover{background:#fff!important;color:#000!important}
+.plyr__control{color:#dedbd2}
+.plyr__control:hover{background:var(--bone)!important;color:#000!important}
 .plyr__control[aria-pressed=true]{color:#fff}
-.plyr__progress input[type=range]{color:#fff}
+.plyr__progress input[type=range]{color:var(--bone)}
 .plyr__captions{font-size:clamp(22px,3.2vw,44px)!important;bottom:7%!important}
-.plyr--captions-active .plyr__caption{background:rgba(0,0,0,.82);color:#fff;line-height:1.34;
+.plyr--captions-active .plyr__caption{background:rgba(0,0,0,.84);color:#fff;line-height:1.34;
   white-space:pre-wrap;font-family:var(--f);font-weight:500;letter-spacing:.02em;
-  box-shadow:0 0 0 1px rgba(255,255,255,.14)}
-.plyr__menu__container{background:#050505;border:1px solid #2a2a2a;font-family:var(--f)}
-.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before{background:#fff}
-.plyr__control.sync{font-size:12px;font-weight:500;min-width:36px;letter-spacing:.02em}
-.plyr--full-ui.plyr--video .plyr__control--overlaid{background:rgba(0,0,0,.65);border:1px solid #fff;color:#fff;border-radius:0;padding:22px}
-.plyr--full-ui.plyr--video .plyr__control--overlaid:hover{background:#fff;color:#000}
-.plyr__progress{padding-bottom:10px}
+  box-shadow:0 0 0 1px rgba(232,228,216,.14)}
+.plyr__menu__container{background:#050505;border:1px solid #26241f;font-family:var(--f)}
+.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before{background:var(--bone)}
+.plyr__control.sync{font-size:12px;font-weight:500;min-width:36px}
+.plyr--full-ui.plyr--video .plyr__control--overlaid{background:rgba(0,0,0,.68);border:1px solid var(--bone);
+  color:var(--bone);border-radius:0;padding:24px}
+.plyr--full-ui.plyr--video .plyr__control--overlaid:hover{background:var(--bone);color:#000}
+.plyr__progress{padding-bottom:12px}
+
+/* capítulos: marcas en la barra */
+.plyr__progress .cap{position:absolute;top:50%;width:1px;height:14px;margin-top:-7px;
+  background:rgba(232,228,216,.55);z-index:3;pointer-events:none}
+.plyr__progress .cap::after{content:attr(data-t);position:absolute;left:0;top:-19px;
+  font-size:9px;letter-spacing:.14em;color:var(--bone);background:rgba(0,0,0,.9);
+  padding:1px 5px;opacity:0;transition:opacity .15s;white-space:nowrap;transform:translateX(-50%)}
+.plyr__progress:hover .cap::after{opacity:1}
+
+/* vista previa con miniatura */
+.plyr__preview-thumb{margin-bottom:8px!important}
+.plyr__preview-thumb__image-container{background:#000;border:1px solid rgba(232,228,216,.35);
+  border-radius:0!important}
+.plyr__preview-thumb__time-container{background:#000!important;border-top:1px solid rgba(232,228,216,.2)}
+.plyr__preview-thumb__time{font-family:var(--f);letter-spacing:.1em}
 
 #ping{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:38;pointer-events:none;
   font-family:var(--f);font-size:clamp(34px,8vw,84px);letter-spacing:.06em;
-  color:#fff;text-shadow:0 0 40px #000,0 0 90px rgba(255,255,255,.45);opacity:0;transition:opacity .15s}
+  color:var(--bone);text-shadow:0 0 40px #000,0 0 90px rgba(232,228,216,.45);opacity:0;transition:opacity .15s}
 #ping.on{opacity:1}
 
 #toast{position:absolute;top:4%;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;
-  background:#000;border:1px solid #fff;color:#fff;font-family:var(--f);font-size:13px;letter-spacing:.18em;
-  text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;max-width:88%;text-align:center}
+  background:#000;border:1px solid var(--bone);color:var(--bone);font-family:var(--f);font-size:13px;
+  letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;
+  max-width:88%;text-align:center}
 #toast::before{content:"// "}
 
 #err{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;
-  justify-content:center;gap:16px;background:rgba(0,0,0,.96);text-align:center;padding:24px}
+  justify-content:center;gap:14px;background:rgba(0,0,0,.97);text-align:center;padding:24px}
 #err.on{display:flex}
-#err .big{font-family:var(--f);font-size:clamp(24px,5vw,46px);
-  letter-spacing:.06em;text-transform:uppercase;color:#fff}
-#err p{font-family:var(--f);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#d0d0d0;margin:0;max-width:420px}
-#err .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-#err button{font-family:var(--f);padding:13px 30px;border:1px solid #3a3a3a;letter-spacing:.22em;font-size:13px;text-transform:uppercase;color:#fff}
-#err button:hover,#err button:focus{outline:none;border-color:#fff}
+#err .big{font-family:var(--g);font-size:clamp(24px,5vw,46px);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--bone)}
+#err p{font-family:var(--f);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#a9a69e;
+  margin:0;max-width:420px}
+#err .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+#err button{font-family:var(--f);padding:13px 30px;border:1px solid #38352f;letter-spacing:.22em;
+  font-size:13px;text-transform:uppercase;color:var(--bone)}
+#err button:hover,#err button:focus{outline:none;border-color:var(--bone)}
+#alt{position:absolute;inset:0;z-index:55;display:none;background:#000;flex-direction:column}
+#alt.on{display:flex}
+#alt .top{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#a9a69e}
+#alt iframe{flex:1;width:100%;border:0;background:#000}
 
 #file{display:none}
 
@@ -162,12 +194,15 @@ h2{margin:0;font-family:var(--f);font-weight:500;
   h2{font-size:clamp(13px,3.6vw,17px)}
   .acts button{font-size:15px;letter-spacing:.26em}
 }
+@media (prefers-reduced-motion:reduce){.fog,#grain,#home::after{animation:none}}
 </style>
 </head>
 <body>
 
 <main id="home">
   <div id="photo"></div>
+  <div class="fog"></div><div class="fog b"></div>
+  <div id="grain"></div>
   <canvas id="rain"></canvas>
 
   <div id="seal">
@@ -199,13 +234,22 @@ h2{margin:0;font-family:var(--f);font-weight:500;
 </main>
 
 <div id="film">
-  <video id="v" playsinline preload="auto"></video>
+  <video id="v" playsinline preload="metadata"></video>
   <div id="ping"></div>
   <div id="toast"></div>
   <div id="err">
     <div class="big">EL POZO NO RESPONDE</div>
-    <p>Se perdió la conexión con archive.org. El punto se conserva: reintenta y sigue donde estabas.</p>
-    <div class="btns"><button id="retry">Reintentar</button><button id="pick">Cargar .srt</button></div>
+    <p>Archive.org no entregó el archivo. Puedes reintentar aquí o abrir su reproductor oficial.</p>
+    <div class="btns">
+      <button id="retry">Reintentar</button>
+      <button id="altb">Reproductor alternativo</button>
+      <button id="pick">Cargar .srt</button>
+    </div>
+  </div>
+  <div id="alt">
+    <div class="top"><span>archive.org · reproductor oficial</span>
+      <span style="flex:1"></span><button id="altx" style="border:1px solid #38352f;padding:6px 14px">Volver</button></div>
+    <iframe id="altf" allow="autoplay; fullscreen" allowfullscreen></iframe>
   </div>
   <input id="file" type="file" accept=".srt,.vtt,text/vtt">
 </div>
@@ -215,15 +259,12 @@ h2{margin:0;font-family:var(--f);font-weight:500;
 const ITEM="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
 const BASE="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT";
 const NODO_FIJO="dn600303.us.archive.org";
-/* Derivada .ia.mp4: mismo contenido, indexada al principio, sirve para streaming.
-   El .mp4 original es el BluRay de 9 GB con el índice al final: por eso tardaba
-   una eternidad en arrancar. Se queda solo como segundo intento. */
-const SRC1="https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4";
-const SRC2="https://archive.org/download/"+ITEM+"/"+BASE+".mp4";
-const SRC3="https://"+NODO_FIJO+"/0/items/"+ITEM+"/"+BASE+".ia.mp4";
-const FUENTES=[SRC1,SRC2,SRC3];
-let fi=0;
-const SRC=SRC1;
+const SRC1="https://archive.org/download/"+ITEM+"/"+BASE+".mp4";
+const SRC2="https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4";
+const SRC3="https://"+NODO_FIJO+"/0/items/"+ITEM+"/"+BASE+".mp4";
+const SRC4="https://"+NODO_FIJO+"/0/items/"+ITEM+"/"+BASE+".ia.mp4";
+const FUENTES=[SRC1,SRC2,SRC3,SRC4];
+const THUMB="https://archive.org/download/"+ITEM+"/"+ITEM+".thumbs/"+BASE+"_";
 
 const LOCAL="satantango.es-419.srt";
 const MIRRORS=[
@@ -236,15 +277,21 @@ const PHOTOS=[
   "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG/1920px-Temple_Hill_Graveyard_%28Cork%29_at_night_03.JPG"
 ];
 const DUR=26348.92;
+const NTHUMB=248;
 const BPS_FALLBACK=175000;
+
+const CAPS=["La noticia de que vendrán","Resucitaremos","Algo de conocimiento","La trampa de la telaraña",
+"Desarrollo de la maraña","El círculo se cierra","El cielo nocturno","El cielo diurno",
+"La esperanza perdida","El trabajo","Solo la preocupación","El círculo"];
+
 const $=id=>document.getElementById(id),v=$("v");
 const KP="sat.pos",KO="sat.off",KN="sat.node",KS="sat.size",KT="sat.nodeT";
 const num=k=>{try{return +localStorage.getItem(k)||0;}catch{return 0;}};
 const put=(k,x)=>{try{localStorage.setItem(k,x);}catch{}};
 let off=num(KO),wl=null,srt=null,player=null,booted=false,listo=false;
-let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false,fails=0;
+let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false,fi=0,fails=0,watch=0;
 
-/* ============ imagen de fondo ============ */
+/* ============ fondo ============ */
 (function photo(i){
   if(i>=PHOTOS.length)return;
   const im=new Image();
@@ -253,18 +300,25 @@ let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false,fails=0;
   im.src=PHOTOS[i];
 })(0);
 
-/* ============ arranque inmediato del vídeo ============ */
-v.src=SRC1;
-v.load();
-(function(){const p=num(KP);if(p>60)v.addEventListener("loadedmetadata",()=>{
-  try{v.currentTime=p;}catch{}},{once:true});})();
+/* ============ fuente de vídeo ============ */
+function setSrc(i){
+  fi=i;
+  v.src=FUENTES[i];
+  v.load();
+  armarWatch();
+}
+function armarWatch(){
+  clearTimeout(watch);
+  /* si en 15 s no hay ni un fotograma, se pasa a la siguiente fuente */
+  watch=setTimeout(()=>{
+    if(listo)return;
+    if(fi<FUENTES.length-1){toast("Servidor lento · cambiando");setSrc(fi+1);}
+    else $("err").classList.add("on");
+  },15000);
+}
+setSrc(0);
 
-/* ============ nodo + tamaño vía API de metadatos ============
-   Los nodos de descarga no mandan Access-Control-Allow-Origin, así que
-   cualquier fetch en modo CORS contra ellos falla. La API de metadatos sí
-   manda CORS: de ahí sacamos el tamaño real y la ruta del nodo.
-   Las precargas van en mode:"no-cors" (el <video> tampoco necesita CORS).
-   El nodo se caduca a los 30 min: archive.org lo rota y uno viejo falla. */
+/* ============ nodo + tamaño (API de metadatos, que sí manda CORS) ============ */
 function preconnect(u){try{
   const o=new URL(u).origin;
   ["preconnect","dns-prefetch"].forEach(rel=>{
@@ -273,8 +327,7 @@ function preconnect(u){try{
 
 async function resolveNode(){
   try{
-    const c=sessionStorage.getItem(KN);
-    const t=+(sessionStorage.getItem(KT)||0);
+    const c=sessionStorage.getItem(KN),t=+(sessionStorage.getItem(KT)||0);
     if(c&&Date.now()-t<18e5&&/^https:\/\/[a-z0-9.-]+\.archive\.org\//i.test(c))NODE=c;
     const s=+(sessionStorage.getItem(KS)||0);if(s)SIZE=s;
   }catch{}
@@ -288,16 +341,15 @@ async function resolveNode(){
             (j.files||[]).find(x=>/\.mp4$/i.test(x.name||""));
     if(f&&+f.size)SIZE=+f.size;
     const srv=(j.workable_servers&&j.workable_servers[0])||j.server||j.d1;
-    if(srv&&j.dir)NODE="https://"+srv+j.dir+"/"+BASE+".ia.mp4";
+    if(srv&&j.dir)NODE="https://"+srv+j.dir+"/"+BASE+".mp4";
     try{sessionStorage.setItem(KN,NODE||"");sessionStorage.setItem(KS,SIZE);
       sessionStorage.setItem(KT,Date.now());}catch{}
     if(NODE)preconnect(NODE);
   }catch{}
 }
 
-/* ============ precarga por rango (no-cors) ============ */
 function prefetch(t){
-  const base=NODE||SRC;
+  const base=NODE||FUENTES[0];
   const bps=SIZE?SIZE/DUR:BPS_FALLBACK;
   clearTimeout(pfT);
   pfT=setTimeout(()=>{
@@ -307,9 +359,24 @@ function prefetch(t){
     try{if(pfAbort)pfAbort.abort();}catch{}
     pfAbort=new AbortController();
     fetch(base,{mode:"no-cors",credentials:"omit",
-      headers:{Range:"bytes="+start+"-"+end},signal:pfAbort.signal})
-      .then(()=>{}).catch(()=>{});
+      headers:{Range:"bytes="+start+"-"+end},signal:pfAbort.signal}).then(()=>{}).catch(()=>{});
   },110);
+}
+
+/* ============ miniaturas para la vista previa ============ */
+function thumbVtt(){
+  const paso=DUR/NTHUMB;
+  let out="WEBVTT\n\n";
+  for(let i=1;i<=NTHUMB;i++){
+    const a=(i-1)*paso,b=i*paso;
+    const n=String(i).padStart(6,"0");
+    out+=ts(a)+" --> "+ts(b)+"\n"+THUMB+n+".jpg\n\n";
+  }
+  return URL.createObjectURL(new Blob([out],{type:"text/vtt"}));
+}
+function ts(s){
+  const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=Math.floor(s%60),ms=Math.round((s%1)*1000);
+  return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(x).padStart(2,"0")+"."+String(ms).padStart(3,"0");
 }
 
 /* ============ subtítulos ============ */
@@ -346,7 +413,7 @@ function attach(){
   if(player){try{player.captions.active=true;player.captions.language="es";}catch{}}
 }
 function toast(m){const t=$("toast");t.textContent=m;t.style.opacity=1;clearTimeout(toast.t);
-  toast.t=setTimeout(()=>t.style.opacity=0,2200);}
+  toast.t=setTimeout(()=>t.style.opacity=0,2400);}
 function shift(d){
   const tr=v.textTracks&&v.textTracks[0];if(!tr||!tr.cues)return;
   for(const c of tr.cues){c.startTime=Math.max(0,c.startTime+d);c.endTime=Math.max(.1,c.endTime+d);}
@@ -365,7 +432,7 @@ addEventListener("resize",size);size();
   if(!run)return;
   cx.clearRect(0,0,W,H);
   for(const d of dr){
-    cx.strokeStyle="rgba(255,255,255,"+d.o+")";cx.lineWidth=d.w;
+    cx.strokeStyle="rgba(232,228,216,"+d.o+")";cx.lineWidth=d.w;
     cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1,d.y+d.l);cx.stroke();
     d.y+=d.v;d.x-=.22;
     if(d.y>H+40){d.y=-40;d.x=Math.random()*W;}
@@ -380,9 +447,8 @@ addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/inner
 (function drift(){
   cx2+=(tx-cx2)*.04;cy2+=(ty-cy2)*.04;
   const c=$("core");
-  if(c&&!document.body.classList.contains("film")){
+  if(c&&!document.body.classList.contains("film"))
     c.style.transform="translate("+(-cx2*14)+"px,"+(-cy2*10)+"px)";
-  }
   requestAnimationFrame(drift);
 })();
 
@@ -393,10 +459,11 @@ function buildPlayer(){
   if(player||!window.Plyr)return;
   const opts={
     controls:["play-large","play","progress","current-time","duration","mute","volume","captions","settings","fullscreen"],
-    settings:["captions","speed"],speed:{selected:1,options:[.75,1,1.25,1.5]},
+    settings:["captions","speed"],speed:{selected:1,options:[.5,.75,1,1.25,1.5,2]},
     captions:{active:true,language:"es",update:false},
     keyboard:{focused:true,global:true},seekTime:10,hideControls:true,clickToPlay:true,
     ratio:null,fullscreen:{enabled:true,fallback:true,iosNative:true},
+    previewThumbnails:{enabled:true,src:thumbVtt(),width:172},
     iconUrl:"https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.svg",
     i18n:{captions:"Subtítulos",settings:"Ajustes",speed:"Velocidad",normal:"Normal",disabled:"Desactivados",
       enabled:"Activados",play:"Reproducir",pause:"Pausa",mute:"Silenciar",unmute:"Activar sonido",
@@ -411,14 +478,24 @@ function buildPlayer(){
       b.onclick=()=>shift(d);
       bar.insertBefore(b,fs||null);
     });
+    marcarCaps();
     wireScrub();
   }catch(e){v.controls=true;}
 }
 
-function play(){
-  const p=v.play();
-  if(p&&p.catch)p.catch(()=>{});
+function marcarCaps(){
+  const prog=document.querySelector(".plyr__progress");
+  if(!prog)return;
+  const paso=DUR/CAPS.length;
+  CAPS.forEach((n,i)=>{
+    if(i===0)return;
+    const d=document.createElement("span");
+    d.className="cap";d.style.left=(i*100/CAPS.length)+"%";d.dataset.t=(i+1)+" · "+n;
+    prog.appendChild(d);
+  });
 }
+
+function play(){const p=v.play();if(p&&p.catch)p.catch(()=>{});}
 
 function start(resume){
   if(booted)return;booted=true;
@@ -428,37 +505,25 @@ function start(resume){
   document.body.classList.add("film");
   run=false;
   setTimeout(()=>{$("home").style.display="none";},1200);
-  /* el clic de "Descender" cuenta como gesto: aquí sí se puede reproducir */
   play();
   if(off)setTimeout(()=>toast("Ajuste guardado: "+(off>0?"+":"")+off.toFixed(1)+" s"),1800);
 }
 
-/* se reproduce en cuanto hay imagen, y se instala Plyr entonces */
 v.addEventListener("canplay",()=>{
-  listo=true;fails=0;
+  listo=true;fails=0;clearTimeout(watch);
   if(!player&&window.Plyr)buildPlayer();
   if(document.body.classList.contains("film")&&v.paused)play();
 });
 v.addEventListener("loadeddata",()=>{
+  listo=true;clearTimeout(watch);
   if(document.body.classList.contains("film")&&v.paused)play();
 });
-v.addEventListener("playing",()=>{listo=true;fails=0;$("err").classList.remove("on");});
+v.addEventListener("playing",()=>{listo=true;$("err").classList.remove("on");clearTimeout(watch);});
 
-/* si la fuente falla: probar la siguiente sin molestar, y solo al final avisar */
-function cambiarFuente(){
-  fails++;
-  if(fi<FUENTES.length-1){
-    fi++;v.src=FUENTES[fi];v.load();
-    setTimeout(()=>{if(document.body.classList.contains("film"))play();},400);
-    if(fails>1)toast("Cambiando de servidor");
-    return true;
-  }
-  return false;
-}
 v.addEventListener("error",()=>{
   if(!v.getAttribute("src"))return;
-  if(cambiarFuente())return;
-  if(!listo)$("err").classList.add("on");
+  if(fi<FUENTES.length-1){setSrc(fi+1);setTimeout(()=>{if(document.body.classList.contains("film"))play();},500);}
+  else $("err").classList.add("on");
 });
 
 function wireScrub(){
@@ -468,8 +533,7 @@ function wireScrub(){
   const ratio=e=>{const r=prog.getBoundingClientRect();
     return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));};
   prog.addEventListener("pointermove",e=>{
-    const k=ratio(e);
-    prefetch(k*DUR);
+    const k=ratio(e);prefetch(k*DUR);
     if(dragging){ping.textContent=fmt(k*DUR);ping.classList.add("on");}
   },{passive:true});
   prog.addEventListener("pointerdown",e=>{
@@ -492,14 +556,19 @@ async function lock(){try{if(navigator.wakeLock&&!wl){wl=await navigator.wakeLoc
 v.addEventListener("play",lock);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!v.paused)lock();});
 
-/* ============ errores ============ */
+/* ============ errores y alternativa ============ */
 $("retry").onclick=()=>{
-  const t=v.currentTime||num(KP);$("err").classList.remove("on");
-  fi=0;fails=0;listo=false;
-  v.src=FUENTES[0];v.load();
+  const t=v.currentTime||num(KP);
+  $("err").classList.remove("on");listo=false;fails=0;
+  setSrc(0);
   v.addEventListener("loadedmetadata",()=>{try{v.currentTime=t;}catch{}},{once:true});
-  setTimeout(play,600);
+  setTimeout(play,700);
 };
+$("altb").onclick=()=>{
+  $("altf").src="https://archive.org/embed/"+ITEM+"?autoplay=1";
+  $("alt").classList.add("on");
+};
+$("altx").onclick=()=>{$("alt").classList.remove("on");$("altf").src="about:blank";};
 $("pick").onclick=()=>$("file").click();
 $("file").onchange=e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
