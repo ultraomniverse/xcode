@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070707">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='17' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath d='M20 6v14l10 8' stroke='%23fff' stroke-width='3' fill='none'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://archive.org" crossorigin>
 <link rel="preconnect" href="https://mohetios.github.io" crossorigin>
 <title>Psychotic Entertainment — Catálogo</title>
@@ -346,10 +347,10 @@ kbd{border:1px solid #444;padding:1px 5px;font-family:var(--m);font-size:9px;col
 </div>
 
 <div id="player" class="player off">
-  <video id="v0" class="vid on" preload="auto" playsinline webkit-playsinline x5-playsinline disablepictureinpicture controlslist="nodownload noplaybackrate"></video>
-  <video id="v1" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline disablepictureinpicture></video>
-  <video id="v2" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline disablepictureinpicture></video>
-  <video id="v3" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline disablepictureinpicture></video>
+  <video id="v0" class="vid on" preload="auto" playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page" x5-video-player-fullscreen="false" disableremoteplayback disablepictureinpicture controlslist="nodownload noplaybackrate"></video>
+  <video id="v1" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page" x5-video-player-fullscreen="false" disableremoteplayback disablepictureinpicture></video>
+  <video id="v2" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page" x5-video-player-fullscreen="false" disableremoteplayback disablepictureinpicture></video>
+  <video id="v3" class="vid" preload="metadata" muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page" x5-video-player-fullscreen="false" disableremoteplayback disablepictureinpicture></video>
 
   <div class="p-top">
     <button class="p-back" id="backBtn" title="Volver (Esc)">←</button>
@@ -409,9 +410,10 @@ kbd{border:1px solid #444;padding:1px 5px;font-family:var(--m);font-size:9px;col
   <div class="fatal" id="fatal" hidden>
     <div>
       <h4>NO SE PUDO CARGAR</h4>
-      <p>El navegador no abrió la fuente de video. Revisa la conexión o prueba en otro navegador de la TV.</p>
+      <p id="fatalMsg">El navegador no abrió la fuente de video. Revisa la conexión o prueba en otro navegador de la TV.</p>
       <button id="retryBtn">REINTENTAR</button>
       <button id="openExt">ABRIR FUENTE</button>
+      <button id="urlBtn">OTRA URL</button>
     </div>
   </div>
 
@@ -732,7 +734,11 @@ const ORDER=Object.keys(SEG).map(id=>({id,s:SEG[id][0],e:SEG[id][1]})).sort((a,b
 function segAt(t){let lo=0,hi=ORDER.length-1;while(lo<=hi){const m=(lo+hi)>>1,o=ORDER[m];if(t<o.s)hi=m-1;else if(t>=o.e)lo=m+1;else return o.id}return null}
 
 const $=s=>document.querySelector(s);
+const QS=new URLSearchParams(location.search), UA=navigator.userAgent||'';
+/* TV o equipo justo: UN solo <video> (los decodificadores de TV suelen admitir solo uno) y sin fullscreen nativo */
+const TV=QS.get('tv')==='1'||(QS.get('tv')!=='0'&&(/SMART-?TV|Tizen|Web0S|WebOS|NetCast|HbbTV|BRAVIA|AFT[A-Z]|Android ?TV|GoogleTV|CrKey|VIDAA|Hisense|Roku|PhilipsTV|TV Safari|Large Screen/i.test(UA)||(navigator.deviceMemory&&navigator.deviceMemory<=1)));
 const pool=[...document.querySelectorAll('.vid')];
+if(TV) pool.splice(1).forEach(e=>e.remove());
 let v=pool[0];
 const player=$('#player'), site=$('#site');
 const choiceLayer=$('#choiceLayer'), choiceRow=$('#choiceRow'), ring=$('#ring');
@@ -741,7 +747,7 @@ const tCur=$('#tCur'), buffer=$('#buffer'), fill=$('#fill');
 const subsEl=$('#subs'), fatal=$('#fatal');
 const lockBadge=$('#lockBadge'), lockToast=$('#lockToast'), bigPlay=$('#bigPlay');
 
-const LIMIT=15000, SPARES=3, EDGE=30; // SPARES: 3 = máxima precarga; 1-2 si el dispositivo se queda corto
+const LIMIT=15000, SPARES=TV?0:3, EDGE=30; // SPARES: 3 = máxima precarga; 1-2 si el dispositivo se queda corto
 const BASE='https://archive.org/download/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/';
 const SRC={
   '480':'Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4',
@@ -756,7 +762,9 @@ let countdown=null, ccMode='es', subs={es:[],en:[]}, subsReady=false, loaded=fal
 let lastChoiceAt=0, autoMuted=false, watched=0, lastT=null;
 let metaHandler=null, fbTimer=null, fatalCount=0, activeCard=null, cssFs=false, unlocked=false;
 
-const srcUrl=()=>BASE+SRC[quality];
+let CUSTOM=QS.get('src')||''; try{ if(!CUSTOM) CUSTOM=localStorage.getItem('pe_src')||''; }catch(e){}
+let wdT=null;
+const srcUrl=()=>CUSTOM||BASE+SRC[quality];
 const isOff=()=>player.classList.contains('off');
 const secOf=k=>SEG[k]?SEG[k][0]/1000:parseFloat(k.slice(2))/1000;
 const keyOk=k=>!!k&&(!!SEG[k]||k.slice(0,2)==='W:');
@@ -788,7 +796,7 @@ function play(){
 function unlockPool(){
   if(unlocked) return; unlocked=true;
   others().forEach(e=>{
-    if(!e.getAttribute('src')) return;
+    if(!e.getAttribute('src')){ e.src=srcUrl(); e.load(); }
     const k=e.dataset.t; e.muted=true;
     const p=e.play();
     if(p&&p.then) p.then(()=>{ if(e!==v){ e.pause(); if(k) try{ e.currentTime=secOf(k); }catch(x){} } }).catch(()=>{});
@@ -799,7 +807,7 @@ function unlockPool(){
 function fsElement(){ return document.fullscreenElement||document.webkitFullscreenElement||document.msFullscreenElement; }
 function enterFs(){
   const el=player;
-  const req=el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen||el.msRequestFullscreen;
+  const req=TV?null:(el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen||el.msRequestFullscreen);
   let ok=false;
   if(req){ try{ const p=req.call(el,{navigationUI:'hide'}); if(p&&p.catch) p.catch(()=>fallbackFs(true)); ok=true; }catch(e){ ok=false; } }
   if(!ok) fallbackFs(true);
@@ -865,18 +873,19 @@ function setQuality(q,keep){
   fatal.hidden=true;
   try{ el.pause(); }catch(e){}
   el.preload='auto'; el.src=srcUrl(); el.load();
-  others().forEach(s=>{ s.dataset.t=''; s.preload='metadata'; s.src=srcUrl(); s.load(); });
+  others().forEach(s=>{ s.dataset.t=''; s.removeAttribute('src'); try{ s.load(); }catch(e){} });
   $('#qBtn').textContent=q==='1080'?'1080p':'480p';
   $('#status').textContent=q==='1080'?'1080p MKV':'480p';
   metaHandler=function(){
     el.removeEventListener('loadedmetadata',metaHandler); metaHandler=null;
-    clearTimeout(fbTimer);
+    clearTimeout(fbTimer); clearTimeout(wdT);
     if(t>0){ try{ el.currentTime=t; }catch(e){} }
     if(was) play();
     setTimeout(()=>warm(targetsFor(cur||segAt(el.currentTime*1000+2)||'1A')),800);
   };
   el.addEventListener('loadedmetadata',metaHandler);
-  clearTimeout(fbTimer);
+  clearTimeout(fbTimer); clearTimeout(wdT);
+  wdT=setTimeout(()=>{ if(v.readyState===0){ fatal.hidden=false; probe(); } },20000);
   if(q==='1080'){
     fbTimer=setTimeout(()=>{ if(el.readyState<2){ setQuality('480',true); toast('El 1080p no abrió. De vuelta en 480p.'); } },7000);
   }
@@ -887,10 +896,25 @@ function onError(){
   if(quality==='1080'){ setQuality('480',true); toast('Falló el 1080p. Usando 480p.'); return; }
   fatalCount++;
   if(fatalCount<=2){ const t=v.currentTime||0; setTimeout(()=>{ setQuality('480',true); if(t) try{ v.currentTime=t; }catch(e){} },600); }
-  else fatal.hidden=false;
+  else { fatal.hidden=false; probe(); }
 }
+async function probe(){
+  const m=$('#fatalMsg'); m.textContent='Comprobando la fuente…';
+  try{
+    const r=await fetch(srcUrl(),{headers:{Range:'bytes=0-1'},cache:'no-store'});
+    if([401,403,404,410].includes(r.status)) m.textContent='La fuente respondió '+r.status+': el archivo ya no está disponible o está bloqueado. Pulsa OTRA URL y pega un enlace directo al video completo (5:12:14).';
+    else if(r.ok) m.textContent='La fuente responde ('+r.status+') pero el navegador no puede reproducirla (formato o códec). Prueba Chrome o la calidad 480p.';
+    else m.textContent='La fuente respondió '+r.status+'. Reintenta o usa OTRA URL.';
+  }catch(e){ m.textContent='No se pudo contactar con la fuente (red, bloqueo o CORS). Revisa la conexión o usa OTRA URL.'; }
+}
+$('#urlBtn').addEventListener('click',()=>{
+  const u=(prompt('Pega el enlace directo al video (.mp4/.webm) de 5:12:14:',CUSTOM)||'').trim();
+  if(!/^https?:\/\//i.test(u)) return;
+  CUSTOM=u; try{ localStorage.setItem('pe_src',u); }catch(e){}
+  fatalCount=0; fatal.hidden=true; setQuality('480',false); play();
+});
 $('#retryBtn').addEventListener('click',()=>{ fatalCount=0; fatal.hidden=true; setQuality('480',true); play(); });
-$('#openExt').addEventListener('click',()=>{ window.open(BASE+SRC['480'],'_blank'); });
+$('#openExt').addEventListener('click',()=>{ window.open(srcUrl(),'_blank'); });
 $('#qBtn').addEventListener('click',()=>setQuality(quality==='1080'?'480':'1080',true));
 
 /* ---------- PRECARGA + INTERCAMBIO DE ELEMENTOS ---------- */
@@ -911,6 +935,7 @@ function targetsFor(id,atChoice){
 }
 function arm(s,key){
   s.dataset.t=key; s.muted=true; s.preload='auto';
+  if(!s.getAttribute('src')){ s.src=srcUrl(); s.load(); }
   const sec=secOf(key);
   const go=()=>{ if(s.dataset.t===key){ try{ s.currentTime=sec; }catch(e){} } };
   try{ s.pause(); }catch(e){}
@@ -942,6 +967,7 @@ function swapTo(s){
 }
 
 pool.forEach(el=>{
+  ['webkitbeginfullscreen','webkitpresentationmodechanged'].forEach(ev=>el.addEventListener(ev,()=>{ try{ if(el.webkitDisplayingFullscreen) el.webkitExitFullscreen(); }catch(e){} }));
   const g=fn=>e=>{ if(e.target===v) fn(e); };
   el.addEventListener('timeupdate',g(onTime));
   el.addEventListener('error',e=>{ if(e.target===v) onError(); else e.target.dataset.t=''; });
@@ -975,13 +1001,23 @@ function parseVTT(txt){
 }
 async function loadSubs(){
   if(subsReady) return; subsReady=true;
-  const jobs=[['es',[SUB_ES]],['en',[SUB_EN,SUB_EN2]]];
+  const jobs=[['es',[SUB_ES]],['en',[SUB_EN2,SUB_EN]]];
   for(const [k,urls] of jobs){
     for(const url of urls){
       let done=false;
       try{ const r=await fetch(url,{mode:'cors',cache:'force-cache'}); if(r.ok){ subs[k]=parseVTT(await r.text()); done=true; } }catch(e){}
       if(!done){ try{ const r2=await fetch(url); if(r2.ok){ subs[k]=parseVTT(await r2.text()); done=true; } }catch(e2){} }
       if(done) break;
+    }
+    if(!subs[k].length){ // último recurso: listar la carpeta del repositorio y buscar por idioma
+      try{
+        const re=k==='es'?/span|espa|latin|spa/i:/eng|\ben\b|webrip/i;
+        const r=await fetch('https://api.github.com/repos/mohetios/BandersnatchInteractive/contents/subtitle');
+        if(r.ok){
+          const f=(await r.json()).find(x=>/\.vtt$/i.test(x.name)&&re.test(x.name));
+          if(f&&f.download_url){ const t=await fetch(f.download_url); if(t.ok) subs[k]=parseVTT(await t.text()); }
+        }
+      }catch(e3){}
     }
   }
   if(!subs.es.length&&!subs.en.length){ toast('Subtítulos no disponibles.'); subsReady=false; }
@@ -1150,6 +1186,8 @@ document.addEventListener('keydown',e=>{
   if(isOff()) return;
   const k=e.key.length===1?e.key.toLowerCase():e.key;
   if(!locked) armIdle();
+  if(e.keyCode===10009||e.keyCode===461||k==='GoBack'||k==='BrowserBack'||k==='MediaStop'){ e.preventDefault(); if(isFs()) exitFs(); else $('#backBtn').click(); return; }
+  if(k==='MediaPlayPause'||k==='MediaPlay'||k==='MediaPause'){ e.preventDefault(); togglePlay(); return; }
   if(k==='F9'){ e.preventDefault(); toggleLock(); return; }
   if(k==='f'){ e.preventDefault(); toggleFs(); return; }
   if(locked){
@@ -1168,7 +1206,7 @@ document.addEventListener('keydown',e=>{
     e.preventDefault(); return;
   }
   if(showing&&k==='Enter'){ if(activeCard) activeCard.click(); e.preventDefault(); return; }
-  if(k===' '||k==='k'){ e.preventDefault(); togglePlay(); }
+  if(k===' '||k==='k'||(k==='Enter'&&!showing&&!(document.activeElement&&/BUTTON|A/.test(document.activeElement.tagName)))){ e.preventDefault(); togglePlay(); }
   else if(k==='c'){ $('#ccBtn').click(); }
   else if(k==='r'){ restart(); }
   else if(k==='Escape'){ if(isFs()) exitFs(); else $('#backBtn').click(); }
