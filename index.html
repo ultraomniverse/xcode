@@ -125,7 +125,7 @@ h2{margin:0;font-weight:500;font-size:clamp(15px,2.4vw,29px);line-height:1.24;le
     <p>Archive.org no entregó el archivo. Puedes reintentar o abrir su reproductor oficial.</p>
     <div class="btns"><button id="retry">Reintentar</button><button id="altb">Reproductor alternativo</button><button id="pick">Cargar .srt</button></div>
   </div>
-  <div id="alt"><div class="top"><span>archive.org · reproductor oficial</span><span style="flex:1"></span><button id="altx" style="border:1px solid #38352f;padding:6px 14px">Volver</button></div><iframe id="altf" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+  <div id="alt"><div class="top"><span>archive.org · reproductor oficial</span><span style="flex:1"></span><button id="altx" style="border:1px solid #38352f;padding:6px 14px">Volver</button></div><iframe id="altf" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media"></iframe></div>
   <input id="file" type="file" accept=".srt,.vtt,text/vtt">
 </div>
 
@@ -135,9 +135,6 @@ const ITEM="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
 const BASE="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT";
 const NODO="dn600303.us.archive.org";
 const DIR="/0/items/"+ITEM+"/"+BASE;
-/* El nodo directo evita la redirección de archive.org/download (que es lo que
-   metía los segundos de espera) y la derivada .ia.mp4 está indexada para
-   streaming, así que arranca sin recorrer el archivo entero. */
 const FUENTES=[
   "https://"+NODO+DIR+".ia.mp4",
   "https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4",
@@ -163,12 +160,10 @@ function play(){const p=v.play();if(p&&p.catch)p.catch(()=>{});}
 function spin(on){clearTimeout(spinT);if(on){$("spin").classList.add("on");}
   else{spinT=setTimeout(()=>$("spin").classList.remove("on"),160);}}
 
-/* ---------- fondo ---------- */
 (function photo(i){if(i>=PHOTOS.length)return;const im=new Image();
   im.onload=()=>{const e=$("photo");e.style.backgroundImage="url('"+PHOTOS[i]+"')";e.classList.add("on");};
   im.onerror=()=>photo(i+1);im.src=PHOTOS[i];})(0);
 
-/* ---------- vídeo: se pide desde el primer segundo de la página ---------- */
 function setSrc(i,t){
   fi=i;v.src=FUENTES[i];v.load();
   if(t>1)v.addEventListener("loadedmetadata",()=>{try{v.currentTime=t;}catch{}},{once:true});
@@ -182,7 +177,6 @@ function setSrc(i,t){
 setSrc(0,0);
 if(pos>60)v.addEventListener("loadedmetadata",()=>{try{v.currentTime=pos;}catch{}},{once:true});
 
-/* calentamiento: abre TLS y deja el primer bloque en caché antes del clic */
 try{fetch(FUENTES[0],{mode:"no-cors",credentials:"omit",headers:{Range:"bytes=0-131071"}}).catch(()=>{});}catch{}
 
 v.addEventListener("loadedmetadata",()=>clearTimeout(watch));
@@ -195,7 +189,6 @@ v.addEventListener("error",()=>{
   else{spin(false);$("err").classList.add("on");}
 });
 
-/* ---------- subtítulos ---------- */
 function toVtt(src,o){
   return "WEBVTT\n\n"+src.replace(/^\uFEFF/,"").replace(/\r/g,"").replace(/(\d{2}):(\d{2}):(\d{2}),(\d{3})/g,(m,h,mi,s,ms)=>{
     const t=Math.max(0,Math.round(((+h*60+ +mi)*60+ +s)*1000+ +ms+o*1000));
@@ -231,7 +224,6 @@ $("file").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
   r.onload=()=>{const x=String(r.result);if(x.indexOf("-->")<0){toast("Ese archivo no tiene marcas de tiempo");return;}srt=x;attach();toast("Subtítulos cargados");};
   r.readAsText(f,"utf-8");};
 
-/* ---------- lluvia y paralaje ---------- */
 const cv=$("rain"),cx=cv.getContext("2d");let W,H,dr=[],run=true,tx=0,ty=0,px=0,py=0;
 function size(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);
   dr=Array.from({length:Math.min(150,W/9|0)},()=>({x:Math.random()*W,y:Math.random()*H,l:9+Math.random()*34,v:.7+Math.random()*1.6,o:.05+Math.random()*.2,w:Math.random()<.2?1:.6}));}
@@ -247,7 +239,6 @@ addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/inner
   requestAnimationFrame(loop);
 })();
 
-/* ---------- arranque ---------- */
 function start(resume){
   if(booted)return;booted=true;
   $("home").classList.add("out");
