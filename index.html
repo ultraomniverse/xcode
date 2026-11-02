@@ -5,199 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
-<title>xcode</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Cpath d='M14 5h4v9h9v4h-9v9h-4v-9H5v-4h9z' fill='%23fff'/%3E%3C/svg%3E">
+<title>XCODE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Cpath d='M14 4h4v10h10v4H18v10h-4V18H4v-4h10z' fill='%23000'/%3E%3C/svg%3E">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html{background:#1b1b1b}
-body{font-family:Arial,Helvetica,sans-serif;color:#fff;background:#1b1b1b;font-size:18px;line-height:1.6}
+html{background:#000}
+body{font-family:"Courier New",Courier,monospace;color:#fff;background:#000;font-size:17px;line-height:1.6;overflow-x:hidden}
 
-#bg{position:fixed;inset:0;z-index:0;
-background:#2a2a2a url("https://previews.123rf.com/images/gillcopeland/gillcopeland1903/gillcopeland190300003/119540271-an-english-grave-yard-in-the-mist-in-the-foreground-the-head-stones-are-in-the-shape-of-christian.jpg") center/cover no-repeat;
-filter:grayscale(1) contrast(1.3) brightness(1.45)}
-#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
-background:
-  radial-gradient(ellipse 75% 60% at 50% 42%,rgba(0,0,0,.30),rgba(0,0,0,.52) 60%,rgba(0,0,0,.82) 100%),
-  linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.25) 40%,rgba(0,0,0,.6))}
-#screen{position:fixed;inset:0;z-index:1;pointer-events:none;background:#fff;mix-blend-mode:screen;opacity:.07}
+/* ---------- fondo: cementerio infernal glitcheado ---------- */
+#bg,#bg2{position:fixed;inset:-4%;z-index:0;background:#000 center/cover no-repeat;
+  filter:grayscale(1) contrast(1.55) brightness(1.15);will-change:transform,filter}
+#bg2{mix-blend-mode:difference;opacity:.5;filter:grayscale(1) contrast(2) brightness(.9) invert(1);
+  animation:jitter .18s steps(2) infinite}
+#bg{animation:tear 5.5s steps(1) infinite}
+@keyframes jitter{
+  0%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}
+  50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,-1px)}100%{transform:translate(0,0)}}
+@keyframes tear{
+  0%,86%{transform:none;filter:grayscale(1) contrast(1.55) brightness(1.15)}
+  87%{transform:translate(-9px,0) skewX(-.6deg);filter:grayscale(1) contrast(2.4) brightness(1.6)}
+  88%{transform:translate(7px,0) skewX(.8deg)}
+  89%{transform:translate(-4px,2px);filter:grayscale(1) contrast(1.2) brightness(.8)}
+  90%,100%{transform:none;filter:grayscale(1) contrast(1.55) brightness(1.15)}}
 
-.wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 28px}
-header{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.25)}
-.brand{display:flex;align-items:center;gap:14px}
-.cross{width:26px;height:34px;position:relative}
-.cross::before,.cross::after{content:"";position:absolute;background:#fff}
+#bands{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.55;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.10) 0 1px,transparent 1px 4px);
+  animation:roll 1.2s steps(3) infinite}
+@keyframes roll{to{background-position:0 12px}}
+#slice{position:fixed;left:0;right:0;height:6vh;z-index:1;pointer-events:none;
+  background:#fff;mix-blend-mode:overlay;opacity:.35;animation:slice 3.2s steps(1) infinite}
+@keyframes slice{
+  0%,70%{top:-10vh;height:6vh}71%{top:18vh;height:2vh}73%{top:62vh;height:9vh}
+  75%{top:41vh;height:1vh}78%{top:80vh;height:4vh}85%,100%{top:110vh;height:0}}
+
+#scan{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.5;
+  background:linear-gradient(180deg,rgba(0,0,0,.55),transparent 25%,transparent 70%,rgba(0,0,0,.7))}
+#noise{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.22;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .55s steps(3) infinite}
+@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}}
+
+/* ---------- estructura ---------- */
+.wrap{position:relative;z-index:5;max-width:1120px;margin:0 auto;padding:0 26px}
+
+header{position:sticky;top:0;z-index:40;background:#fff;border-bottom:4px solid #000}
+.hin{max-width:1120px;margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:16px}
+.cross{width:26px;height:34px;position:relative;flex:none}
+.cross::before,.cross::after{content:"";position:absolute;background:#000}
 .cross::before{left:11px;top:0;width:4px;height:34px}
 .cross::after{left:0;top:9px;width:26px;height:4px}
-.brand b{font-size:30px;letter-spacing:.16em;font-weight:700}
+.brand{font-size:26px;letter-spacing:.34em;font-weight:700;color:#000}
+header nav{margin-left:auto;display:flex;gap:18px;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+header nav a{color:#000;text-decoration:none;border-bottom:2px solid transparent;padding-bottom:2px}
+header nav a:hover{border-color:#000}
 
-main{padding:60px 0 20px}
-h1{font-size:52px;line-height:1.1;font-weight:700;margin-bottom:14px;letter-spacing:-.01em}
-.sub{font-size:19px;color:#d4d4d4;margin-bottom:52px;max-width:640px}
+main{padding:64px 0 10px}
+.kicker{display:inline-block;font-size:11px;letter-spacing:.4em;text-transform:uppercase;
+  border:2px solid #fff;padding:6px 12px;margin-bottom:22px}
+h1{font-size:clamp(34px,7vw,74px);line-height:.98;letter-spacing:-.02em;text-transform:uppercase;
+  margin-bottom:18px;text-shadow:3px 3px 0 #000,-1px -1px 0 #000}
+.sub{font-size:17px;color:#e4e4e4;max-width:620px;margin-bottom:46px;text-shadow:2px 2px 0 #000}
 
-h2.sec{font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:#cfcfcf;
-margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
+h2.sec{font-size:13px;letter-spacing:.4em;text-transform:uppercase;color:#fff;
+  border-bottom:2px solid #fff;padding-bottom:10px;margin-bottom:24px}
 
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:70px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:70px}
 
-.card{display:block;background:#111;border:1px solid rgba(255,255,255,.28);
-text-decoration:none;color:#fff;padding:0;cursor:pointer;text-align:left;font-family:inherit}
-.card:hover,.card:focus{outline:3px solid #fff;outline-offset:3px;background:#000}
-.poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#222}
-.card .body{padding:14px 16px 18px}
-.card .t{font-size:20px;font-weight:700;line-height:1.25;margin-bottom:6px}
-.card .m{font-size:13px;color:#bcbcbc;letter-spacing:.06em;text-transform:uppercase}
-.tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.18em;
-text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:4px 9px;color:#e2e2e2}
+.card{display:block;background:#000;border:2px solid #fff;color:#fff;padding:0;cursor:pointer;
+  text-align:left;font-family:inherit;position:relative;overflow:hidden;transition:transform .12s}
+.card:hover,.card:focus{outline:none;transform:translate(-3px,-3px);box-shadow:6px 6px 0 #fff}
+.poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#111;
+  filter:grayscale(1) contrast(1.2) brightness(.95)}
+.card:hover .poster{filter:grayscale(1) contrast(1.5) brightness(1.1)}
+.card .body{padding:13px 14px 16px;border-top:2px solid #fff}
+.card .t{font-size:18px;font-weight:700;line-height:1.2;text-transform:uppercase;margin-bottom:6px}
+.card .m{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#cfcfcf}
+.tag{display:inline-block;margin-top:9px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  border:1px solid #fff;padding:3px 8px}
+.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
+  border-bottom:2px solid #fff;background:repeating-linear-gradient(45deg,#000 0 12px,#0d0d0d 12px 24px)}
+.soon span{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#d0d0d0}
 
-.soon{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;
-border:1px dashed rgba(255,255,255,.45);background:rgba(0,0,0,.45);text-align:center;padding:24px}
-.soon span{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:#d8d8d8}
+footer{position:relative;z-index:5;background:#000;border-top:4px solid #fff;margin-top:30px}
+.fwrap{max-width:1120px;margin:0 auto;padding:48px 26px 30px}
+.cols{display:grid;grid-template-columns:repeat(6,1fr);gap:24px;margin-bottom:40px}
+.col h3{font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:12px}
+.col a{display:block;font-size:12px;color:#a8a8a8;text-decoration:none;padding:4px 0}
+.col a:hover{background:#fff;color:#000}
+.legal{border-top:1px solid #333;padding-top:22px;font-size:11px;color:#8c8c8c;line-height:1.75}
+.legal p{margin-bottom:12px}
+.copy{margin-top:22px;padding-top:18px;border-top:1px solid #333;font-size:11px;color:#777;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;text-transform:uppercase;letter-spacing:.14em}
 
-footer{position:relative;z-index:2;background:#0b0b0b;border-top:1px solid #333;margin-top:40px}
-.fwrap{max-width:1100px;margin:0 auto;padding:52px 28px 34px}
-.cols{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-bottom:44px}
-.col h3{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:14px}
-.col a{display:block;font-size:13px;color:#9d9d9d;text-decoration:none;padding:5px 0;line-height:1.4}
-.col a:hover{color:#fff;text-decoration:underline}
-.legal{border-top:1px solid #2a2a2a;padding-top:26px;font-size:12px;color:#7d7d7d;line-height:1.75}
-.legal p{margin-bottom:14px}
-.copy{margin-top:26px;padding-top:20px;border-top:1px solid #2a2a2a;
-font-size:12px;color:#6f6f6f;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-
-#film{position:fixed;inset:0;z-index:100;background:#000;display:none}
+/* ---------- reproductor ---------- */
+#film{position:fixed;inset:0;z-index:200;background:#000;display:none}
 #film.on{display:block}
 #stage{position:absolute;inset:0;overflow:hidden;background:#000}
-#frame{position:absolute;top:50%;left:50%;width:100%;height:100%;border:0;transform:translate(-50%,-50%)}
-#bn{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:none}
-#bar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:10px;align-items:center;
-padding:12px 20px;background:linear-gradient(#000,rgba(0,0,0,.65) 60%,transparent);
-opacity:0;transition:.2s;pointer-events:none}
+#bn{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+#bar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:8px;align-items:center;
+  padding:12px 18px;background:linear-gradient(#000,rgba(0,0,0,.6) 60%,transparent);
+  opacity:0;transition:.2s;pointer-events:none}
 #bar.on{opacity:1;pointer-events:auto}
-#bar button{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointer}
-#bar button:hover,#bar button:focus{outline:3px solid #fff;outline-offset:2px}
+#bar button{font-family:inherit;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  padding:9px 14px;background:#000;color:#fff;border:1px solid #666;cursor:pointer}
+#bar button:hover,#bar button:focus{outline:2px solid #fff;outline-offset:2px}
 #bar .sp{flex:1}
-#bar .n{font-size:13px;color:#ccc;letter-spacing:.14em;text-transform:uppercase}
+#bar .n{font-size:11px;color:#bbb;letter-spacing:.18em;text-transform:uppercase}
 
-@media(max-width:900px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .cols{grid-template-columns:repeat(3,1fr)}
-  h1{font-size:38px}
-}
-@media(max-width:600px){
-  .grid{grid-template-columns:1fr}
-  .cols{grid-template-columns:repeat(2,1fr)}
-  h1{font-size:30px}
-}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.cols{grid-template-columns:repeat(2,1fr)}
+  header nav{display:none}}
 </style>
 </head>
 <body>
 
 <div id="bg"></div>
-<div id="veil"></div>
-<div id="screen"></div>
+<div id="bg2"></div>
+<div id="slice"></div>
+<div id="bands"></div>
+<div id="noise"></div>
+<div id="scan"></div>
+
+<header>
+  <div class="hin">
+    <div class="cross"></div>
+    <div class="brand">XCODE</div>
+    <nav><a href="#cartelera">Cartelera</a><a href="#info">Info</a></nav>
+  </div>
+</header>
 
 <div class="wrap">
-  <header>
-    <div class="brand"><div class="cross"></div><b>XCODE</b></div>
-  </header>
-
   <main>
-    <h1>El catálogo del abismo.</h1>
-    <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin prisa. Entrá y elegí.</p>
+    <span class="kicker">La plataforma nº1 del abismo</span>
+    <h1>Streaming<br>desde el pozo.</h1>
+    <p class="sub">Cine que no se digiere. Sin algoritmo, sin recomendaciones, sin subir archivos. Elegís y se reproduce.</p>
 
-    <h2 class="sec">Disponible ahora</h2>
+    <h2 class="sec" id="cartelera">Cartelera</h2>
     <div class="grid">
 
-      <button class="card" data-play="sat">
-        <img class="poster" loading="lazy" decoding="async" alt="Sátántangó"
-        src="https://m.media-amazon.com/images/M/MV5BM2U1ZGYwNTItMjcwMS00ZTdjLWE2OWUtNDI5M2JlNjdmMTZlXkEyXkFqcGc@._V1_.jpg">
-        <div class="body">
-          <div class="t">Sátántangó</div>
-          <div class="m">1994 · Béla Tarr · 7 h 19 min</div>
-          <span class="tag">1080p · subtítulos ES</span>
-        </div>
-      </button>
-
       <button class="card" data-play="ban">
-        <img class="poster" loading="lazy" decoding="async" alt="Bandersnatch"
+        <img class="poster" decoding="async" alt="Bandersnatch"
         src="https://m.media-amazon.com/images/M/MV5BMjM5MzgzMjM3OF5BMl5BanBnXkFtZTgwMzQ2MzQwNzM@._V1_.jpg">
         <div class="body">
           <div class="t">Black Mirror: Bandersnatch</div>
-          <div class="m">2018 · David Slade · interactivo</div>
-          <span class="tag">1080p · decisiones en español</span>
+          <div class="m">2018 · interactivo · 5 h 12 min</div>
+          <span class="tag">1080p · subtítulos latino</span>
         </div>
       </button>
 
       <div class="card" style="cursor:default">
-        <div class="soon"><span>Espacio disponible<br>para otra<br>que viene pronto</span></div>
-        <div class="body">
-          <div class="t">—</div>
-          <div class="m">Próximamente</div>
-        </div>
+        <div class="soon"><span>Espacio reservado<br>para otra<br>que baja pronto</span></div>
+        <div class="body"><div class="t">—</div><div class="m">Próximamente</div></div>
+      </div>
+
+      <div class="card" style="cursor:default">
+        <div class="soon"><span>Más cine<br>del abismo<br>en camino</span></div>
+        <div class="body"><div class="t">—</div><div class="m">Próximamente</div></div>
       </div>
 
     </div>
   </main>
 </div>
 
-<footer>
+<footer id="info">
   <div class="fwrap">
     <div class="cols">
-      <div class="col">
-        <h3>Compañía</h3>
-        <a href="#">Sobre xcode</a><a href="#">Historia</a><a href="#">Empleo</a>
-        <a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a>
-      </div>
-      <div class="col">
-        <h3>Catálogo</h3>
-        <a href="#">Películas</a><a href="#">Series</a><a href="#">Documentales</a>
-        <a href="#">Cine de culto</a><a href="#">Interactivos</a><a href="#">Próximos estrenos</a>
-      </div>
-      <div class="col">
-        <h3>Ayuda</h3>
+      <div class="col"><h3>Compañía</h3>
+        <a href="#">Sobre XCODE</a><a href="#">Historia</a><a href="#">Empleo</a>
+        <a href="#">Prensa</a><a href="#">Inversores</a><a href="#">Sostenibilidad</a></div>
+      <div class="col"><h3>Catálogo</h3>
+        <a href="#">Películas</a><a href="#">Interactivos</a><a href="#">Cine de culto</a>
+        <a href="#">Documentales</a><a href="#">Próximos estrenos</a><a href="#">Archivo</a></div>
+      <div class="col"><h3>Ayuda</h3>
         <a href="#">Centro de ayuda</a><a href="#">Dispositivos</a><a href="#">Mi cuenta</a>
-        <a href="#">Facturación</a><a href="#">Reportar un error</a><a href="#">Estado del servicio</a>
-      </div>
-      <div class="col">
-        <h3>Legal</h3>
+        <a href="#">Reportar un error</a><a href="#">Estado de nodos</a><a href="#">Contacto</a></div>
+      <div class="col"><h3>Legal</h3>
         <a href="#">Términos de uso</a><a href="#">Privacidad</a><a href="#">Cookies</a>
-        <a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a>
-      </div>
-      <div class="col">
-        <h3>Regiones</h3>
+        <a href="#">Licencias</a><a href="#">Accesibilidad</a><a href="#">Aviso legal</a></div>
+      <div class="col"><h3>Regiones</h3>
         <a href="#">España</a><a href="#">México</a><a href="#">Argentina</a>
-        <a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a>
-      </div>
-      <div class="col">
-        <h3>Recursos</h3>
+        <a href="#">Colombia</a><a href="#">Chile</a><a href="#">Estados Unidos</a></div>
+      <div class="col"><h3>Recursos</h3>
         <a href="#">Fuentes de video</a><a href="#">Datos de ramificación</a><a href="#">Subtítulos</a>
-        <a href="#">Estado de nodos</a><a href="#">API pública</a><a href="#">Contacto</a>
-      </div>
+        <a href="#">API pública</a><a href="#">Espejos</a><a href="#">UltraOmniverse</a></div>
     </div>
     <div class="legal">
-      <p>xcode es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; xcode no aloja los archivos ni reclama su titularidad. Sátántangó (1994), dirigida por Béla Tarr, se exhibe desde un espejo público. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
-      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad de reproducción depende del ancho de banda, del dispositivo y de la fuente. Los subtítulos se ofrecen según disponibilidad de cada obra. La duración total del archivo interactivo es de 5 h 12 min 14 s.</p>
-      <p>Este sitio no utiliza cookies de seguimiento. El progreso y las decisiones tomadas se guardan localmente en el dispositivo. Ninguna recomendación es automática: el orden del catálogo es editorial.</p>
-      <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos. Las imágenes de portada provienen de bases de datos públicas de metadatos.</p>
-      <p>xcode opera de forma independiente y sin fines comerciales. No se ofrece soporte telefónico. Las consultas se atienden por correo y con demora variable.</p>
+      <p>XCODE es una plataforma de exhibición de cine de autor y cine interactivo. Las obras se reproducen desde sus fuentes originales; XCODE no aloja los archivos ni reclama su titularidad. Black Mirror: Bandersnatch (2018), producida por Netflix, se reproduce con datos de ramificación de código abierto sobre una copia alojada en Internet Archive.</p>
+      <p>La disponibilidad del catálogo puede variar sin previo aviso. La calidad depende del ancho de banda, del dispositivo y de la fuente. Los subtítulos se ofrecen según disponibilidad de cada obra.</p>
+      <p>Este sitio no utiliza cookies de seguimiento. Las decisiones tomadas y el estado narrativo se guardan localmente en el dispositivo. Ninguna recomendación es automática: el orden del catálogo es editorial.</p>
+      <p>Marcas, títulos y carteles pertenecen a sus respectivos titulares y se emplean con fines informativos.</p>
     </div>
-    <div class="copy">
-      <span>© 2026 xcode. Todos los derechos reservados.</span>
-      <span>Hecho en el abismo · versión 2.4</span>
-    </div>
+    <div class="copy"><span>© 2026 XCODE. Todos los derechos reservados.</span><span>Hecho en el abismo · v3.0</span></div>
   </div>
 </footer>
 
 <div id="film">
   <div id="stage">
-    <iframe id="frame" allowfullscreen="true" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" style="display:none"></iframe>
     <iframe id="bn" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
     <div id="bar">
       <button id="back">← Volver</button>
       <button id="restart">Reiniciar</button>
       <span class="sp"></span>
-      <span class="n" id="now"></span>
+      <span class="n">Bandersnatch · interactivo</span>
       <button id="fs">Pantalla</button>
     </div>
   </div>
@@ -206,18 +215,15 @@ padding:10px 16px;background:#111;color:#fff;border:1px solid #555;cursor:pointe
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const film=$("film"), fr=$("frame"), bn=$("bn"), bar=$("bar"), now=$("now");
+const film=$("film"), bn=$("bn"), bar=$("bar");
 
-const OK="https://ok.ru/videoembed/7513547082408";
 const MP4="https://ia800103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.Web-DL.x264.AAC-PTerWEB.mp4";
 const MP4B="https://ia600103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.Web-DL.x264.AAC-PTerWEB.mp4";
 const BASE="https://cdn.jsdelivr.net/gh/CyberShadow/BandersnatchInteractive@master/";
 const VTT=BASE+"subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt";
 
-/* diccionario de decisiones: inglés -> español */
 const D={
-"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES",
-"thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
+"sugar puffs":"SUGAR PUFFS","frosties":"FROSTIES","thompson twins":"THOMPSON TWINS","now 2":"NOW 2",
 "accept":"ACEPTAR","reject":"RECHAZAR","yes":"SÍ","no":"NO",
 "throw tea over computer":"TIRAR TÉ EN LA COMPUTADORA","throw tea":"TIRAR TÉ EN LA COMPUTADORA",
 "shout at dad":"GRITARLE AL PADRE","phaedra":"PHAEDRA","bermuda triangle":"EL TRIÁNGULO DE LAS BERMUDAS",
@@ -231,10 +237,8 @@ const D={
 "work":"TRABAJAR","sleep":"DORMIR","drink":"BEBER","visit colin":"VISITAR A COLIN",
 "open the door":"ABRIR LA PUERTA","knock":"GOLPEAR","follow him":"SEGUIRLO","stay":"QUEDARSE",
 "read the book":"LEER EL LIBRO","play the tape":"PONER LA CINTA","watch the tape":"VER LA CINTA",
-"burn it":"QUEMARLO","keep it":"GUARDARLO","start over":"EMPEZAR DE NUEVO","give up":"RENDIRSE"
-};
+"burn it":"QUEMARLO","keep it":"GUARDARLO","start over":"EMPEZAR DE NUEVO","give up":"RENDIRSE"};
 
-/* documento del reproductor: motor, datos y estilo originales, con video ya puesto y traducción */
 const DOC=`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <link rel="stylesheet" href="${BASE}assets/styles.css">
 <style>
@@ -243,15 +247,22 @@ html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
 #c,#wrapper-video,video{width:100%!important;height:100%!important;display:block}
 video{object-fit:contain;background:#000;cursor:none}
 .controls{bottom:0}
-#choices li a{font-size:clamp(13px,1.6vw,20px);letter-spacing:.1em;text-transform:uppercase}
-#progress{height:4px;background:#9a9a9a}
-#choiceCaption{font-size:clamp(11px,1.1vw,14px);letter-spacing:.28em;text-transform:uppercase;color:#bbb}
+#choices li a{font-family:"Courier New",monospace;font-size:clamp(13px,1.6vw,20px);
+  letter-spacing:.1em;text-transform:uppercase}
+#progress{height:4px;background:#fff}
+#choiceCaption{font-family:"Courier New",monospace;font-size:clamp(10px,1vw,13px);
+  letter-spacing:.28em;text-transform:uppercase;color:#ccc}
+#spin{position:absolute;inset:0;z-index:9;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.6);font-family:"Courier New",monospace;font-size:12px;
+  letter-spacing:.4em;text-transform:uppercase;color:#fff}
+#spin.on{display:flex}
 </style></head><body>
 <div id="c"><section>
 <div id="file-selector"></div><input id="fileinput" type="file">
 <div id="wrapper-video">
 <video id="video" preload="auto" playsinline><source id="video-source" src="${MP4}">
 <track id="es" label="Español" kind="subtitles" srclang="es" default></video>
+<div id="spin">buffering</div>
 <div class="controls"><div id="choiceCaption"></div><div id="progress"></div>
 <div class="buttons"><ul id="choices"></ul><ul id="interactionZones"></ul><ul id="nextSegments"></ul><ul id="nextSegment"></ul></div>
 </div></div></section></div>
@@ -260,15 +271,14 @@ video{object-fit:contain;background:#000;cursor:none}
 <script src="${BASE}assets/scripts.js"><\/script>
 <script>
 function askReset(){reset();}
-var v=document.getElementById("video");
+var v=document.getElementById("video"), spin=document.getElementById("spin");
 var D=${JSON.stringify(D)};
-var list=document.getElementById("choices");
-var busy=false;
+var list=document.getElementById("choices"), busy=false;
 function fix(){
   if(busy) return; busy=true;
   var as=list.querySelectorAll("a");
   for(var i=0;i<as.length;i++){
-    var a=as[i], raw=a.textContent, lead=raw.charAt(0)==="[", trail=raw.charAt(raw.length-1)==="]";
+    var a=as[i], raw=a.textContent, lead=raw.charAt(0)==="[";
     var core=raw.replace(/^\\[|\\]$/g,"").trim();
     var n=D[core.toLowerCase()]||core;
     if(lead) n="["+n+"]";
@@ -280,58 +290,38 @@ new MutationObserver(fix).observe(list,{childList:true,subtree:true,characterDat
 fetch("${VTT}").then(function(r){return r.text();}).then(function(t){
   var u=URL.createObjectURL(new Blob([t],{type:"text/vtt"}));
   var tr=document.getElementById("es"); tr.src=u;
-  setTimeout(function(){try{tr.track.mode="showing";}catch(e){}},400);
-  setTimeout(function(){try{tr.track.mode="showing";}catch(e){}},1500);
+  setTimeout(function(){try{tr.track.mode="showing";}catch(e){}},300);
+  setTimeout(function(){try{tr.track.mode="showing";}catch(e){}},1200);
 }).catch(function(){});
+v.addEventListener("waiting",function(){ if(v.currentTime>0) spin.classList.add("on"); });
+v.addEventListener("playing",function(){ spin.classList.remove("on"); });
+v.addEventListener("canplay",function(){ spin.classList.remove("on"); });
 v.addEventListener("error",function(){
   var s=document.getElementById("video-source");
   if(s.src.indexOf("ia800103")>-1){ s.src="${MP4B}"; v.load(); v.play(); }
 },{once:true});
+v.addEventListener("click",function(){ if(v.paused) v.play(); else v.pause(); });
 <\/script></body></html>`;
 
 let hideT=0;
-function wake(){
-  bar.classList.add("on"); clearTimeout(hideT);
-  hideT=setTimeout(()=>bar.classList.remove("on"),3500);
-}
+function wake(){ bar.classList.add("on"); clearTimeout(hideT); hideT=setTimeout(()=>bar.classList.remove("on"),3500); }
 $("stage").addEventListener("pointermove",wake);
 $("stage").addEventListener("touchstart",wake,{passive:true});
 
 function open(){ film.classList.add("on"); document.body.style.overflow="hidden"; wake(); }
 function close(){
   film.classList.remove("on"); bar.classList.remove("on");
-  fr.style.display="none"; fr.src="about:blank";
-  bn.style.display="none"; bn.removeAttribute("srcdoc"); bn.src="about:blank";
-  document.body.style.overflow=""; now.textContent="";
+  bn.removeAttribute("srcdoc"); bn.src="about:blank";
+  document.body.style.overflow="";
 }
 $("back").onclick=close;
 $("fs").onclick=()=>{ document.fullscreenElement?document.exitFullscreen():film.requestFullscreen?.(); };
 $("restart").onclick=()=>{
-  if(bn.style.display==="block"){
-    try{ bn.contentWindow.localStorage.clear(); }catch(e){}
-    bn.removeAttribute("srcdoc"); bn.srcdoc=DOC;
-  } else if(fr.style.display==="block"){ fr.src=OK; }
+  try{ bn.contentWindow.localStorage.clear(); }catch(e){}
+  bn.removeAttribute("srcdoc"); bn.srcdoc=DOC;
 };
-
-function startSAT(){
-  open(); now.textContent="Sátántangó · 1080p";
-  bn.style.display="none"; fr.style.display="block";
-  const fit=()=>{
-    const R=1722/1080, w=innerWidth, h=innerHeight;
-    let W=w, H=w/R; if(H<h){ H=h; W=h*R; }
-    fr.style.width=W+"px"; fr.style.height=H+"px";
-  };
-  fit(); addEventListener("resize",fit);
-  fr.src=OK;
-}
-function startBN(){
-  open(); now.textContent="Bandersnatch · interactivo";
-  fr.style.display="none"; fr.src="about:blank";
-  bn.style.display="block";
-  bn.srcdoc=DOC;
-}
 document.querySelectorAll("[data-play]").forEach(c=>{
-  c.addEventListener("click",()=>{ c.dataset.play==="sat"?startSAT():startBN(); });
+  c.addEventListener("click",()=>{ open(); bn.srcdoc=DOC; });
 });
 </script>
 </body>
