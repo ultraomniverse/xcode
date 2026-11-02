@@ -124,7 +124,7 @@ body.showbar #bar{opacity:1;transform:none;pointer-events:auto}
 
 <div id="film">
   <div id="stage" tabindex="-1">
-    <video id="v" preload="auto" playsinline webkit-playsinline>
+    <video id="v" preload="metadata" playsinline webkit-playsinline>
       <track id="trk" kind="subtitles" srclang="es" label="Español" default>
     </video>
     <div id="spin"></div>
@@ -213,10 +213,13 @@ const v=$("v"),trk=$("trk"),stage=$("stage"),veil=$("veil"),bar=$("bar"),seek=$(
 let subRaw=null,subMode="none",subOff=0,subUrl=null,gen=0,showSubs=true,started=false,dragging=false,curChap=-1,barT=0,overBar=false,ptr="mouse",wl=null;
 
 /* ---------- subtítulos ---------- */
-const SRCS=[
- "satantango.es.vtt","es.vtt",
- "https://www.subtitlecat.com/subs/1324/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es-419.srt",
- "https://www.subtitlecat.com/subs/1249/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es.srt"
+const LATAM="https://www.subtitlecat.com/subs/1324/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es-419.srt";
+const NEUTRO="https://www.subtitlecat.com/subs/1249/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es.srt";
+const RESPALDO="https://raw.githubusercontent.com/ultraomniverse/xcode/HEAD/satantango.es.vtt";
+const PROXIES=[
+ u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
+ u=>"https://corsproxy.io/?"+encodeURIComponent(u),
+ u=>"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u)
 ];
 const ready=()=>subMode!=="none"&&!!subRaw;
 const pad=(n,l)=>String(n).padStart(l,"0");
@@ -262,9 +265,13 @@ async function boot(){
   subRaw=null;subMode="none";trk.removeAttribute("src");applyMode();
   $("subState").textContent="Buscando subtítulos en español…";
   const tryOne=async u=>{const r=await fetch(u);if(!r.ok)throw 0;const x=await r.text();if(x.indexOf("-->")<0)throw 0;return x;};
-  for(const u of SRCS){try{const x=await tryOne(u);if(gen!==my)return;setSub(x,u.split("/").pop(),"red");return;}catch{}}
-  for(const u of SRCS.filter(s=>/^https?:/.test(s))){
-    try{const x=await tryOne("https://api.allorigins.win/raw?url="+encodeURIComponent(u));if(gen!==my)return;setSub(x,u.split("/").pop()+" (proxy)","red");return;}catch{}
+  /* 1) español latino (directo y luego por proxies CORS), 2) español neutro, 3) respaldo del repo */
+  for(const u of [LATAM,NEUTRO,RESPALDO]){
+    const vias=[[u,""]].concat(u===RESPALDO?[]:PROXIES.map(f=>[f(u)," (proxy)"]));
+    for(const [url,tag] of vias){
+      try{const x=await tryOne(url);if(gen!==my)return;
+        setSub(x,(u===LATAM?"latino · ":u===NEUTRO?"neutro · ":"respaldo · ")+u.split("/").pop()+tag,"red");return;}catch{}
+    }
   }
   if(gen!==my)return;
   $("subState").textContent="No se pudieron cargar. Usa «Cargar .srt / .vtt».";
@@ -342,7 +349,14 @@ v.addEventListener("loadedmetadata",ui);
 seek.addEventListener("pointerdown",()=>dragging=true);
 addEventListener("pointerup",()=>{dragging=false;});
 addEventListener("pointercancel",()=>{dragging=false;});
-seek.addEventListener("input",()=>{if(isFinite(v.duration))v.currentTime=seek.value/1000*v.duration;});
+/* arrastrar solo previsualiza la hora; al soltar salta de una vez (un único Range request) */
+seek.addEventListener("input",()=>{
+  const t=seek.value/1000*total();
+  $("time").textContent=fmt(t)+" / "+fmt(total());
+  const m=Math.round(t/total()*DEEP);
+  $("meter").textContent="profundidad "+m+" m / "+DEEP+" m";$("depthRead").textContent=m+" m";
+});
+seek.addEventListener("change",()=>{dragging=false;v.currentTime=Math.min(seek.value/1000*total(),total()-.5);});
 function skip(s){v.currentTime=Math.max(0,Math.min(total()-.5,v.currentTime+s));}
 $("bB").onclick=()=>skip(-10);
 $("bF").onclick=()=>skip(10);
