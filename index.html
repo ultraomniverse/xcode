@@ -54,6 +54,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 /* lluvia fina por encima */
 #rain{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
 
+/* ============================================================
+   ARMAS REGADAS POR TODA LA PÁGINA
+   ============================================================ */
+#guns{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+#guns img{position:absolute;width:var(--w,52px);height:auto;
+  filter:invert(1) grayscale(1) contrast(1.22);mix-blend-mode:screen;
+  opacity:var(--o,.14);transform:rotate(var(--r,0deg))}
+
 /* ============ CABECERA CON ARMAS REGADAS ============ */
 #seal{position:absolute;left:0;right:0;top:0;z-index:8;height:60px;display:flex;align-items:center;gap:11px;
   padding:0 20px;pointer-events:none;
@@ -74,6 +82,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
   opacity:.34;transform-origin:center}
 #spr svg:nth-child(2n){opacity:.2}
 #spr svg:nth-child(3n){opacity:.45}
+#spr img{position:absolute;width:var(--w,18px);height:auto;
+  filter:invert(1) grayscale(1) contrast(1.25);mix-blend-mode:screen;
+  opacity:var(--o,.28);transform:rotate(var(--r,0deg))}
 
 /* bloque central */
 .core{position:relative;z-index:7;display:flex;flex-direction:column;align-items:center;
@@ -93,13 +104,6 @@ h2{margin:0;font-family:Spectre,ui-serif,Georgia,"Times New Roman",serif;font-we
 .tagline{margin:4px 0 0;font-size:clamp(9px,1.6vw,14px);font-weight:300;
   letter-spacing:.44em;text-transform:uppercase;color:#cfcbc0;
   text-shadow:0 2px 10px #000,0 0 26px #000,0 0 60px #000}
-
-/* LOS LOGOS DE ARMAS: la imagen, invertida a negro */
-#guns{position:relative;z-index:2;display:block;width:min(540px,84vw);height:auto;margin-top:8px;
-  filter:invert(1) grayscale(1) contrast(1.15);
-  mix-blend-mode:screen;opacity:.45;
-  -webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);
-  mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent)}
 
 /* botones */
 .acts{display:flex;flex-direction:column;gap:11px;margin-top:22px;align-items:center}
@@ -180,7 +184,8 @@ h2{margin:0;font-family:Spectre,ui-serif,Georgia,"Times New Roman",serif;font-we
   #seal .tag{display:none}
   h1{font-size:clamp(24px,9vw,52px);letter-spacing:.07em}
   h2{letter-spacing:.1em}
-  #spr svg:nth-child(n+6){display:none}
+  #spr svg:nth-child(n+6),#spr img:nth-child(n+5){display:none}
+  #guns img{width:calc(var(--w,52px) * .72)}
 }
 </style>
 </head>
@@ -195,6 +200,25 @@ h2{margin:0;font-family:Spectre,ui-serif,Georgia,"Times New Roman",serif;font-we
   </div>
 
   <canvas id="rain"></canvas>
+
+  <!-- armas regadas por toda la portada -->
+  <div id="guns" aria-hidden="true">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:2%;top:9%;--w:58px;--r:-14deg;--o:.13">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:8%;top:58%;--w:42px;--r:9deg;--o:.19">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:15%;top:31%;--w:34px;--r:22deg;--o:.1">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:21%;top:82%;--w:52px;--r:-6deg;--o:.16">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:29%;top:14%;--w:30px;--r:-25deg;--o:.11">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:36%;top:90%;--w:46px;--r:13deg;--o:.14">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:47%;top:74%;--w:32px;--r:-30deg;--o:.09">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:57%;top:20%;--w:48px;--r:6deg;--o:.12">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:64%;top:86%;--w:56px;--r:-17deg;--o:.17">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:72%;top:36%;--w:36px;--r:16deg;--o:.1">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:79%;top:64%;--w:50px;--r:-9deg;--o:.18">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:88%;top:12%;--w:38px;--r:25deg;--o:.12">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:93%;top:52%;--w:54px;--r:-4deg;--o:.15">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:12%;top:44%;--w:26px;--r:-11deg;--o:.08">
+    <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:83%;top:88%;--w:28px;--r:19deg;--o:.11">
+  </div>
 
   <div id="seal">
     <span class="cr" aria-hidden="true">
@@ -216,6 +240,13 @@ h2{margin:0;font-family:Spectre,ui-serif,Georgia,"Times New Roman",serif;font-we
       <svg style="left:73%;top:58%;width:12px;rotate:11deg" viewBox="0 0 24 24"><path d="M2 11h14v2H2zM16 10h5v4h-5z"/></svg>
       <svg style="left:80%;top:26%;width:11px" viewBox="0 0 24 24"><circle cx="12" cy="13" r="5"/><path d="M12 4v4M9 5h6"/></svg>
       <svg style="left:87%;top:60%;width:13px;rotate:-11deg" viewBox="0 0 24 24"><path d="M1 12h5l2-3h6v3h4v2h-4v2h-3v-2H8v2H6v-2H1z"/></svg>
+
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:5%;top:46%;--w:22px;--r:-16deg;--o:.3">
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:18%;top:30%;--w:16px;--r:10deg;--o:.36">
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:42%;top:66%;--w:19px;--r:-6deg;--o:.26">
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:63%;top:32%;--w:15px;--r:21deg;--o:.34">
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:76%;top:64%;--w:20px;--r:-12deg;--o:.28">
+      <img src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg" alt="" decoding="async" style="left:92%;top:38%;--w:17px;--r:14deg;--o:.32">
     </div>
   </div>
 
@@ -224,9 +255,6 @@ h2{margin:0;font-family:Spectre,ui-serif,Georgia,"Times New Roman",serif;font-we
     <h1>SANTANTANGO,</h1>
     <h2>EL ABISMO.</h2>
     <p class="tagline">Casi 8 horas de puro dolor.</p>
-
-    <img id="guns" alt="" decoding="async"
-      src="https://static.vecteezy.com/system/resources/previews/013/776/086/original/drawing-gun-illustration-on-white-background-free-vector.jpg">
 
     <div class="acts">
       <button id="go">Descender<small>entrar al pozo</small></button>
@@ -410,11 +438,12 @@ let tx=0,ty=0,cx2=0,cy2=0;
 addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5;},{passive:true});
 (function drift(){
   cx2+=(tx-cx2)*.04;cy2+=(ty-cy2)*.04;
-  const c=$("core"),cr=$("cross"),sp=$("spr");
+  const c=$("core"),cr=$("cross"),sp=$("spr"),gn=$("guns");
   if(c&&!document.body.classList.contains("film")){
     c.style.transform="translate("+(-cx2*14)+"px,"+(-cy2*10)+"px)";
     if(cr)cr.style.transform="translate(calc(-50% + "+(-cx2*22)+"px),calc(-50% + "+(-cy2*16)+"px))";
     if(sp)sp.style.transform="translate("+(-cx2*9)+"px,"+(-cy2*4)+"px)";
+    if(gn)gn.style.transform="translate("+(-cx2*5)+"px,"+(-cy2*3)+"px)";
   }
   requestAnimationFrame(drift);
 })();
