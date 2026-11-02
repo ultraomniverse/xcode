@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:,">
 <title>SÁTÁNTANGÓ · descenso</title>
 <link rel="preconnect" href="https://archive.org" crossorigin>
 <style>
@@ -241,8 +242,7 @@ function toVtt(raw,off){
 function applyMode(){
   const t=v.textTracks&&v.textTracks[0];
   if(t)t.mode=(showSubs&&ready())?"showing":"disabled";
-  $("bCC").classList.toggle("on",ready()&&showSubs);
-  $("bCC").classList.toggle("off",!ready());
+  $("bCC").classList.toggle("on",showSubs);   /* activo por defecto, aunque los subtítulos aún estén cargando */
 }
 trk.addEventListener("load",applyMode);
 function mount(){
@@ -271,7 +271,7 @@ async function boot(){
   if(gen!==my)return;
   $("subState").textContent="No se pudieron cargar. Usa «Cargar .srt / .vtt».";
 }
-$("bCC").onclick=()=>{if(!ready()){$("subState").textContent="Todavía sin subtítulos.";return;}showSubs=!showSubs;applyMode();};
+$("bCC").onclick=()=>{showSubs=!showSubs;applyMode();if(showSubs&&!ready())$("subState").textContent="Subtítulos aún cargando…";};
 $("bSyncL").onclick=()=>{if(subRaw){subOff-=500;mount();}};
 $("bSyncR").onclick=()=>{if(subRaw){subOff+=500;mount();}};
 $("bFile").onclick=()=>$("file").click();
