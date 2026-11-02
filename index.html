@@ -13,7 +13,7 @@
   --m:ui-monospace,"Courier New",monospace;
 }
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--f);overflow-x:hidden;min-height:100vh}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.6;overflow-x:hidden;min-height:100vh}
 body.playing{overflow:hidden}
 .mono{font-family:var(--m);letter-spacing:.16em;font-size:10px;color:var(--dim)}
 h1,h2,h3,h4{font-family:var(--f);font-weight:800;letter-spacing:.02em;line-height:1.02}
@@ -29,7 +29,7 @@ h1,h2,h3,h4{font-family:var(--f);font-weight:800;letter-spacing:.02em;line-heigh
 #site{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column}
 
 /* cabecera */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+.top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:12px clamp(12px,3vw,40px);border-bottom:1px solid var(--line);background:#00000080}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .mark{width:30px;height:30px;flex:0 0 auto;color:#e8e8e8}
@@ -41,10 +41,13 @@ h1,h2,h3,h4{font-family:var(--f);font-weight:800;letter-spacing:.02em;line-heigh
 .nav a{color:#cfcfcf;text-decoration:none;font-family:var(--m);font-size:10px;letter-spacing:.18em;padding:6px 2px;border-bottom:1px solid transparent}
 .nav a:hover,.nav a:focus-visible{color:#fff;border-bottom-color:#fff;outline:none}
 
-main{flex:1}
+main{position:relative;z-index:1;flex:1}
 .hero{padding:clamp(28px,7vw,80px) clamp(12px,3vw,40px) clamp(24px,5vw,50px);max-width:820px}
 .hero h1{font-size:clamp(28px,7.5vw,64px);letter-spacing:-.01em}
-.hero h1 em{font-style:normal;-webkit-text-stroke:1px #fff;color:transparent}
+.hero h1 em{font-style:normal;color:#fff}
+@supports (-webkit-text-stroke:1px #fff){
+  .hero h1 em{color:transparent;-webkit-text-stroke:1px #fff}
+}
 .lede{max-width:520px;margin-top:16px;color:#c2c2c2;font-size:clamp(13px,1.6vw,15px);line-height:1.65}
 .cta{display:inline-block;margin-top:22px;padding:12px 20px;border:1px solid #fff;color:#fff;text-decoration:none;
   font-family:var(--m);font-size:11px;letter-spacing:.2em;background:#0006}
@@ -97,7 +100,7 @@ main{flex:1}
 .acerca p{color:#b4b4b4;font-size:13.5px;line-height:1.7;max-width:620px;margin-bottom:10px}
 .acerca .small{font-family:var(--m);font-size:9.5px;letter-spacing:.08em;color:#8a8a8a}
 kbd{border:1px solid #444;padding:1px 5px;font-family:var(--m);font-size:9px;color:#ddd}
-.foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+.foot{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
   padding:14px clamp(12px,3vw,40px);border-top:1px solid var(--line);font-family:var(--m);font-size:8.5px;letter-spacing:.18em;color:#8f8f8f;background:#000}
 
 /* ---------------- PLAYER ---------------- */
