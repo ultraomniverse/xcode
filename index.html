@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23f0f0f0' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath fill='%23ffffff' d='M44 18 42 4h16l-2 14v26l40-12 2 20-42 2v78l2 14H42l2-14V54L2 52 4 32l40 12z'/%3E%3C/svg%3E">
 <title>SANTANTANGO · EL ABISMO</title>
 <link rel="preconnect" href="https://archive.org" crossorigin>
+<link rel="preconnect" href="https://dn600303.us.archive.org" crossorigin>
 <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
 <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
@@ -15,16 +16,16 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
 <style>
 :root{
-  --bone:#f2f2f2;--ash:#8c8c8c;--dim:#575757;--line:#262626;--void:#000;
+  --bone:#ffffff;--ash:#d0d0d0;--dim:#7a7a7a;--line:#2a2a2a;--void:#000;
   --f:Spectre,ui-serif,Georgia,"Times New Roman",serif;
-  --plyr-color-main:#f2f2f2;--plyr-video-background:#000;--plyr-control-radius:0;
-  --plyr-font-family:Spectre,serif;--plyr-menu-background:#050505;--plyr-menu-color:#b9b9b9;
+  --plyr-color-main:#ffffff;--plyr-video-background:#000;--plyr-control-radius:0;
+  --plyr-font-family:Spectre,serif;--plyr-menu-background:#050505;--plyr-menu-color:#d0d0d0;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;color:var(--bone)}
 body{font:400 16px/1.5 var(--f);-webkit-font-smoothing:antialiased;cursor:default;letter-spacing:.02em}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
-::selection{background:var(--bone);color:#000}
+::selection{background:#fff;color:#000}
 
 /* ============================================================
    PORTADA
@@ -39,6 +40,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
   transition:opacity 1.4s ease}
 #photo.on{opacity:1}
 
+/* velo negro SOLO detrás del texto, para que el blanco corte sobre el gris */
+#home::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:6;pointer-events:none;
+  background:radial-gradient(ellipse 62% 46% at 50% 50%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.6) 45%,rgba(0,0,0,.2) 72%,transparent 88%)}
+
 /* solo las líneas de escaneo, al mínimo */
 #home::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
   background:repeating-linear-gradient(to bottom,rgba(0,0,0,.09) 0 1px,transparent 1px 3px)}
@@ -47,105 +52,106 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 #rain{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
 
 /* ============ CABECERA ============ */
-#seal{position:absolute;left:0;right:0;top:0;z-index:8;height:58px;display:flex;align-items:center;gap:12px;
+#seal{position:absolute;left:0;right:0;top:0;z-index:9;height:58px;display:flex;align-items:center;gap:12px;
   padding:0 22px;pointer-events:none;
-  border-bottom:1px solid rgba(242,242,242,.09);background:linear-gradient(to bottom,rgba(0,0,0,.72),transparent)}
-#seal .wm{font-family:var(--f);font-size:17px;letter-spacing:.16em;color:#f2f2f2;
+  border-bottom:1px solid rgba(255,255,255,.1);background:linear-gradient(to bottom,rgba(0,0,0,.78),transparent)}
+#seal .wm{font-family:var(--f);font-size:17px;letter-spacing:.16em;color:#fff;
   text-transform:uppercase;text-shadow:0 1px 8px #000}
 #seal .wm small{display:block;font-family:var(--f);font-size:8px;font-weight:400;
-  letter-spacing:.42em;color:var(--ash);margin-top:0}
+  letter-spacing:.42em;color:#d0d0d0;margin-top:0}
 #seal .sp{flex:1}
-#seal .tag{font-family:var(--f);font-size:10px;letter-spacing:.32em;color:#c4c4c4;text-transform:uppercase}
+#seal .tag{font-family:var(--f);font-size:10px;letter-spacing:.32em;color:#eaeaea;text-transform:uppercase;
+  text-shadow:0 1px 6px #000}
 
 /* bloque central */
 .core{position:relative;z-index:7;display:flex;flex-direction:column;align-items:center;
   gap:14px;text-align:center;padding:0 24px;max-width:1080px;will-change:transform}
-.kicker{font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:#cfcfcf;
+.kicker{font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:#fff;
   text-shadow:0 1px 8px #000,0 0 20px #000,0 0 44px #000}
-.kicker b{color:#f5f5f5;font-weight:500}
+.kicker b{color:#fff;font-weight:500}
 
-/* EL TITULAR — Spectre, hueso sobre negro */
+/* EL TITULAR — Spectre, blanco puro sobre negro */
 h1{margin:0;font-family:var(--f);font-weight:500;
-  font-size:clamp(25px,5.4vw,72px);line-height:1.07;letter-spacing:.02em;color:#f5f5f5;
+  font-size:clamp(25px,5.4vw,72px);line-height:1.07;letter-spacing:.02em;color:#fff;
   text-transform:none;text-wrap:balance;
-  text-shadow:0 3px 12px #000,0 0 30px #000,0 0 70px #000,0 0 140px #000,0 0 220px #000}
+  text-shadow:0 2px 6px #000,0 4px 18px #000,0 0 40px #000,0 0 90px #000,0 0 160px #000}
 h2{margin:0;font-family:var(--f);font-weight:500;
   font-size:clamp(15px,2.5vw,30px);line-height:1.24;letter-spacing:.035em;
-  color:transparent;-webkit-text-stroke:1px #a8a8a8;text-wrap:balance;
-  filter:drop-shadow(0 0 8px #000) drop-shadow(0 0 20px #000)}
+  color:#fff;text-wrap:balance;
+  text-shadow:0 2px 6px #000,0 0 22px #000,0 0 50px #000}
 
 /* botones */
 .acts{display:flex;flex-direction:column;gap:11px;margin-top:24px;align-items:center}
 .acts button{font-family:var(--f);min-width:min(340px,78vw);padding:17px 42px;
-  border:1px solid rgba(242,242,242,.42);
-  background:rgba(0,0,0,.55);letter-spacing:.32em;font-size:16px;
-  text-transform:uppercase;color:#f2f2f2;transition:.28s;position:relative;overflow:hidden;
-  box-shadow:0 4px 24px rgba(0,0,0,.6)}
-.acts button::before{content:"";position:absolute;inset:0;background:var(--bone);
+  border:1px solid rgba(255,255,255,.6);
+  background:rgba(0,0,0,.62);letter-spacing:.32em;font-size:16px;
+  text-transform:uppercase;color:#fff;transition:.28s;position:relative;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.7)}
+.acts button::before{content:"";position:absolute;inset:0;background:#fff;
   transform:translateY(101%);transition:transform .28s;z-index:-1}
-.acts button:hover,.acts button:focus{outline:none;border-color:#f2f2f2;letter-spacing:.38em;
-  box-shadow:0 0 0 1px rgba(242,242,242,.35),0 0 60px rgba(242,242,242,.2)}
+.acts button:hover,.acts button:focus{outline:none;border-color:#fff;letter-spacing:.38em;
+  box-shadow:0 0 0 1px rgba(255,255,255,.4),0 0 60px rgba(255,255,255,.25)}
 .acts button:active{color:#000}
 .acts button:active::before{transform:translateY(0)}
-.acts .ghost{min-width:min(340px,78vw);border-color:rgba(242,242,242,.18);color:#b8b8b8;font-size:13px;
+.acts .ghost{min-width:min(340px,78vw);border-color:rgba(255,255,255,.26);color:#e8e8e8;font-size:13px;
   letter-spacing:.26em;padding:12px 34px}
-.acts .ghost:hover{border-color:var(--bone);color:#f2f2f2;box-shadow:none}
+.acts .ghost:hover{border-color:#fff;color:#fff;box-shadow:none}
 #res[hidden]{display:none}
-.acts small{display:block;font-family:var(--f);font-size:10px;letter-spacing:.28em;color:#a8a8a8;margin-top:5px;
+.acts small{display:block;font-family:var(--f);font-size:10px;letter-spacing:.28em;color:#dcdcdc;margin-top:5px;
   text-shadow:0 1px 6px #000}
 
 /* franja técnica */
-#strip{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;flex-wrap:wrap;
-  justify-content:center;gap:0;border-top:1px solid rgba(242,242,242,.13);
-  background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,.35) 65%,transparent);pointer-events:none}
-#strip span{font-family:var(--f);padding:11px 16px;font-size:11px;letter-spacing:.22em;color:#c8c8c8;
+#strip{position:absolute;left:0;right:0;bottom:0;z-index:9;display:flex;flex-wrap:wrap;
+  justify-content:center;gap:0;border-top:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.4) 65%,transparent);pointer-events:none}
+#strip span{font-family:var(--f);padding:11px 16px;font-size:11px;letter-spacing:.22em;color:#f0f0f0;
   text-transform:uppercase;text-shadow:0 1px 6px #000}
-#strip span+span{border-left:1px solid rgba(242,242,242,.13)}
-#strip b{color:#f5f5f5;font-weight:500}
-#strip .cred{color:#8c8c8c;letter-spacing:.18em}
+#strip span+span{border-left:1px solid rgba(255,255,255,.16)}
+#strip b{color:#fff;font-weight:500}
+#strip .cred{color:#cfcfcf;letter-spacing:.18em}
 
 /* ============================================================
    REPRODUCTOR (Plyr)
    ============================================================ */
-#film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:9}
+#film{position:fixed;inset:0;background:#000;visibility:hidden;z-index:10}
 #film.on{visibility:visible}
 #film .plyr,#film .plyr__video-wrapper,#film video{width:100%;height:100%}
 #film video{object-fit:contain;background:#000}
 .plyr{-webkit-font-smoothing:antialiased;font-family:var(--f)}
-.plyr__control{color:#b8b8b8}
-.plyr__control:hover{background:var(--bone)!important;color:#000!important}
-.plyr__control[aria-pressed=true]{color:#f2f2f2}
-.plyr__progress input[type=range]{color:var(--bone)}
+.plyr__control{color:#e2e2e2}
+.plyr__control:hover{background:#fff!important;color:#000!important}
+.plyr__control[aria-pressed=true]{color:#fff}
+.plyr__progress input[type=range]{color:#fff}
 .plyr__captions{font-size:clamp(22px,3.2vw,44px)!important;bottom:7%!important}
-.plyr--captions-active .plyr__caption{background:rgba(0,0,0,.8);color:#eaeaea;line-height:1.34;
+.plyr--captions-active .plyr__caption{background:rgba(0,0,0,.82);color:#fff;line-height:1.34;
   white-space:pre-wrap;font-family:var(--f);font-weight:500;letter-spacing:.02em;
-  box-shadow:0 0 0 1px rgba(242,242,242,.12)}
-.plyr__menu__container{background:#050505;border:1px solid #242424;font-family:var(--f)}
-.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before{background:var(--bone)}
+  box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.plyr__menu__container{background:#050505;border:1px solid #2a2a2a;font-family:var(--f)}
+.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before{background:#fff}
 .plyr__control.sync{font-size:12px;font-weight:500;min-width:36px;letter-spacing:.02em}
-.plyr--full-ui.plyr--video .plyr__control--overlaid{background:rgba(0,0,0,.6);border:1px solid var(--bone);color:var(--bone);border-radius:0;padding:22px}
-.plyr--full-ui.plyr--video .plyr__control--overlaid:hover{background:var(--bone);color:#000}
+.plyr--full-ui.plyr--video .plyr__control--overlaid{background:rgba(0,0,0,.65);border:1px solid #fff;color:#fff;border-radius:0;padding:22px}
+.plyr--full-ui.plyr--video .plyr__control--overlaid:hover{background:#fff;color:#000}
 .plyr__progress{padding-bottom:10px}
 
 #ping{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:38;pointer-events:none;
   font-family:var(--f);font-size:clamp(34px,8vw,84px);letter-spacing:.06em;
-  color:#f2f2f2;text-shadow:0 0 40px #000,0 0 90px rgba(242,242,242,.4);opacity:0;transition:opacity .15s}
+  color:#fff;text-shadow:0 0 40px #000,0 0 90px rgba(255,255,255,.45);opacity:0;transition:opacity .15s}
 #ping.on{opacity:1}
 
 #toast{position:absolute;top:4%;left:50%;transform:translateX(-50%);z-index:40;padding:8px 18px;
-  background:#000;border:1px solid var(--bone);color:#f2f2f2;font-family:var(--f);font-size:13px;letter-spacing:.18em;
+  background:#000;border:1px solid #fff;color:#fff;font-family:var(--f);font-size:13px;letter-spacing:.18em;
   text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none;max-width:88%;text-align:center}
 #toast::before{content:"// "}
 
 #err{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;
-  justify-content:center;gap:16px;background:rgba(0,0,0,.95);text-align:center;padding:24px}
+  justify-content:center;gap:16px;background:rgba(0,0,0,.96);text-align:center;padding:24px}
 #err.on{display:flex}
 #err .big{font-family:var(--f);font-size:clamp(24px,5vw,46px);
-  letter-spacing:.06em;text-transform:uppercase;color:#f2f2f2}
-#err p{font-family:var(--f);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin:0;max-width:420px}
+  letter-spacing:.06em;text-transform:uppercase;color:#fff}
+#err p{font-family:var(--f);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#d0d0d0;margin:0;max-width:420px}
 #err .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-#err button{font-family:var(--f);padding:13px 30px;border:1px solid var(--line);letter-spacing:.22em;font-size:13px;text-transform:uppercase;color:var(--bone)}
-#err button:hover,#err button:focus{outline:none;border-color:var(--bone)}
+#err button{font-family:var(--f);padding:13px 30px;border:1px solid #3a3a3a;letter-spacing:.22em;font-size:13px;text-transform:uppercase;color:#fff}
+#err button:hover,#err button:focus{outline:none;border-color:#fff}
 
 #file{display:none}
 
@@ -206,9 +212,19 @@ h2{margin:0;font-family:var(--f);font-weight:500;
 
 <script>
 "use strict";
-const SRC="https://archive.org/download/satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt/Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
-const ID="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
-const FNAME="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT.mp4";
+const ITEM="satantango.-1994.-hungarian.-1080p.-blu-ray.-h-264.-aac-vxt";
+const BASE="Satantango.1994.HUNGARIAN.1080p.BluRay.H264.AAC-VXT";
+const NODO_FIJO="dn600303.us.archive.org";
+/* Derivada .ia.mp4: mismo contenido, indexada al principio, sirve para streaming.
+   El .mp4 original es el BluRay de 9 GB con el índice al final: por eso tardaba
+   una eternidad en arrancar. Se queda solo como segundo intento. */
+const SRC1="https://archive.org/download/"+ITEM+"/"+BASE+".ia.mp4";
+const SRC2="https://archive.org/download/"+ITEM+"/"+BASE+".mp4";
+const SRC3="https://"+NODO_FIJO+"/0/items/"+ITEM+"/"+BASE+".ia.mp4";
+const FUENTES=[SRC1,SRC2,SRC3];
+let fi=0;
+const SRC=SRC1;
+
 const LOCAL="satantango.es-419.srt";
 const MIRRORS=[
   "https://www.subtitlecat.com/subs/1324/Satantango.1994.HUNGARIAN.720p.BluRay.H264.AAC-VXT-es-419.srt",
@@ -222,11 +238,11 @@ const PHOTOS=[
 const DUR=26348.92;
 const BPS_FALLBACK=175000;
 const $=id=>document.getElementById(id),v=$("v");
-const KP="sat.pos",KO="sat.off",KN="sat.node",KS="sat.size";
+const KP="sat.pos",KO="sat.off",KN="sat.node",KS="sat.size",KT="sat.nodeT";
 const num=k=>{try{return +localStorage.getItem(k)||0;}catch{return 0;}};
 const put=(k,x)=>{try{localStorage.setItem(k,x);}catch{}};
-let off=num(KO),wl=null,srt=null,player=null,booted=false;
-let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false;
+let off=num(KO),wl=null,srt=null,player=null,booted=false,listo=false;
+let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false,fails=0;
 
 /* ============ imagen de fondo ============ */
 (function photo(i){
@@ -238,15 +254,17 @@ let NODE="",SIZE=0,pfAbort=null,pfT=0,dragging=false;
 })(0);
 
 /* ============ arranque inmediato del vídeo ============ */
-v.src=SRC;
+v.src=SRC1;
 v.load();
-(function(){const p=num(KP);if(p>60)v.addEventListener("loadedmetadata",()=>{v.currentTime=p;},{once:true});})();
+(function(){const p=num(KP);if(p>60)v.addEventListener("loadedmetadata",()=>{
+  try{v.currentTime=p;}catch{}},{once:true});})();
 
 /* ============ nodo + tamaño vía API de metadatos ============
    Los nodos de descarga no mandan Access-Control-Allow-Origin, así que
    cualquier fetch en modo CORS contra ellos falla. La API de metadatos sí
    manda CORS: de ahí sacamos el tamaño real y la ruta del nodo.
-   Las precargas van en mode:"no-cors" (el <video> tampoco necesita CORS). */
+   Las precargas van en mode:"no-cors" (el <video> tampoco necesita CORS).
+   El nodo se caduca a los 30 min: archive.org lo rota y uno viejo falla. */
 function preconnect(u){try{
   const o=new URL(u).origin;
   ["preconnect","dns-prefetch"].forEach(rel=>{
@@ -256,19 +274,23 @@ function preconnect(u){try{
 async function resolveNode(){
   try{
     const c=sessionStorage.getItem(KN);
-    if(c&&/^https:\/\/[a-z0-9.-]+\.archive\.org\//i.test(c))NODE=c;
+    const t=+(sessionStorage.getItem(KT)||0);
+    if(c&&Date.now()-t<18e5&&/^https:\/\/[a-z0-9.-]+\.archive\.org\//i.test(c))NODE=c;
     const s=+(sessionStorage.getItem(KS)||0);if(s)SIZE=s;
   }catch{}
   if(NODE&&SIZE){preconnect(NODE);return;}
   try{
     const ac=new AbortController(),to=setTimeout(()=>ac.abort(),5000);
-    const r=await fetch("https://archive.org/metadata/"+ID,{signal:ac.signal});
+    const r=await fetch("https://archive.org/metadata/"+ITEM,{signal:ac.signal});
     clearTimeout(to);
     const j=await r.json();
-    const f=(j.files||[]).find(x=>/\.mp4$/i.test(x.name||""));
+    const f=(j.files||[]).find(x=>/\.ia\.mp4$/i.test(x.name||""))||
+            (j.files||[]).find(x=>/\.mp4$/i.test(x.name||""));
     if(f&&+f.size)SIZE=+f.size;
-    if(j.server&&j.dir)NODE="https://"+j.server+j.dir+"/"+FNAME;
-    try{sessionStorage.setItem(KN,NODE||"");sessionStorage.setItem(KS,SIZE);}catch{}
+    const srv=(j.workable_servers&&j.workable_servers[0])||j.server||j.d1;
+    if(srv&&j.dir)NODE="https://"+srv+j.dir+"/"+BASE+".ia.mp4";
+    try{sessionStorage.setItem(KN,NODE||"");sessionStorage.setItem(KS,SIZE);
+      sessionStorage.setItem(KT,Date.now());}catch{}
     if(NODE)preconnect(NODE);
   }catch{}
 }
@@ -343,7 +365,7 @@ addEventListener("resize",size);size();
   if(!run)return;
   cx.clearRect(0,0,W,H);
   for(const d of dr){
-    cx.strokeStyle="rgba(242,242,242,"+d.o+")";cx.lineWidth=d.w;
+    cx.strokeStyle="rgba(255,255,255,"+d.o+")";cx.lineWidth=d.w;
     cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1,d.y+d.l);cx.stroke();
     d.y+=d.v;d.x-=.22;
     if(d.y>H+40){d.y=-40;d.x=Math.random()*W;}
@@ -357,28 +379,18 @@ let tx=0,ty=0,cx2=0,cy2=0;
 addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5;},{passive:true});
 (function drift(){
   cx2+=(tx-cx2)*.04;cy2+=(ty-cy2)*.04;
-  const c=$("core"),cr=$("cross"),sp=$("spr"),gn=$("guns");
+  const c=$("core");
   if(c&&!document.body.classList.contains("film")){
     c.style.transform="translate("+(-cx2*14)+"px,"+(-cy2*10)+"px)";
-    if(cr)cr.style.transform="translate(calc(-50% + "+(-cx2*22)+"px),calc(-50% + "+(-cy2*16)+"px))";
-    if(sp)sp.style.transform="translate("+(-cx2*9)+"px,"+(-cy2*4)+"px)";
-    if(gn)gn.style.transform="translate("+(-cx2*5)+"px,"+(-cy2*3)+"px)";
   }
   requestAnimationFrame(drift);
 })();
 
-/* ============ arranque del reproductor (Plyr) ============ */
+/* ============ reproductor ============ */
 const fmt=t=>{t=Math.max(0,Math.floor(t||0));return (t/3600|0)+":"+p2(t%3600/60|0)+":"+p2(t%60);};
 
-function start(resume){
-  if(booted)return;booted=true;
-  $("home").classList.add("out");
-  if(!resume&&num(KP)>60)try{v.currentTime=0;}catch{}
-  $("film").classList.add("on");
-  document.body.classList.add("film");
-  run=false;
-  setTimeout(()=>{$("home").style.display="none";},1200);
-
+function buildPlayer(){
+  if(player||!window.Plyr)return;
   const opts={
     controls:["play-large","play","progress","current-time","duration","mute","volume","captions","settings","fullscreen"],
     settings:["captions","speed"],speed:{selected:1,options:[.75,1,1.25,1.5]},
@@ -390,24 +402,64 @@ function start(resume){
       enabled:"Activados",play:"Reproducir",pause:"Pausa",mute:"Silenciar",unmute:"Activar sonido",
       enterFullscreen:"Pantalla completa",exitFullscreen:"Salir de pantalla completa"}
   };
-  if(window.Plyr){
-    try{
-      player=new Plyr(v,opts);
-      const bar=document.querySelector(".plyr__controls"),fs=bar&&bar.querySelector('[data-plyr="fullscreen"]');
-      if(bar)[["−5",-5],["−.5",-.5],["+.5",.5],["+5",5]].forEach(([t,d])=>{
-        const b=document.createElement("button");
-        b.type="button";b.className="plyr__control sync";b.textContent=t;b.title="Subtítulos "+t+" s";
-        b.onclick=()=>shift(d);
-        bar.insertBefore(b,fs||null);
-      });
-      wireScrub();
-      try{player.fullscreen.enter();}catch{}
-    }catch(e){v.controls=true;}
-  }else v.controls=true;
+  try{
+    player=new Plyr(v,opts);
+    const bar=document.querySelector(".plyr__controls"),fs=bar&&bar.querySelector('[data-plyr="fullscreen"]');
+    if(bar)[["−5",-5],["−.5",-.5],["+.5",.5],["+5",5]].forEach(([t,d])=>{
+      const b=document.createElement("button");
+      b.type="button";b.className="plyr__control sync";b.textContent=t;b.title="Subtítulos "+t+" s";
+      b.onclick=()=>shift(d);
+      bar.insertBefore(b,fs||null);
+    });
+    wireScrub();
+  }catch(e){v.controls=true;}
+}
 
-  v.play().catch(()=>{});
+function play(){
+  const p=v.play();
+  if(p&&p.catch)p.catch(()=>{});
+}
+
+function start(resume){
+  if(booted)return;booted=true;
+  $("home").classList.add("out");
+  if(!resume&&num(KP)>60)try{v.currentTime=0;}catch{}
+  $("film").classList.add("on");
+  document.body.classList.add("film");
+  run=false;
+  setTimeout(()=>{$("home").style.display="none";},1200);
+  /* el clic de "Descender" cuenta como gesto: aquí sí se puede reproducir */
+  play();
   if(off)setTimeout(()=>toast("Ajuste guardado: "+(off>0?"+":"")+off.toFixed(1)+" s"),1800);
 }
+
+/* se reproduce en cuanto hay imagen, y se instala Plyr entonces */
+v.addEventListener("canplay",()=>{
+  listo=true;fails=0;
+  if(!player&&window.Plyr)buildPlayer();
+  if(document.body.classList.contains("film")&&v.paused)play();
+});
+v.addEventListener("loadeddata",()=>{
+  if(document.body.classList.contains("film")&&v.paused)play();
+});
+v.addEventListener("playing",()=>{listo=true;fails=0;$("err").classList.remove("on");});
+
+/* si la fuente falla: probar la siguiente sin molestar, y solo al final avisar */
+function cambiarFuente(){
+  fails++;
+  if(fi<FUENTES.length-1){
+    fi++;v.src=FUENTES[fi];v.load();
+    setTimeout(()=>{if(document.body.classList.contains("film"))play();},400);
+    if(fails>1)toast("Cambiando de servidor");
+    return true;
+  }
+  return false;
+}
+v.addEventListener("error",()=>{
+  if(!v.getAttribute("src"))return;
+  if(cambiarFuente())return;
+  if(!listo)$("err").classList.add("on");
+});
 
 function wireScrub(){
   const prog=document.querySelector(".plyr__progress");
@@ -434,19 +486,19 @@ $("res").onclick=()=>start(true);
 /* ============ progreso, vigilia ============ */
 setInterval(()=>{if(!v.paused&&v.currentTime>5)put(KP,v.currentTime);},5000);
 v.addEventListener("play",()=>prefetch(v.currentTime+40));
-v.addEventListener("seeked",()=>prefetch(v.currentTime));
+v.addEventListener("seeked",()=>{prefetch(v.currentTime);if(!v.paused)play();});
 async function lock(){try{if(navigator.wakeLock&&!wl){wl=await navigator.wakeLock.request("screen");
   wl.addEventListener("release",()=>wl=null);}}catch{}}
 v.addEventListener("play",lock);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!v.paused)lock();});
 
 /* ============ errores ============ */
-v.addEventListener("error",()=>{if(v.getAttribute("src"))$("err").classList.add("on");});
 $("retry").onclick=()=>{
   const t=v.currentTime||num(KP);$("err").classList.remove("on");
-  v.load();
+  fi=0;fails=0;listo=false;
+  v.src=FUENTES[0];v.load();
   v.addEventListener("loadedmetadata",()=>{try{v.currentTime=t;}catch{}},{once:true});
-  v.play().catch(()=>{});
+  setTimeout(play,600);
 };
 $("pick").onclick=()=>$("file").click();
 $("file").onchange=e=>{
