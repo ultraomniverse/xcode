@@ -4,8 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PSYCHOTIC</title>
+
 <link rel="preconnect" href="https://static.vecteezy.com">
 <link rel="preconnect" href="https://upload.wikimedia.org">
+<link rel="preconnect" href="https://freepngimg.com">
+
+<link rel="preload" as="image" type="image/webp" fetchpriority="high"
+      href="https://freepngimg.com/save/webp/138059-revolver">
+<link rel="preload" as="image" fetchpriority="high"
+      href="https://freepngimg.com/thumb/revolver/138059-revolver.png">
+<link rel="preload" as="image" fetchpriority="high"
+      href="https://static.vecteezy.com/system/resources/thumbnails/013/425/328/small_2x/halloween-day-concept-cemetery-or-graveyard-in-the-night-with-dark-sky-haunted-cemetery-spooky-and-creepy-burial-ground-horror-scene-of-graveyard-funeral-concept-halloween-day-background-photo.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -21,22 +31,35 @@
 
   header{
     position:fixed;
-    top:.9rem;
-    left:1rem;
-    right:1rem;
+    top:1.4rem;
+    left:1.4rem;
+    right:1.4rem;
     z-index:10;
+    isolation:isolate;
     display:flex;
     flex-direction:column;
     align-items:center;
     text-align:center;
     padding:1.1rem 5vw 1.3rem;
-    background:rgba(0,0,0,.32);
-    backdrop-filter:blur(7px) saturate(.85);
-    -webkit-backdrop-filter:blur(7px) saturate(.85);
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;
-    box-shadow:0 6px 34px rgba(0,0,0,.45);
+    border-radius:34px;
+    border:1px solid rgba(255,255,255,.28);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.55),
+      0 10px 44px rgba(0,0,0,.6);
     overflow:hidden;
+  }
+
+  /* el cristal vive en un pseudo con el mismo radio, así el desenfoque
+     queda recortado por la curva en vez de desbordarla */
+  header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    border-radius:inherit;
+    background:rgba(0,0,0,.34);
+    backdrop-filter:blur(8px) saturate(.85);
+    -webkit-backdrop-filter:blur(8px) saturate(.85);
   }
 
   .brand{
@@ -48,6 +71,7 @@
 
   .gun{
     width:clamp(42px,7vw,92px);
+    aspect-ratio:2942/1651;
     height:auto;
     object-fit:contain;
     mix-blend-mode:screen;
@@ -118,9 +142,17 @@
 
   <header>
     <div class="brand">
-      <img class="gun l" alt="" src="https://freepngimg.com/thumb/revolver/138059-revolver.png">
+      <picture>
+        <source srcset="https://freepngimg.com/save/webp/138059-revolver" type="image/webp">
+        <img class="gun l" alt="" width="92" height="52" decoding="sync" fetchpriority="high"
+             src="https://freepngimg.com/thumb/revolver/138059-revolver.png">
+      </picture>
       <h1>PSYCHOTIC</h1>
-      <img class="gun r" alt="" src="https://freepngimg.com/thumb/revolver/138059-revolver.png">
+      <picture>
+        <source srcset="https://freepngimg.com/save/webp/138059-revolver" type="image/webp">
+        <img class="gun r" alt="" width="92" height="52" decoding="sync" fetchpriority="high"
+             src="https://freepngimg.com/thumb/revolver/138059-revolver.png">
+      </picture>
     </div>
 
     <p class="sub">The future of horrific, chaotic and stressful streaming...</p>
