@@ -30,15 +30,13 @@
     background-attachment:fixed;
   }
 
-  .topshell{
-    position:fixed;
-    top:1.4rem;
-    left:1.4rem;
-    right:1.4rem;
-    z-index:10;
+  /* sección 1: header + flecha */
+  .hero{
+    min-height:100svh;
     display:flex;
     flex-direction:column;
     align-items:center;
+    padding:1.4rem 1.4rem 2.4rem;
   }
 
   header{
@@ -51,22 +49,12 @@
     text-align:center;
     padding:1.1rem 5vw 1.3rem;
     border-radius:34px;
-    border:1px solid rgba(255,255,255,.28);
-    box-shadow:
-      0 0 0 1px rgba(0,0,0,.55),
-      0 10px 44px rgba(0,0,0,.6);
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(0,0,0,.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 20px 60px rgba(0,0,0,.7);
     overflow:hidden;
-  }
-
-  header::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    z-index:-1;
-    border-radius:inherit;
-    background:rgba(0,0,0,.34);
-    backdrop-filter:blur(8px) saturate(.85);
-    -webkit-backdrop-filter:blur(8px) saturate(.85);
   }
 
   .brand{
@@ -142,10 +130,10 @@
     text-shadow:0 1px 8px rgba(0,0,0,.8);
   }
 
-  /* flecha desnuda, sin caja */
+  /* flecha desnuda, centrada en el hueco que queda */
   .arrow{
     display:block;
-    margin-top:.9rem;
+    margin:auto 0;
     color:#ff2020;
     line-height:0;
     text-decoration:none;
@@ -160,8 +148,9 @@
     50%{transform:translateY(10px);opacity:1}
   }
 
-  main{
-    padding:clamp(200px,27vh,285px) 6vw 8rem;
+  /* sección 2: la carta */
+  .lettersec{
+    padding:clamp(3rem,8vh,6rem) 6vw 8rem;
     display:flex;
     justify-content:center;
   }
@@ -220,7 +209,7 @@
 </head>
 <body>
 
-  <div class="topshell">
+  <section class="hero">
 
     <header>
       <div class="brand">
@@ -286,9 +275,9 @@
       </svg>
     </a>
 
-  </div>
+  </section>
 
-  <main>
+  <section class="lettersec">
     <article class="letter" id="carta">
       <h2>To those who cannot be calmed</h2>
 
@@ -324,7 +313,7 @@
         <span class="who">In the name of PSYCHOTIC</span>
       </div>
     </article>
-  </main>
+  </section>
 
 </body>
 </html>
