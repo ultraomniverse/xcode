@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XCODE — recepción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#ff2020; --bone:#e8e4dc; --dim:#8f8981; --line:rgba(255,255,255,.10);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--bone);
+  font-family:'EB Garamond',Georgia,serif;font-size:17px;line-height:1.6;
+  background-color:#05060a;
+  background-image:
+    radial-gradient(130% 60% at 50% 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.92) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='xMidYMax slice'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='rgb(5,6,9)'/><stop offset='.5' stop-color='rgb(13,15,20)'/><stop offset='1' stop-color='rgb(3,4,6)'/></linearGradient><radialGradient id='m'><stop offset='0' stop-color='rgb(205,210,222)'/><stop offset='.32' stop-color='rgb(150,158,175)' stop-opacity='.42'/><stop offset='1' stop-color='rgb(120,130,150)' stop-opacity='0'/></radialGradient><filter id='b' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='16'/></filter><filter id='f' x='-30%' y='-60%' width='160%' height='220%'><feGaussianBlur stdDeviation='26'/></filter></defs><rect width='1600' height='1000' fill='url(%23s)'/><circle cx='1210' cy='175' r='200' fill='url(%23m)'/><circle cx='1210' cy='175' r='44' fill='rgb(206,211,221)' opacity='.85'/><ellipse cx='420' cy='230' rx='330' ry='62' fill='rgb(24,27,35)' opacity='.55' filter='url(%23b)'/><path d='M0,742 L0,652 Q180,606 360,668 T720,646 T1080,700 T1420,650 L1600,678 L1600,760 Z' fill='rgb(8,9,12)'/><g stroke='rgb(5,6,8)' fill='none' stroke-linecap='round'><path d='M150,700 L152,560' stroke-width='7'/><path d='M152,600 L110,545 M152,590 L196,540' stroke-width='5'/><path d='M1450,700 L1448,552' stroke-width='7'/><path d='M1448,596 L1492,536' stroke-width='5'/></g><rect y='716' width='1600' height='284' fill='rgb(6,7,9)'/><g fill='rgb(11,12,16)'><rect x='250' y='742' width='62' height='96' rx='28'/><rect x='392' y='762' width='54' height='78' rx='24'/><rect x='520' y='736' width='70' height='104' rx='32'/><rect x='700' y='768' width='48' height='72' rx='22'/><rect x='860' y='744' width='64' height='98' rx='29'/><rect x='1010' y='766' width='52' height='76' rx='24'/><rect x='1160' y='738' width='68' height='102' rx='31'/><rect x='1320' y='764' width='50' height='74' rx='23'/></g><g fill='rgb(10,11,15)'><rect x='345' y='700' width='12' height='150'/><rect x='318' y='734' width='66' height='12'/></g><g fill='rgb(255,255,255)' opacity='.055' filter='url(%23f)'><ellipse cx='400' cy='800' rx='420' ry='70'/><ellipse cx='1150' cy='860' rx='480' ry='80'/></g></svg>");
+  background-size:cover;background-position:center top;background-attachment:fixed;background-repeat:no-repeat;
+  transition:letter-spacing .8s;
+}
+::selection{background:var(--red);color:#000}
+body.d3{letter-spacing:.004em}
+body.d4{letter-spacing:.008em}
+
+/* ── RECEPCIÓN ─────────────────────────────── */
+.bar{
+  position:sticky;top:10px;z-index:40;margin:10px 12px 0;border-radius:16px;
+  border:1px solid var(--line);overflow:hidden;padding:10px 16px 11px;
+}
+.bar::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);
+  background:linear-gradient(180deg,rgba(9,9,11,.6),rgba(9,9,11,.3));
+}
+.bar>*{position:relative;z-index:1}
+.row1{display:flex;align-items:center;justify-content:center;gap:14px}
+.gun{width:64px;height:auto;flex:none;fill:#f2efe9;filter:drop-shadow(0 0 12px rgba(0,0,0,.9));opacity:.9}
+.gun.r{transform:scaleX(-1)}
+.brand{text-align:center}
+.brand h1{
+  margin:0;font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(24px,6vw,40px);letter-spacing:.3em;text-indent:.3em;color:#fff;
+  text-shadow:0 2px 24px rgba(0,0,0,.95)
+}
+.brand .sub{margin:4px 0 0;font-style:italic;font-size:clamp(10px,2.3vw,13px);color:var(--red);letter-spacing:.04em}
+.sigs{display:flex;gap:12px;justify-content:center;margin-top:6px;opacity:.62}
+.sigs svg{height:19px;width:auto}
+.clock{
+  display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:9px;padding-top:8px;
+  border-top:1px solid rgba(255,255,255,.07);
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#6f6a63
+}
+.clock b{color:var(--red);font-weight:400;font-size:11px;letter-spacing:.1em}
+
+/* ── LAYOUT ────────────────────────────────── */
+main{max-width:820px;margin:0 auto;padding:44px 18px 80px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+h2{font-family:'Cinzel',serif;font-weight:400;font-size:clamp(20px,4.4vw,30px);letter-spacing:.1em;margin:0 0 12px;color:#fff;line-height:1.25}
+h2 b{color:var(--red);font-weight:400}
+p{margin:0 0 14px}
+.lede{color:var(--dim);max-width:60ch}
+
+/* ── SALA DE ESPERA ────────────────────────── */
+#sala{text-align:center;padding:34px 0 10px}
+#sala h2{font-size:clamp(22px,5.4vw,36px)}
+.btns{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.btn{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:12px 22px;border-radius:9px;border:1px solid var(--red);background:var(--red);color:#000;
+  cursor:pointer;font-weight:600;transition:.2s
+}
+.btn:hover{background:#ff3b3b;box-shadow:0 0 26px rgba(255,32,32,.4)}
+.btn.ghost{background:none;color:var(--red)}
+.btn.ghost:hover{background:rgba(255,32,32,.1);box-shadow:none}
+.quiet{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#5d5852;margin-top:18px}
+
+/* ── PUERTAS ───────────────────────────────── */
+#gab{display:none}
+#gab.on{display:block}
+.doors{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:26px 0 8px}
+.door{
+  position:relative;border:1px solid var(--line);border-radius:12px;padding:16px 13px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,0,0,.25));
+  cursor:pointer;transition:.22s;text-align:left;overflow:hidden
+}
+.door:hover{border-color:var(--red);background:rgba(255,32,32,.06);transform:translateY(-2px)}
+.door .n{font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--red)}
+.door h3{font-family:'Cinzel',serif;font-size:14px;letter-spacing:.12em;margin:7px 0 5px;color:#fff}
+.door p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.45}
+.door .latch{position:absolute;right:11px;top:13px;font-family:var(--mono);font-size:11px;color:#3d3a36}
+.door:hover .latch{color:var(--red)}
+
+/* puerta séptima */
+.door.sealed{
+  grid-column:1/-1;border-style:dashed;border-color:rgba(255,255,255,.14);
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.4));
+  cursor:not-allowed
+}
+.door.sealed:hover{transform:none;border-color:rgba(255,255,255,.22);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4))}
+.door.sealed h3{color:#8f8981}
+.door.sealed .n{color:#5d5852}
+.door.sealed .req{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:#6f6a63;margin-top:9px;display:block
+}
+.door.sealed .req b{color:#9a948c;font-weight:400}
+.door.sealed .req b.hit{color:#7ee08a}
+.door.open{
+  border-style:solid;border-color:var(--red);cursor:pointer;
+  background:linear-gradient(180deg,rgba(255,32,32,.1),rgba(20,4,4,.5));
+  box-shadow:0 0 30px rgba(255,32,32,.18)
+}
+.door.open:hover{transform:translateY(-2px)}
+.door.open h3{color:#fff}
+.door.open .n{color:var(--red)}
+.door.open .req{color:var(--red)}
+.door.open .latch{color:var(--red);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── PANEL ─────────────────────────────────── */
+#panel{display:none;margin-top:22px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(8,8,10,.66);backdrop-filter:blur(8px)}
+#panel.on{display:block}
+.ph{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#cfc9c0}
+.ph .x{margin-left:auto;background:none;border:1px solid rgba(255,255,255,.16);color:#8d8880;border-radius:6px;padding:3px 9px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;cursor:pointer}
+.ph .x:hover{color:var(--red);border-color:var(--red)}
+.pb{padding:17px}
+
+/* ── PRUEBAS ───────────────────────────────── */
+.test{border-top:1px dashed rgba(255,255,255,.09);padding:16px 0 6px}
+.test:first-child{border-top:0;padding-top:0}
+.test h4{font-family:'Cinzel',serif;font-size:13.5px;letter-spacing:.1em;color:#fff;margin:0 0 4px}
+.test .instr{font-size:13.5px;color:var(--dim);margin:0 0 10px}
+canvas.draw{width:100%;height:190px;background:#08090c;border:1px solid var(--line);border-radius:9px;cursor:crosshair;touch-action:none}
+.colors{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.colors button{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:8px 13px;border-radius:7px;border:1px solid var(--line);background:rgba(0,0,0,.4);color:#c9c4bd;cursor:pointer}
+.colors button:hover{border-color:#fff}
+.stroopword{font-family:'Cinzel',serif;font-size:34px;letter-spacing:.14em;margin:6px 0 12px;min-height:44px}
+input.f,textarea.f{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:rgba(0,0,0,.45);color:var(--bone);font-family:'EB Garamond',serif;font-size:15px;outline:none;resize:vertical}
+input.f:focus,textarea.f:focus{border-color:var(--red)}
+.mini{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;padding:8px 14px;border-radius:7px;border:1px solid var(--red);background:none;color:var(--red);cursor:pointer;margin-top:8px}
+.mini:hover{background:rgba(255,32,32,.12)}
+.verdict{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:9px;min-height:15px}
+.verdict.ok{color:#7ee08a}
+.verdict.no{color:var(--red)}
+.seq{display:flex;gap:7px;margin-bottom:10px}
+.seq i{width:38px;height:38px;border-radius:6px;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:pointer;display:block}
+.seq i.on{background:var(--red);border-color:var(--red)}
+
+/* ── TEXTO / DIAGRAMAS / ASCII ─────────────── */
+.piece{border-top:1px solid rgba(255,255,255,.07);padding:15px 0}
+.piece:first-child{border-top:0;padding-top:0}
+.piece .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.piece h4{font-family:'Cinzel',serif;font-size:14px;letter-spacing:.06em;margin:0 0 4px;color:#fff}
+.piece .gate{font-size:13px;font-style:italic;color:#7d7770;margin:0 0 8px}
+.piece blockquote{margin:0;padding-left:13px;border-left:2px solid rgba(255,32,32,.4);color:#cdc8c0;font-size:15.5px;line-height:1.62}
+.piece blockquote em{color:#fff}
+pre.ascii{font-family:var(--mono);font-size:9.5px;line-height:1.05;color:#c8d3c4;background:#040507;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px;overflow-x:auto;margin:0 0 9px;letter-spacing:0}
+pre.diag{font-family:var(--mono);font-size:10px;line-height:1.35;color:#a9b0b8;background:#040507;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:13px;overflow-x:auto;margin:0 0 10px}
+pre.diag b{color:var(--red);font-weight:400}
+ul.books{list-style:none;padding:0;margin:0}
+ul.books li{padding:9px 0;border-top:1px solid rgba(255,255,255,.07);font-size:15px}
+ul.books li:first-child{border-top:0}
+ul.books li b{font-family:'Cinzel',serif;font-weight:400;letter-spacing:.04em;color:#fff}
+ul.books li span{display:block;color:#7d7770;font-size:13px;font-style:italic}
+ul.books li i{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.18em;color:var(--red)}
+
+/* ── BITÁCORA ──────────────────────────────── */
+.log{font-family:var(--mono);font-size:11.5px;line-height:1.9;color:#9a948c}
+.log b{color:var(--red);font-weight:400}
+.log .d{color:#5d5852}
+.bajas{margin-top:16px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+.bajas h5{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:#6f6a63;margin:0 0 8px}
+.bajas div{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:#8f8981;padding:3px 0;border-bottom:1px dotted rgba(255,255,255,.06)}
+
+/* ── SÉPTIMA ───────────────────────────────── */
+.seven{text-align:center;padding:6px 0}
+.seven .mark{font-family:'Cinzel',serif;font-size:44px;letter-spacing:.3em;color:var(--red);margin:0 0 6px;text-indent:.3em}
+.seven .line{font-size:19px;line-height:1.7;color:#d8d3cb;max-width:52ch;margin:0 auto 16px}
+.seven .line em{color:#fff;font-style:italic}
+.seven .mirror{
+  font-family:var(--mono);font-size:10.5px;line-height:1.9;letter-spacing:.1em;color:#b9b3aa;
+  background:#040507;border:1px solid rgba(255,32,32,.28);border-radius:9px;
+  padding:14px;max-width:430px;margin:0 auto 16px;text-align:left
+}
+.seven .mirror b{color:var(--red);font-weight:400}
+.seven .closing{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#6f6a63;margin-top:18px}
+
+/* ── CERTIFICADO ───────────────────────────── */
+#cert{display:none;margin-top:24px;border:1px solid rgba(255,32,32,.4);border-radius:14px;padding:20px;background:rgba(12,4,4,.6);text-align:center}
+#cert.on{display:block}
+#cert h3{font-family:'Cinzel',serif;letter-spacing:.24em;font-size:15px;color:#fff;margin:0 0 4px}
+#cert .small{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+#cert pre{font-family:var(--mono);font-size:9px;line-height:1.05;color:#e8e4dc;text-align:center;margin:0 0 14px;white-space:pre;overflow-x:auto}
+#cert .data{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#9a948c;line-height:1.9}
+#cert .data b{color:#fff;font-weight:400}
+#cert .data .sv{color:var(--red)}
+#cert input.f{max-width:240px;margin:12px auto 0;text-align:center}
+
+/* ── DEGRADACIÓN ───────────────────────────── */
+body.d1 .deg{opacity:.99}
+body.d2 p,body.d2 blockquote{line-height:1.85}
+body.d3 .piece blockquote{color:#bdb8b0}
+body.d3 .door:nth-child(2n){transform:rotate(-.25deg)}
+body.d3 .door:nth-child(2n+1){transform:rotate(.22deg)}
+body.d3 .door.sealed{transform:none}
+body.d4 .brand h1{letter-spacing:.24em;text-shadow:0 0 18px rgba(255,32,32,.5)}
+.ghost{display:none;color:#4a4640;font-style:italic;font-size:14px}
+body.d2 .ghost{display:block}
+.whisper{display:none;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--red);opacity:.75;margin-top:14px}
+body.d4 .whisper{display:block}
+footer{text-align:center;padding:34px 18px 46px;font-family:var(--mono);font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:#57524c}
+footer b{color:var(--red);font-weight:400}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="row1">
+    <svg class="gun" viewBox="0 0 300 170" aria-hidden="true">
+      <path d="M44 62h150v-9h11v9h14a10 10 0 0 1 10 10v8h-12v10H150v-14H44z"/>
+      <circle cx="150" cy="96" r="30"/><circle cx="150" cy="96" r="30" fill="none" stroke="#07080a" stroke-width="3"/>
+      <circle cx="150" cy="80" r="5" fill="#07080a"/><circle cx="166" cy="90" r="5" fill="#07080a"/>
+      <circle cx="160" cy="108" r="5" fill="#07080a"/><circle cx="140" cy="108" r="5" fill="#07080a"/>
+      <circle cx="134" cy="90" r="5" fill="#07080a"/>
+      <path d="M124 112c-4 16-10 30-22 42l-24 6c-6 2-9-4-5-9 14-18 22-32 26-46z"/>
+      <path d="M92 118c-9 12-10 22-6 27" fill="none" stroke="#07080a" stroke-width="4"/>
+      <path d="M196 52l16-8 7 6-9 12z"/>
+    </svg>
+    <div class="brand">
+      <h1>XCODE</h1>
+      <p class="sub">The future of horrific, chaotic and stressful streaming</p>
+      <div class="sigs">
+        <svg viewBox="0 0 150 40"><text x="0" y="26" font-family="EB Garamond,serif" font-style="italic" font-size="20" fill="#e8e4dc">Béla Tarr</text></svg>
+        <svg viewBox="0 0 190 40"><text x="0" y="26" font-family="EB Garamond,serif" font-style="italic" font-size="20" fill="#e8e4dc">Charlie Brooker</text></svg>
+      </div>
+    </div>
+    <svg class="gun r" viewBox="0 0 300 170" aria-hidden="true">
+      <path d="M44 62h150v-9h11v9h14a10 10 0 0 1 10 10v8h-12v10H150v-14H44z"/>
+      <circle cx="150" cy="96" r="30"/><circle cx="150" cy="96" r="30" fill="none" stroke="#07080a" stroke-width="3"/>
+      <circle cx="150" cy="80" r="5" fill="#07080a"/><circle cx="166" cy="90" r="5" fill="#07080a"/>
+      <circle cx="160" cy="108" r="5" fill="#07080a"/><circle cx="140" cy="108" r="5" fill="#07080a"/>
+      <circle cx="134" cy="90" r="5" fill="#07080a"/>
+      <path d="M124 112c-4 16-10 30-22 42l-24 6c-6 2-9-4-5-9 14-18 22-32 26-46z"/>
+      <path d="M92 118c-9 12-10 22-6 27" fill="none" stroke="#07080a" stroke-width="4"/>
+      <path d="M196 52l16-8 7 6-9 12z"/>
+    </svg>
+  </div>
+  <div class="clock">
+    <span>Resistencia <b id="clk">00:00</b></span>
+    <span>Pruebas <b id="tst">0/5</b></span>
+    <span id="cond">Sin declarar</span>
+  </div>
+</header>
+
+<main>
+
+  <section id="sala">
+    <div class="kicker">Recepción</div>
+    <h2>¿ESTÁ USTED EN CONDICIONES?</h2>
+    <p class="lede" style="margin:0 auto">Aquí no se viene a descansar. Se viene a resistir. Las puertas de este gabinete miden, y a partir del tercer minuto la casa empieza a ceder. Si recarga, vuelve a cero.</p>
+    <div class="btns">
+      <button class="btn" id="yes">Sí, estoy en condiciones</button>
+      <button class="btn ghost" id="anyway">Entrar de todos modos</button>
+    </div>
+    <p class="quiet" id="salaNote">La casa no comprueba nada.</p>
+  </section>
+
+  <section id="gab">
+    <div class="kicker">Gabinete</div>
+    <h2>SIETE PUERTAS <b>/</b> NINGUNA SALIDA</h2>
+    <p class="lede">Cada puerta cobra en una moneda distinta: tiempo, atención, memoria, paciencia. No hay orden. No hay progreso. La séptima no se abre con un clic.</p>
+
+    <div class="doors">
+      <div class="door" data-p="p1"><span class="latch">▸</span><div class="n">I</div><h3>PRUEBAS</h3><p>Cinco instrumentos. Le dictaminan.</p></div>
+      <div class="door" data-p="p2"><span class="latch">▸</span><div class="n">II</div><h3>TRATADOS</h3><p>Textos que desarman por dentro.</p></div>
+      <div class="door" data-p="p3"><span class="latch">▸</span><div class="n">III</div><h3>DIAGRAMAS</h3><p>Sistemas que se caen solos.</p></div>
+      <div class="door" data-p="p4"><span class="latch">▸</span><div class="n">IV</div><h3>GABINETE GRÁFICO</h3><p>Caras en dígitos. Se copian y sobreviven.</p></div>
+      <div class="door" data-p="p5"><span class="latch">▸</span><div class="n">V</div><h3>BIBLIOTECA</h3><p>Los libros que hay que haber leído.</p></div>
+      <div class="door" data-p="p6"><span class="latch">▸</span><div class="n">VI</div><h3>BITÁCORA</h3><p>Registro del farero y lista de bajas.</p></div>
+
+      <div class="door sealed" id="door7">
+        <span class="latch" id="latch7">▮</span>
+        <div class="n">VII</div>
+        <h3>LO QUE NO SE PUEDE MIRAR DOS VECES</h3>
+        <p>No está en la lista. No se abre con un clic.</p>
+        <span class="req" id="req7">Requiere <b id="rq1">0/5</b> pruebas y <b id="rq2">00:00 / 20:00</b> de resistencia</span>
+      </div>
+    </div>
+
+    <p class="ghost">Hay una puerta séptima. Ya la ha visto. Ahora tiene que ganarla.</p>
+
+    <div id="panel">
+      <div class="ph"><span id="ptitle">—</span><button class="x" id="pclose">CERRAR</button></div>
+      <div class="pb" id="pbody"></div>
+    </div>
+
+    <div class="btns" style="justify-content:flex-start;margin-top:26px">
+      <button class="btn ghost" id="out">Salir y pedir certificado</button>
+    </div>
+    <p class="whisper" id="whisper">Sigue aquí. Son las <span id="wh2">—</span>.</p>
+
+    <div id="cert">
+      <h3>CERTIFICADO DE SUPERVIVENCIA</h3>
+      <div class="small">XCODE · Psychotic Corp</div>
+      <pre id="art"></pre>
+      <div class="data">
+        Resistencia: <b id="cTime">—</b><br>
+        Pruebas superadas: <b id="cTests">—</b><br>
+        Declaración de entrada: <b id="cCond">—</b><br>
+        Séptima puerta: <b id="cSeventh">no abierta</b><br>
+        Serie: <b id="cSerial">—</b>
+      </div>
+      <input class="f" id="cName" placeholder="nombre del superviviente" maxlength="28">
+      <div class="btns"><button class="btn ghost" id="ccopy">Copiar bloque</button></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>Psychotic Corp · <b>In the World — 2026</b></footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const el = (t, c, h) => { const n = document.createElement(t); if(c) n.className = c; if(h != null) n.innerHTML = h; return n; };
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = a => a[rnd(0, a.length - 1)];
+
+const NEED_TESTS = 5, NEED_SECS = 1200;
+let t0 = 0, timer = null, passed = 0, declared = 'Sin declarar', fired = {}, seventh = false, unlocked = false;
+
+/* ── ENTRADA ─────────────────────────────── */
+function enter(cond){
+  declared = cond;
+  $('#cond').textContent = cond;
+  $('#sala').style.display = 'none';
+  $('#gab').classList.add('on');
+  t0 = Date.now();
+  timer = setInterval(tick, 1000);
+  $('#wh2').textContent = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+$('#yes').onclick = () => {
+  $('#salaNote').textContent = 'Bien. No lo demuestre todavía.';
+  setTimeout(() => enter('En condiciones'), 700);
+};
+$('#anyway').onclick = () => enter('De todos modos');
+
+/* ── RELOJ, DEGRADACIÓN Y CANDADO ────────── */
+function tick(){
+  const s = Math.floor((Date.now() - t0) / 1000);
+  const m = Math.floor(s / 60);
+  $('#clk').textContent = String(m).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0');
+
+  if (s >= 180 && !fired.d1){ fired.d1 = 1; document.body.classList.add('d1'); scrambleAll(4); }
+  if (s >= 420 && !fired.d2){ fired.d2 = 1; document.body.classList.add('d2'); scrambleAll(9); }
+  if (s >= 900 && !fired.d3){ fired.d3 = 1; document.body.classList.add('d3'); scrambleAll(14); secondPerson(); }
+  if (s >= 1500 && !fired.d4){ fired.d4 = 1; document.body.classList.add('d4'); scrambleAll(20); lie(); }
+
+  if (s % 25 === 0 && s > 30) scrambleAll(1);
+  checkLock(s);
+}
+
+function checkLock(s){
+  $('#rq1').textContent = passed + '/' + NEED_TESTS;
+  $('#rq1').className = passed >= NEED_TESTS ? 'hit' : '';
+  const mm = String(Math.floor(s/60)).padStart(2,'0'), ss = String(s%60).padStart(2,'0');
+  $('#rq2').textContent = mm + ':' + ss + ' / 20:00';
+  $('#rq2').className = s >= NEED_SECS ? 'hit' : '';
+  if (!unlocked && passed >= NEED_TESTS && s >= NEED_SECS){
+    unlocked = true;
+    const d = $('#door7');
+    d.classList.remove('sealed'); d.classList.add('open');
+    $('#latch7').textContent = '▸';
+    $('#req7').innerHTML = 'Abierta. <b>Pase.</b>';
+    d.onclick = () => open('p7');
+  }
+}
+
+const WRONG = ['aún','después','nadie','nunca','otra vez','debajo','antes','quizá','lejos','sin','contra'];
+function scrambleAll(n){
+  const ps = [...document.querySelectorAll('#gab p, #gab blockquote, #gab li, #gab .line')].filter(p => !p.closest('#cert'));
+  if (!ps.length) return;
+  for (let i = 0; i < n; i++){
+    const p = pick(ps);
+    const words = p.innerHTML.split(' ');
+    if (words.length < 4) continue;
+    const k = rnd(1, words.length - 2);
+    if (Math.random() < .5) words[k] = '<span style="color:#6f6a63">' + pick(WRONG) + '</span>';
+    else { const tmp = words[k]; words[k] = words[k+1]; words[k+1] = tmp; }
+    p.innerHTML = words.join(' ');
+  }
+}
+function secondPerson(){
+  const p = el('p', 'ghost', 'Usted llegó a las ' + $('#wh2').textContent + '. Nadie lo anotó. Lo anotamos nosotros.');
+  p.style.display = 'block';
+  $('#panel').before(p);
+}
+function lie(){
+  const real = $('#clk').textContent;
+  const f = real.split(':');
+  $('#clk').textContent = String(Number(f[0]) + rnd(1,3)).padStart(2,'0') + ':' + f[1];
+  setTimeout(() => { if (fired.d4) $('#clk').textContent = real; }, 4000);
+}
+
+/* ── PUERTAS ─────────────────────────────── */
+document.querySelectorAll('.door[data-p]').forEach(d => d.onclick = () => open(d.dataset.p));
+
+function open(id){
+  const t = {p1:'PRUEBAS', p2:'TRATADOS', p3:'DIAGRAMAS', p4:'GABINETE GRÁFICO', p5:'BIBLIOTECA', p6:'BITÁCORA', p7:'LA SÉPTIMA'}[id];
+  $('#ptitle').textContent = t;
+  $('#pbody').innerHTML = '';
+  $('#panel').classList.add('on');
+  BUILD[id]($('#pbody'));
+  $('#panel').scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('#pclose').onclick = () => { $('#panel').classList.remove('on'); $('#pbody').innerHTML = ''; };
+
+/* ── CONSTRUCTORES ───────────────────────── */
+const BUILD = {};
+
+/* I — PRUEBAS */
+BUILD.p1 = box => {
+  box.appendChild(el('p', 'instr', 'Cinco instrumentos. Ninguno le va a decir si está bien. Solo si sirve.'));
+  box.appendChild(el('div', 'verdict', 'Superadas: 0 de 5'));
+
+  const t1 = el('div', 'test');
+  t1.innerHTML = '<h4>1 · El reloj</h4><p class="instr">Dibuje un reloj analógico con las agujas marcando las once y diez. Con el ratón o el dedo.</p>';
+  const cv = el('canvas', 'draw'); cv.width = 700; cv.height = 190;
+  const v1 = el('div', 'verdict');
+  t1.appendChild(cv); t1.appendChild(el('button', 'mini', 'Dictaminar')); t1.appendChild(v1);
+  box.appendChild(t1);
+
+  const ctx = cv.getContext('2d');
+  ctx.strokeStyle = '#e8e4dc'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+  let drawing = false, strokes = 0;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.width / r.width), (e.clientY - r.top) * (cv.height / r.height)]; };
+  cv.onpointerdown = e => { drawing = true; strokes++; const p = pos(e); ctx.beginPath(); ctx.moveTo(p[0], p[1]); cv.setPointerCapture(e.pointerId); };
+  cv.onpointermove = e => { if(!drawing) return; const p = pos(e); ctx.lineTo(p[0], p[1]); ctx.stroke(); };
+  cv.onpointerup = () => drawing = false;
+  t1.querySelector('.mini').onclick = () => {
+    if (strokes >= 4) judge(v1, true, 'Apto. Un reloj tiene doce números y usted puso ' + strokes + ' trazos.');
+    else if (strokes > 0) judge(v1, false, 'No apto. Eso no es un reloj, es un garabato.');
+    else judge(v1, false, 'No apto. Ni siquiera lo intentó.');
+  };
+
+  const t2 = el('div', 'test');
+  t2.innerHTML = '<h4>2 · El color</h4><p class="instr">Pulse el color de la TINTA, no la palabra. Diez veces. Sin pensar.</p><div class="stroopword" style="color:#ff2020">—</div><div class="colors"></div>';
+  const v2 = el('div', 'verdict'); t2.appendChild(v2); box.appendChild(t2);
+
+  const NAMES = [['ROJO','#ff2020'],['VERDE','#4bd67a'],['AZUL','#4a8cff'],['AMARILLO','#ffd447']];
+  let round = 0, ok = 0, cur = 0;
+  const wordEl = t2.querySelector('.stroopword'), colsEl = t2.querySelector('.colors');
+  NAMES.forEach(pair => {
+    const b = el('button', null, pair[0]); b.style.color = pair[1]; b.dataset.c = pair[1];
+    b.onclick = () => {
+      if (round >= 10) return;
+      if (b.dataset.c === cur) ok++;
+      round++; next2();
+    };
+    colsEl.appendChild(b);
+  });
+  function next2(){
+    if (round >= 10){
+      wordEl.textContent = 'FIN';
+      const good = ok >= 7;
+      judge(v2, good, good ? 'Apto. ' + ok + '/10. Su corteza aguanta la contradicción.' : 'No apto. ' + ok + '/10. Lee lo que dice y no lo que ve.');
+      return;
+    }
+    const n = pick(NAMES), ink = pick(NAMES);
+    wordEl.textContent = n[0]; wordEl.style.color = ink[1]; cur = ink[1];
+  }
+  next2();
+
+  const t3 = el('div', 'test');
+  t3.innerHTML = '<h4>3 · La mancha</h4><p class="instr">Escriba qué ve. No hay respuesta correcta; hay respuestas cortas.</p>';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 300 160'); svg.style.cssText = 'width:100%;height:150px;background:#0b0c10;border:1px solid rgba(255,255,255,.1);border-radius:9px;margin-bottom:9px';
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g.setAttribute('fill', '#171a20');
+  let d = 'M150,18';
+  for (let i = 0; i < 9; i++) d += ' L' + rnd(60,148) + ',' + rnd(30,140);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', d); path.setAttribute('stroke', '#2a2f38'); path.setAttribute('stroke-width', '1');
+  g.appendChild(path);
+  for (let i = 0; i < 26; i++){
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', rnd(20,150)); c.setAttribute('cy', rnd(20,145)); c.setAttribute('r', rnd(4,17));
+    g.appendChild(c);
+  }
+  const mirror = g.cloneNode(true); mirror.setAttribute('transform', 'translate(300,0) scale(-1,1)');
+  svg.appendChild(g); svg.appendChild(mirror);
+  t3.appendChild(svg);
+  const ta = el('textarea', 'f'); ta.rows = 2; ta.placeholder = 'Veo…';
+  t3.appendChild(ta);
+  const v3 = el('div', 'verdict');
+  t3.appendChild(el('button', 'mini', 'Dictaminar')); t3.appendChild(v3);
+  box.appendChild(t3);
+  t3.querySelector('.mini').onclick = () => {
+    const n = ta.value.trim().split(/\s+/).filter(Boolean).length;
+    if (n >= 3) judge(v3, true, 'Apto. ' + n + ' palabras. Ve cosas donde hay tinta.');
+    else if (n >= 1) judge(v3, false, 'No apto. Con ' + n + ' palabra no se sostiene.');
+    else judge(v3, false, 'No apto. No ve nada.');
+  };
+
+  const t4 = el('div', 'test');
+  t4.innerHTML = '<h4>4 · Las figuras</h4><p class="instr">Cuente cuántas figuras hay dibujadas encima unas de otras. Después escríbalo.</p>';
+  const cv2 = el('canvas', 'draw'); cv2.width = 700; cv2.height = 170;
+  t4.appendChild(cv2);
+  const c2 = cv2.getContext('2d'); c2.strokeStyle = 'rgba(232,228,220,.85)'; c2.lineWidth = 1.4;
+  const shapes = rnd(4, 7);
+  for (let i = 0; i < shapes; i++){
+    c2.beginPath();
+    const x = rnd(70, 630), y = rnd(40, 130), r = rnd(18, 40);
+    if (i % 2) c2.rect(x, y, r, r * 1.3); else c2.arc(x, y, r, 0, 7);
+    c2.stroke();
+  }
+  const inp4 = el('input', 'f'); inp4.placeholder = 'cuántas'; inp4.style.maxWidth = '120px';
+  t4.appendChild(inp4);
+  const v4 = el('div', 'verdict');
+  t4.appendChild(el('button', 'mini', 'Dictaminar')); t4.appendChild(v4);
+  box.appendChild(t4);
+  t4.querySelector('.mini').onclick = () => {
+    const n = Number(inp4.value);
+    if (Math.abs(n - shapes) <= 1) judge(v4, true, 'Apto. Había ' + shapes + '. Dijo ' + (n || 0) + '.');
+    else judge(v4, false, 'No apto. Había ' + shapes + '. Dijo ' + (n || 0) + '.');
+  };
+
+  const t5 = el('div', 'test');
+  t5.innerHTML = '<h4>5 · La secuencia</h4><p class="instr">Mire. Se encenderán cinco casillas en orden. Repítalo.</p><div class="seq"></div>';
+  const seqEl = t5.querySelector('.seq');
+  const cells = [];
+  for (let i = 0; i < 5; i++){ const c = el('i'); seqEl.appendChild(c); cells.push(c); }
+  const v5 = el('div', 'verdict');
+  t5.appendChild(el('button', 'mini', 'Empezar')); t5.appendChild(v5);
+  box.appendChild(t5);
+  let order = [], step = 0, playing = false;
+  t5.querySelector('.mini').onclick = () => {
+    order = []; step = 0; playing = true; v5.textContent = 'Mire.';
+    const pool = [0,1,2,3,4];
+    for (let i = 0; i < 5; i++){ const k = rnd(0, pool.length - 1); order.push(pool.splice(k,1)[0]); }
+    order.forEach((idx, i) => setTimeout(() => {
+      cells[idx].classList.add('on');
+      setTimeout(() => cells[idx].classList.remove('on'), 340);
+      if (i === 4) setTimeout(() => { playing = false; v5.textContent = 'Ahora.'; }, 500);
+    }, i * 520));
+  };
+  cells.forEach((c, i) => c.onclick = () => {
+    if (playing || !order.length) return;
+    if (order[step] === i){
+      step++;
+      if (step === 5){ judge(v5, true, 'Apto. Cinco de cinco. La memoria todavía es suya.'); order = []; }
+    } else { judge(v5, false, 'No apto. Se perdió en el paso ' + (step + 1) + '.'); order = []; }
+  });
+
+  function judge(node, good, text){
+    if (node.dataset.done) return;
+    node.dataset.done = '1';
+    node.className = 'verdict ' + (good ? 'ok' : 'no');
+    node.textContent = text;
+    if (good) passed++;
+    $('#tst').textContent = passed + '/5';
+    box.querySelector('.verdict').textContent = 'Superadas: ' + passed + ' de 5';
+    checkLock(Math.floor((Date.now() - t0) / 1000));
+  }
+};
+
+/* II — TRATADOS */
+BUILD.p2 = box => {
+  const P = [
+    ['Gérard de Nerval', 'Aurélia', 'El sueño y la vigilia dejan de tener aduana.', 'El sueño es una segunda vida. Nunca he podido franquear sin temblor esas puertas de marfil o de cuerno que nos separan del mundo invisible.'],
+    ['Guy de Maupassant', 'El Horla', 'La primera persona del singular como síntoma.', 'Entro en mi casa y no reconozco nada. Todo está igual y todo me parece otro. Mi casa es un hueco.'],
+    ['Lautréamont', 'Los cantos de Maldoror', 'La crueldad como método de conocimiento.', 'Soy el hijo del hombre y de la mujer, según me dicen. Eso no me impide conocerme.'],
+    ['Daniil Kharms', 'Sucedió así', 'La lógica que funciona hasta que deja de funcionar.', 'Un hombre tenía un sueño. Se despertó, y ya no había sueño. Pero tampoco había hombre.'],
+    ['Robert Walser', 'El paseo', 'Caminar como única forma de pensar.', 'Salgo a pasear y todo lo que encuentro me pertenece, porque lo miro.'],
+    ['Leonora Carrington', 'Memorias de abajo', 'El manicomio descrito sin dramatismo, como un país.', 'Estaba sentada en un banco de piedra y decidí que las paredes respiraban. No me pareció extraño.'],
+    ['Antonin Artaud', 'El teatro y su doble', 'El cuerpo como territorio en disputa.', 'El teatro ha de devolvernos todo lo que el cine le ha quitado: la respiración, el sudor, el grito.'],
+    ['Unica Zürn', 'El hombre jazmín', 'Los dibujos anagramáticos y el derrumbe.', 'Escribo para saber qué queda de mí cuando las palabras se mezclan.']
+  ];
+  P.forEach(a => {
+    const p = el('div', 'piece');
+    p.innerHTML = '<div class="who">' + a[0] + '</div><h4>' + a[1] + '</h4><p class="gate">' + a[2] + '</p><blockquote>' + a[3] + '</blockquote>';
+    box.appendChild(p);
+  });
+};
+
+/* III — DIAGRAMAS */
+BUILD.p3 = box => {
+  const D = [
+    ['El árbol de la clasificación', 'Cada rama nueva es una grieta que alguien decidió no tapar.',
+'<b>NEUROSIS</b>\n├─ ansiedad\n│  ├─ generalizada\n│  └─ de pánico ──────┬─ agorafobia\n│                     └─ sin agorafobia\n├─ obsesivo-compulsiva\n│  ├─ de comprobación\n│  └─ de orden\n└─ <b>?</b> ─────────────── sin clasificar (1993)\n                          sin clasificar (2004)\n                          <b>sin clasificar (usted)</b>'],
+    ['Planta de la casa', 'El pasillo no lleva a la habitación. Lleva al pasillo.',
+'┌───────┬───────────┬───────┐\n│ recep │  PASILLO  │ cuarto│\n│  ▭    │ ▭ ▭ ▭ ▭ ▭ │  ▭    │\n└───┬───┴─────┬─────┴───┬───┘\n    │         │         │\n ┌──▼──┐   ┌──▼──┐   ┌──▼──┐\n │ baño│   │ baño│   │ baño│\n └─────┘   └─────┘   └─────┘\n     <b>tres baños. ningún espejo.</b>'],
+    ['Mapa del descenso', 'Las paradas están numeradas. La última no tiene número.',
+'01 insomnio ─────────────┐\n02 irritabilidad         │\n03 sospecha              ├─ rama A\n04 <b>certeza</b>              │\n─────────────────────────┘\n05 pérdida de nombres\n06 pérdida de horas\n07 <b>—</b>'],
+    ['Cascada', 'Un sistema que se alimenta de su propia salida.',
+'estímulo\n  └─▶ alerta ─▶ cortisol\n        │            │\n        └◀── sueño ◀─┘\n             (roto)\n  └─▶ más estímulo ─────▶ <b>loop</b>'],
+    ['Planta de la séptima', 'Está detrás de todo esto. No tiene salida dibujada.',
+'        ┌───────────┐\n        │  SÉPTIMA  │\n        └─────┬─────┘\n     ┌────────┴────────┐\n     │   usted, otra    │\n     │      vez         │\n     └────────┬────────┘\n              ▼\n        <b>─── sin flecha ───</b>']
+  ];
+  D.forEach(a => {
+    const p = el('div', 'piece');
+    p.innerHTML = '<h4>' + a[0] + '</h4><p class="gate">' + a[1] + '</p><pre class="diag">' + a[2] + '</pre>';
+    box.appendChild(p);
+  });
+};
+
+/* IV — GABINETE GRÁFICO */
+BUILD.p4 = box => {
+  box.appendChild(el('p', 'instr', 'Retratos generados. Dígitos y binario. Se copian, se pegan y sobreviven en un correo de 1994.'));
+  const pre = el('pre', 'ascii');
+  const CH = '01▓▒░#@·';
+  function face(){
+    const W = 46, H = 20, g = [];
+    for (let y = 0; y < H; y++){
+      const row = [];
+      for (let x = 0; x < W; x++){
+        const mx = x < W/2 ? x : W-1-x;
+        const dx = (mx - 10) / 12, dy = (y - 9) / 8;
+        const inside = dx*dx + dy*dy < 1;
+        const noise = Math.random();
+        row.push(inside ? (noise > .42 ? pick(CH) : ' ') : (noise > .93 ? pick(CH) : ' '));
+      }
+      g.push(row.join(''));
+    }
+    return g.join('\n');
+  }
+  pre.textContent = face();
+  box.appendChild(pre);
+  const b = el('button', 'mini', 'Otro'); b.onclick = () => pre.textContent = face();
+  box.appendChild(b);
+  const cp = el('button', 'mini', 'Copiar'); cp.style.marginLeft = '8px';
+  cp.onclick = () => { navigator.clipboard?.writeText(pre.textContent); cp.textContent = 'Copiado'; setTimeout(() => cp.textContent = 'Copiar', 1200); };
+  box.appendChild(cp);
+};
+
+/* V — BIBLIOTECA */
+BUILD.p5 = box => {
+  const B = [
+    ['Franz Kafka', 'El proceso', 'El trámite como condena.'],
+    ['Herman Melville', 'Bartleby, el escribiente', 'Preferiría no hacerlo. Es suficiente.'],
+    ['Franz Kafka', 'La metamorfosis', 'Despertar siendo otra cosa y seguir yendo a trabajar.'],
+    ['Miguel de Unamuno', 'Niebla', 'El personaje discute con su autor.'],
+    ['Samuel Beckett', 'El innombrable', 'Ya no hay primera persona posible.'],
+    ['Thomas Bernhard', 'El sobrino de Wittgenstein', 'El odio como forma de atención.'],
+    ['Fernando Pessoa', 'Libro del desasosiego', 'Diario sin vida, vida sin diario.'],
+    ['Béla Tarr / László Krasznahorkai', 'Sátántangó', 'Seis pasos adelante, seis atrás.']
+  ];
+  const ul = el('ul', 'books');
+  B.forEach(a => {
+    const li = el('li');
+    li.innerHTML = '<i>' + a[0] + '</i><b>' + a[1] + '</b><span>' + a[2] + '</span>';
+    ul.appendChild(li);
+  });
+  box.appendChild(ul);
+};
+
+/* VI — BITÁCORA */
+BUILD.p6 = box => {
+  const L = [
+    ['12.III', 'Instalado el contador. Alguien entró, estuvo cuatro minutos y se fue sin cerrar.'],
+    ['19.III', 'A los siete minutos el texto empezó a cambiar solo. No lo avisamos.'],
+    ['28.III', 'Una mujer dibujó el reloj perfecto y después preguntó si estaba bien. Estaba bien.'],
+    ['02.IV', 'Se rompió la puerta tercera. La dejamos rota.'],
+    ['11.IV', 'Alguien aguantó veintiséis minutos y pidió el certificado. Firmó como «nadie».'],
+    ['23.IV', 'Añadida la palabra «aún» a los párrafos. Funciona.'],
+    ['hoy', 'Usted está aquí. Es la primera línea que escribimos por su culpa.']
+  ];
+  const d = el('div', 'log');
+  L.forEach(a => { const p = el('p'); p.innerHTML = '<span class="d">' + a[0] + '</span> — ' + a[1]; p.style.margin = '0 0 6px'; d.appendChild(p); });
+  box.appendChild(d);
+
+  const bajas = el('div', 'bajas');
+  bajas.innerHTML = '<h5>Bajas</h5>' + [
+    ['4 min 12 s', 'sin declarar'], ['1 min 03 s', 'de todos modos'],
+    ['9 min 47 s', 'en condiciones'], ['0 min 21 s', 'sin declarar'],
+    ['14 min 30 s', 'en condiciones'], ['2 min 55 s', 'de todos modos'],
+    ['19 min 58 s', 'en condiciones — a dos segundos']
+  ].map(a => '<div><span>' + a[0] + '</span><span>' + a[1] + '</span></div>').join('');
+  box.appendChild(bajas);
+};
+
+/* VII — LA SÉPTIMA */
+BUILD.p7 = box => {
+  if (!seventh){
+    seventh = true;
+    scrambleAll(6);
+  }
+  const s = Math.floor((Date.now() - t0) / 1000);
+  const w = el('div', 'seven');
+  w.innerHTML =
+    '<div class="mark">VII</div>' +
+    '<p class="line">No hay nada nuevo aquí. Eso es lo que <em>no se puede mirar dos veces</em>: la constancia de que ya lo sabía.</p>' +
+    '<p class="line">Usted entró ' + (declared === 'En condiciones' ? 'diciendo que estaba en condiciones' : 'sin declarar nada') + '. ' +
+    'Aguantó ' + Math.floor(s/60) + ' minutos y ' + (s % 60) + ' segundos. Superó ' + passed + ' de 5 pruebas. ' +
+    'No ha ganado nada, pero ahora la casa lo tiene fichado.</p>' +
+    '<div class="mirror">' +
+      '<b>FICHA</b><br>' +
+      'Hora de entrada ........ ' + $('#wh2').textContent + '<br>' +
+      'Declaración ............ ' + declared + '<br>' +
+      'Resistencia ............ ' + Math.floor(s/60) + ' min ' + (s % 60) + ' s<br>' +
+      'Instrumentos .......... ' + passed + ' de 5<br>' +
+      'Séptima ................ abierta<br>' +
+      'Estado ................. en observación' +
+    '</div>' +
+    '<p class="line">Lo que sigue pasando fuera no tiene arreglo. Lo de dentro tampoco. ' +
+    'La diferencia es que aquí al menos está <em>contado</em>.</p>' +
+    '<p class="closing">Puede cerrar esta puerta. La casa no se cierra.</p>';
+  box.appendChild(w);
+};
+
+/* ── CERTIFICADO ─────────────────────────── */
+$('#out').onclick = () => {
+  const s = Math.floor((Date.now() - t0) / 1000);
+  $('#cTime').textContent = Math.floor(s/60) + ' min ' + (s % 60) + ' s';
+  $('#cTests').textContent = passed + ' de 5';
+  $('#cCond').textContent = declared;
+  $('#cSeventh').textContent = seventh ? 'ABIERTA' : 'no abierta';
+  $('#cSeventh').className = seventh ? 'sv' : '';
+  $('#cSerial').textContent = 'XC-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + rnd(100,999);
+  $('#art').textContent =
+    '   ┌─────────────────┐\n' +
+    '   │  ▄▄▄▄▄▄▄▄▄▄▄▄▄  │\n' +
+    '   │  █  X C O D E  █  │\n' +
+    '   │  ▀▀▀▀▀▀▀▀▀▀▀▀▀  │\n' +
+    '   └────────┬────────┘\n' +
+    '         ┌──┴──┐\n' +
+    '      ▄▄▄┤     ├▄▄▄\n' +
+    '         └──┬──┘\n' +
+    '            │\n' +
+    '       ▄▄▄▄▄▄▄▄▄';
+  $('#cert').classList.add('on');
+  $('#cert').scrollIntoView({behavior:'smooth', block:'center'});
+};
+$('#ccopy').onclick = () => {
+  const n = $('#cName').value.trim() || 'anónimo';
+  const txt = [
+    'XCODE — CERTIFICADO DE SUPERVIVENCIA',
+    '──────────────────────────────────',
+    'Nombre: ' + n,
+    'Resistencia: ' + $('#cTime').textContent,
+    'Pruebas: ' + $('#cTests').textContent,
+    'Entrada: ' + $('#cCond').textContent,
+    'Séptima: ' + $('#cSeventh').textContent,
+    'Serie: ' + $('#cSerial').textContent,
+    '',
+    'Psychotic Corp · In the World 2026'
+  ].join('\n');
+  navigator.clipboard?.writeText(txt);
+  $('#ccopy').textContent = 'Copiado';
+  setTimeout(() => $('#ccopy').textContent = 'Copiar bloque', 1400);
+};
+</script>
+</body>
+</html>
