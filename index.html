@@ -30,7 +30,6 @@
     background-attachment:fixed;
   }
 
-  /* sección 1: header + flecha */
   .hero{
     min-height:100svh;
     display:flex;
@@ -57,12 +56,7 @@
     overflow:hidden;
   }
 
-  .brand{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:clamp(8px,2vw,26px);
-  }
+  .brand{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,26px)}
 
   .gun{
     width:clamp(42px,7vw,92px);
@@ -97,88 +91,43 @@
     text-shadow:0 0 16px rgba(255,32,32,.4), 0 1px 3px rgba(0,0,0,.9);
   }
 
-  .sigs{
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    gap:clamp(30px,7vw,90px);
-    margin-top:.9rem;
-  }
+  .sigs{display:flex;align-items:flex-start;justify-content:center;gap:clamp(30px,7vw,90px);margin-top:.9rem}
 
-  .sig{
-    width:clamp(64px,9vw,116px);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:.45rem;
-  }
+  .sig{width:clamp(64px,9vw,116px);display:flex;flex-direction:column;align-items:center;gap:.45rem}
 
   .ink{position:relative;width:100%;aspect-ratio:2.7/1}
-  .ink img,.ink svg{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:contain;
-    mix-blend-mode:screen;
-  }
+  .ink img,.ink svg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:screen}
   .ink .flip{filter:invert(1)}
 
   .name{
-    font-family:'Cinzel',serif;
-    font-size:.44rem;
-    letter-spacing:.28em;
-    text-indent:.28em;
-    color:rgba(255,255,255,.5);
-    text-shadow:0 1px 8px rgba(0,0,0,.8);
+    font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.28em;text-indent:.28em;
+    color:rgba(255,255,255,.5);text-shadow:0 1px 8px rgba(0,0,0,.8);
   }
 
-  /* flecha desnuda, centrada en el hueco que queda */
   .arrow{
-    display:block;
-    margin:auto 0;
-    color:#ff2020;
-    line-height:0;
-    text-decoration:none;
+    display:block;margin:auto 0;color:#ff2020;line-height:0;text-decoration:none;
     filter:drop-shadow(0 3px 12px rgba(0,0,0,.9));
     animation:bob 2.2s ease-in-out infinite;
   }
   .arrow svg{width:clamp(26px,3.4vw,38px);height:auto}
   .arrow:hover{color:#fff;animation-play-state:paused}
 
-  @keyframes bob{
-    0%,100%{transform:translateY(0);opacity:.7}
-    50%{transform:translateY(10px);opacity:1}
-  }
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(10px);opacity:1}}
 
-  /* sección 2: la carta */
-  .lettersec{
-    padding:clamp(3rem,8vh,6rem) 6vw 8rem;
-    display:flex;
-    justify-content:center;
-  }
+  .lettersec{padding:clamp(3rem,8vh,6rem) 6vw 8rem;display:flex;justify-content:center}
 
   .letter{
-    max-width:600px;
-    width:100%;
-    padding:clamp(1.6rem,4vw,2.8rem);
-    border-radius:22px;
-    border:1px solid rgba(255,255,255,.16);
-    background:rgba(0,0,0,.55);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
+    max-width:600px;width:100%;padding:clamp(1.6rem,4vw,2.8rem);border-radius:22px;
+    border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.55);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     box-shadow:0 20px 60px rgba(0,0,0,.7);
-    font-family:'EB Garamond',serif;
-    font-size:clamp(1rem,1.5vw,1.12rem);
-    line-height:1.72;
-    color:rgba(255,255,255,.88);
+    font-family:'EB Garamond',serif;font-size:clamp(1rem,1.5vw,1.12rem);
+    line-height:1.72;color:rgba(255,255,255,.88);
   }
 
   .letter h2{
-    font-family:'Cinzel',serif;
-    font-weight:900;
-    font-size:clamp(1.05rem,2.4vw,1.5rem);
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:#fff;
-    margin-bottom:1.4rem;
+    font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1.05rem,2.4vw,1.5rem);
+    letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-bottom:1.4rem;
   }
 
   .letter p{margin-bottom:1.1rem}
@@ -186,31 +135,123 @@
   .letter em{color:#ff2020;font-style:italic}
 
   .sign{
-    margin-top:2.4rem;
-    padding-top:1.4rem;
-    border-top:1px solid rgba(255,255,255,.12);
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:.7rem;
+    margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid rgba(255,255,255,.12);
+    display:flex;flex-direction:column;align-items:flex-start;gap:.7rem;
+  }
+  .sign .scribble{width:min(210px,60%);height:auto;mix-blend-mode:screen}
+  .sign .who{
+    font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;text-indent:.3em;
+    text-transform:uppercase;color:rgba(255,255,255,.55);
   }
 
-  .sign .scribble{width:min(210px,60%);height:auto;mix-blend-mode:screen}
+  .bridge{display:flex;justify-content:center;padding:0 6vw 4rem}
 
-  .sign .who{
-    font-family:'Cinzel',serif;
-    font-size:.55rem;
-    letter-spacing:.3em;
-    text-indent:.3em;
-    text-transform:uppercase;
-    color:rgba(255,255,255,.55);
+  .binaryzone{
+    position:relative;
+    background:#000;
+    border-top:1px solid rgba(255,32,32,.25);
+  }
+
+  .binaryzone > canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index:0;
+  }
+
+  .binaryzone > .content{position:relative;z-index:1}
+
+  .explosion{height:clamp(430px,94vh,900px);position:relative;overflow:hidden}
+
+  .hud{
+    position:absolute;left:0;right:0;bottom:clamp(1rem,3vh,2rem);
+    display:flex;justify-content:space-between;padding:0 6vw;pointer-events:none;
+    font-family:'Cinzel',serif;font-size:clamp(.46rem,1vw,.58rem);
+    letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.42);
+  }
+  .hud b{color:#ff2020;font-weight:900}
+
+  footer{
+    padding:clamp(3.5rem,10vh,7rem) 6vw;text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  footer .rule{
+    width:min(120px,30%);height:1px;margin:0 auto clamp(1.4rem,4vh,2.4rem);
+    background:linear-gradient(to right,transparent,rgba(255,32,32,.7),transparent);
+  }
+
+  footer p{
+    font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1.1rem,4.4vw,2.6rem);
+    letter-spacing:.22em;text-indent:.22em;color:#fff;text-shadow:0 2px 30px rgba(0,0,0,.9);
+  }
+  footer p span{color:#ff2020}
+
+  .catalog{
+    padding:clamp(4rem,11vh,8rem) 6vw clamp(7rem,16vh,10rem);
+    display:flex;justify-content:center;
+  }
+
+  .catalog .inner{width:100%;max-width:1000px}
+
+  .catalog .eyebrow{
+    font-family:'Cinzel',serif;font-size:clamp(.5rem,1.2vw,.62rem);
+    letter-spacing:.4em;text-indent:.4em;text-transform:uppercase;
+    color:rgba(255,32,32,.9);margin-bottom:.8rem;
+  }
+
+  .catalog h2{
+    font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1.2rem,3.2vw,1.9rem);
+    letter-spacing:.14em;text-indent:.14em;color:#fff;margin-bottom:2.4rem;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:clamp(1rem,2.4vw,1.6rem);
+  }
+
+  .slot{
+    position:relative;
+    aspect-ratio:16/10;
+    border:1px dashed rgba(255,255,255,.26);
+    border-radius:14px;
+    background:rgba(0,0,0,.42);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:.7rem;text-align:center;padding:1rem;
+  }
+
+  .slot.lead{
+    grid-column:1 / -1;
+    aspect-ratio:16/8;
+    border-color:rgba(255,32,32,.55);
+    box-shadow:inset 0 0 60px rgba(255,32,32,.12);
+  }
+
+  .slot svg{width:clamp(26px,3.6vw,38px);height:auto;color:rgba(255,255,255,.36)}
+
+  .slot .label{
+    font-family:'Cinzel',serif;font-size:clamp(.5rem,1.1vw,.6rem);
+    letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;
+    color:rgba(255,255,255,.42);
+  }
+
+  .slot.lead .label{color:rgba(255,255,255,.7)}
+
+  .slot .num{
+    position:absolute;top:.7rem;left:.9rem;
+    font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.24em;
+    color:rgba(255,32,32,.6);
   }
 </style>
 </head>
 <body>
 
   <section class="hero">
-
     <header>
       <div class="brand">
         <picture>
@@ -229,7 +270,6 @@
       <p class="sub">El futuro del streaming horrorífico, caótico y estresante...</p>
 
       <div class="sigs">
-
         <div class="sig">
           <div class="ink">
             <img class="flip" alt="" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/B%C3%A9la_Tarr_signature.svg/960px-B%C3%A9la_Tarr_signature.svg.png">
@@ -263,18 +303,15 @@
           </div>
           <span class="name">CHARLIE BROOKER</span>
         </div>
-
       </div>
     </header>
 
     <a class="arrow" href="#carta" aria-label="Bajar a la carta">
-      <svg viewBox="0 0 34 58" fill="none" stroke="currentColor"
-           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17,4 L17,50"/>
-        <path d="M5,37 L17,51 L29,37"/>
+      <svg viewBox="0 0 34 58" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17,4 L17,50"/><path d="M5,37 L17,51 L29,37"/>
       </svg>
     </a>
-
   </section>
 
   <section class="lettersec">
@@ -315,5 +352,217 @@
     </article>
   </section>
 
+  <div class="bridge">
+    <a class="arrow" href="#explotion" aria-label="Bajar al paisaje">
+      <svg viewBox="0 0 34 58" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17,4 L17,50"/><path d="M5,37 L17,51 L29,37"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="binaryzone">
+
+    <canvas id="bin"></canvas>
+
+    <div class="content">
+
+      <section class="explosion" id="explotion">
+        <div class="hud">
+          <span>paisaje <b>sol y campo</b></span>
+          <span>binarios</span>
+        </div>
+      </section>
+
+      <footer>
+        <div class="rule"></div>
+        <p><span>&copy;</span> IN THE WORLD - 2026</p>
+      </footer>
+
+      <section class="catalog">
+        <div class="inner">
+          <p class="eyebrow">Catálogo</p>
+          <h2>ESPACIO RESERVADO</h2>
+
+          <div class="grid">
+
+            <div class="slot lead">
+              <span class="num">01</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M10 8.5 L16 12 L10 15.5 Z"/>
+              </svg>
+              <span class="label">Sátántangó</span>
+            </div>
+
+            <div class="slot">
+              <span class="num">02</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M10 8.5 L16 12 L10 15.5 Z"/>
+              </svg>
+              <span class="label">Disponible</span>
+            </div>
+
+            <div class="slot">
+              <span class="num">03</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M10 8.5 L16 12 L10 15.5 Z"/>
+              </svg>
+              <span class="label">Disponible</span>
+            </div>
+
+            <div class="slot">
+              <span class="num">04</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M10 8.5 L16 12 L10 15.5 Z"/>
+              </svg>
+              <span class="label">Disponible</span>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  const cv = document.getElementById('bin');
+  const ctx = cv.getContext('2d');
+  const host = cv.parentElement;
+  let W = 0, H = 0, dpr = 1, raf = null, last = 0;
+  const G = ['0','1'];
+
+  /* ---------- ruido de valor ---------- */
+  function hash(i, j){
+    const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453;
+    return s - Math.floor(s);
+  }
+  function vnoise(x, y){
+    const i = Math.floor(x), j = Math.floor(y);
+    const fx = x - i, fy = y - j;
+    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+    const a = hash(i, j), b = hash(i + 1, j), c = hash(i, j + 1), d = hash(i + 1, j + 1);
+    return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
+  }
+  function fbm(x, y){
+    let s = 0, amp = 0.5, f = 1;
+    for (let k = 0; k < 3; k++){ s += vnoise(x * f, y * f) * amp; amp *= 0.5; f *= 2; }
+    return s;
+  }
+
+  function resize(){
+    const r = host.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = Math.max(1, W * dpr);
+    cv.height = Math.max(1, H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.textBaseline = 'top';
+  }
+
+  /* altura del horizonte: línea de árboles irregular */
+  function treeLine(x){
+    return H * 0.655
+      - (fbm(x * 0.010, 7.3) - 0.45) * H * 0.055
+      - (Math.abs(Math.sin(x * 0.031)) > 0.93 ? H * 0.022 : 0);
+  }
+
+  function draw(t){
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    const sx = W * 0.63, sy = H * 0.145;
+    const stepX = 9, stepY = 10;
+
+    for (let y = 0; y <= H; y += stepY){
+      const v = y / H;
+
+      for (let x = 0; x <= W; x += stepX){
+        const tl = treeLine(x);
+        let b;
+
+        if (y > tl){
+          /* ---- campo ---- */
+          const g = fbm(x * 0.02, y * 0.06 + 3.1);
+          b = 0.04 + g * 0.16;
+          b += Math.abs(Math.sin(y * 0.11 + x * 0.004)) * 0.05;
+          /* franja iluminada de rastrojos, justo bajo el horizonte */
+          const band = Math.exp(-Math.pow((v - 0.712) / 0.055, 2));
+          if (Math.random() < 0.13 * band + 0.02) b += 0.5 + Math.random() * 0.5;
+          if (y - tl < 3) b = Math.max(b, 0.42);   /* borde del horizonte */
+        } else {
+          /* ---- cielo ---- */
+          const cx = x * 0.0032 + t * 0.022;
+          const cy = y * 0.0052;
+          const mass = fbm(cx, cy);
+          const rim = Math.abs(mass - fbm(cx + 0.09, cy + 0.03));
+
+          b = 0.05 + mass * 0.10;                        /* cielo base */
+          b += Math.max(0, rim - 0.02) * 2.2;            /* bordes iluminados de nube */
+          b -= Math.max(0, mass - 0.46) * 0.95;          /* masa oscura de nube */
+
+          const dx = x - sx, dy = y - sy;
+          const d = Math.sqrt(dx * dx + dy * dy) / (H * 0.85);
+          b += Math.exp(-Math.pow(d / 0.055, 2)) * 1.1;  /* núcleo del sol */
+          b += Math.exp(-Math.pow(d / 0.30, 2)) * 0.45;  /* halo */
+          const ang = Math.atan2(dy, dx);
+          b += Math.pow(Math.abs(Math.cos(ang * 6)), 14) * Math.exp(-d / 0.5) * 0.55; /* rayos */
+        }
+
+        b = b < 0 ? 0 : (b > 1 ? 1 : b);
+        if (b < 0.055) continue;
+
+        const a = (0.12 + Math.pow(b, 1.35) * 0.88).toFixed(3);
+        const warm = b > 0.62;
+        ctx.fillStyle = warm
+          ? 'rgba(255,' + ((232 + Math.random() * 23) | 0) + ',' + ((205 + Math.random() * 40) | 0) + ',' + a + ')'
+          : 'rgba(' + ((188 + Math.random() * 60) | 0) + ',' + ((206 + Math.random() * 45) | 0) + ',225,' + a + ')';
+        ctx.fillText(G[(Math.random() * 2) | 0], x, y);
+      }
+    }
+
+    /* glitch de bandas */
+    if (Math.random() < 0.18){
+      const by = Math.random() * H;
+      const bh = 5 + Math.random() * 20;
+      const img = ctx.getImageData(0, by * dpr, cv.width, bh * dpr);
+      ctx.putImageData(img, (Math.random() - 0.5) * 40 * dpr, by * dpr);
+    }
+  }
+
+  function loop(ts){
+    raf = requestAnimationFrame(loop);
+    if (ts - last < 45) return;
+    last = ts;
+    draw(ts / 1000);
+  }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  resize();
+  if (reduce){ draw(1.4); } else { raf = requestAnimationFrame(loop); }
+
+  window.addEventListener('resize', function(){
+    resize();
+    if (reduce) draw(1.4);
+  });
+
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (reduce) return;
+        if (e.isIntersecting && !raf){ last = 0; raf = requestAnimationFrame(loop); }
+        else if (!e.isIntersecting && raf){ cancelAnimationFrame(raf); raf = null; }
+      });
+    }, { threshold: 0 }).observe(host);
+  }
+})();
+</script>
 </body>
 </html>
