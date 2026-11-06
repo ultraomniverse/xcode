@@ -20,10 +20,14 @@
     white-space:pre-line;color:#fff;
     text-shadow:0 0 6px #000,0 2px 4px #000,0 0 20px #000}
   #subs:empty{display:none}
-  #load{position:absolute;inset:0;display:grid;place-items:center;
-    background:#000;color:#777;font-size:13px;letter-spacing:.3em;
-    text-transform:uppercase;z-index:5;transition:opacity .25s}
+  #load{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;
+    background:#000;color:#777;font-size:12px;letter-spacing:.3em;
+    text-transform:uppercase;z-index:5;transition:opacity .2s;cursor:pointer}
   #load.off{opacity:0;pointer-events:none}
+  #pct{font-size:11px;letter-spacing:.1em;color:#555}
+  #track{width:180px;height:2px;background:#222}
+  #fill{height:100%;width:0;background:#e50914;transition:width .2s}
   #bar{position:absolute;left:14px;bottom:44px;display:flex;gap:8px;
     align-items:center;opacity:.5;transition:opacity .2s;z-index:6}
   #wrap:hover #bar{opacity:1}
@@ -38,7 +42,11 @@
 <div id="wrap">
   <video id="v" playsinline preload="auto" autoplay muted controls></video>
   <div id="subs"></div>
-  <div id="load">cargando créditos</div>
+  <div id="load">
+    <span id="msg">conectando</span>
+    <div id="track"><div id="fill"></div></div>
+    <span id="pct">0 %</span>
+  </div>
   <div id="bar">
     <button id="rew">⟲ volver a créditos</button>
     <button id="fs">⤢ pantalla completa</button>
@@ -61,48 +69,80 @@ const NODES = [
 ];
 const SUBS_URL = 'https://raw.githubusercontent.com/CyberShadow/BandersnatchInteractive/master/subtitle/Black.Mirror.Bandersnatch.2018.720p.espanish.vtt';
 
-const v    = document.getElementById('v');
-const box  = document.getElementById('subs');
-const clk  = document.getElementById('clk');
-const load = document.getElementById('load');
+const v     = document.getElementById('v');
+const box   = document.getElementById('subs');
+const clk   = document.getElementById('clk');
+const load  = document.getElementById('load');
+const msg   = document.getElementById('msg');
+const fill  = document.getElementById('fill');
+const pct   = document.getElementById('pct');
 const fsBtn = document.getElementById('fs');
 
-let node = 0, seeked = false;
+let node = 0, seeked = false, started = false;
+
+/* ---------- arranque ---------- */
+v.muted = true;
+v.defaultMuted = true;
+v.preload = 'auto';
 
 function boot () {
   seeked = false;
-  v.src = NODES[node] + '#t=' + START;   // el fragmento hace el seek en la petición
+  v.src = NODES[node] + '#t=' + START;
   v.load();
-  v.play().catch(() => {});
+  kick();
 }
 
-/* corrige solo si el navegador ignoró el fragmento: un seek, no tres */
+/* Reintenta reproducir hasta que arranque: cubre bloqueos de autoplay
+   y el retardo hasta tener datos. */
+let tries = 0;
+const kick = () => {
+  if (started || tries++ > 60) return;
+  const p = v.play();
+  if (p && p.catch) p.catch(() => {});
+  if (v.paused) setTimeout(kick, 250);
+};
+
 v.addEventListener('loadedmetadata', () => {
-  if (!seeked && Math.abs(v.currentTime - START) > 2) {
-    v.currentTime = START;
-  }
+  if (!seeked && Math.abs(v.currentTime - START) > 2) v.currentTime = START;
   seeked = true;
-  v.play().catch(() => {});
+  kick();
 }, { once: true });
 
+v.addEventListener('loadeddata', () => { load.classList.add('off'); kick(); });
 v.addEventListener('playing', () => {
+  started = true;
   load.classList.add('off');
   if (!cues.length) fetchSubs();
 });
-v.addEventListener('waiting', () => load.classList.remove('off'));
+v.addEventListener('waiting', () => { if (started) load.classList.remove('off'); });
 
 v.addEventListener('error', () => {
   if (node < NODES.length - 1) { node++; boot(); }
-  else load.textContent = 'no se pudo cargar';
+  else { msg.textContent = 'no se pudo cargar'; fill.style.width = '0'; }
 });
+
+/* progreso real de buffer, para que no parezca muerto */
+v.addEventListener('progress', () => {
+  if (started || !v.buffered.length || !isFinite(v.duration)) return;
+  const end = v.buffered.end(v.buffered.length - 1);
+  const p = Math.min(100, Math.round(end / START * 100));
+  fill.style.width = p + '%';
+  pct.textContent = p + ' %';
+  if (p > 1) msg.textContent = 'cargando créditos';
+});
+
+/* cualquier gesto arranca y desilencia */
+const nudge = () => { v.play().catch(() => {}); };
+load.addEventListener('click', nudge);
+addEventListener('pointerdown', nudge, { once: true });
+addEventListener('keydown', nudge, { once: true });
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
 
 boot();
 
 /* ---------- controles ---------- */
-document.getElementById('rew').onclick = () => {
-  v.currentTime = START;
-  v.play().catch(() => {});
-};
+document.getElementById('rew').onclick = () => { v.currentTime = START; v.play().catch(() => {}); };
 
 document.getElementById('snd').onclick = e => {
   v.muted = false; v.volume = 1;
@@ -110,7 +150,6 @@ document.getElementById('snd').onclick = e => {
   v.play().catch(() => {});
 };
 
-/* pantalla completa real del navegador */
 fsBtn.onclick = () => {
   const el = document.getElementById('wrap');
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
