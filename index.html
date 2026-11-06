@@ -7,13 +7,11 @@
 <link rel="preconnect" href="https://ia800103.us.archive.org">
 <link rel="preconnect" href="https://ia600103.us.archive.org">
 <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
-<link rel="preload" as="video" type="video/mp4"
-      href="https://ia800103.us.archive.org/9/items/black.-mirror.-bandersnatch.-2018.1080p.-nf.-web-dl.x-264.-aac-pter-web/Black.Mirror.Bandersnatch.2018.1080p.NF.WEB-DL.x264.AAC-PTerWEB.mp4">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:#000;overflow:hidden;
     font-family:"Helvetica Neue",Arial,sans-serif;color:#eee}
-  #wrap{position:relative;width:100%;height:100%}
+  #wrap{position:relative;width:100%;height:100%;background:#000}
   #v{position:absolute;inset:0;width:100%;height:100%;
     object-fit:contain;background:#000;outline:none}
   #subs{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);
@@ -43,6 +41,7 @@
   <div id="load">cargando créditos</div>
   <div id="bar">
     <button id="rew">⟲ volver a créditos</button>
+    <button id="fs">⤢ pantalla completa</button>
     <button id="snd">🔊 activar sonido</button>
     <span id="clk">05:05:59</span>
   </div>
@@ -66,49 +65,68 @@ const v    = document.getElementById('v');
 const box  = document.getElementById('subs');
 const clk  = document.getElementById('clk');
 const load = document.getElementById('load');
+const fsBtn = document.getElementById('fs');
 
-let node = 0, placed = false;
-
-function place () {
-  if (placed) return;
-  placed = true;
-  v.currentTime = START;
-  v.play().catch(() => {});
-}
+let node = 0, seeked = false;
 
 function boot () {
-  v.src = NODES[node] + '#t=' + START;
+  seeked = false;
+  v.src = NODES[node] + '#t=' + START;   // el fragmento hace el seek en la petición
   v.load();
-  v.currentTime = START;
   v.play().catch(() => {});
 }
 
-v.addEventListener('loadedmetadata', place, { once: true });
-v.addEventListener('canplay', place, { once: true });
+/* corrige solo si el navegador ignoró el fragmento: un seek, no tres */
+v.addEventListener('loadedmetadata', () => {
+  if (!seeked && Math.abs(v.currentTime - START) > 2) {
+    v.currentTime = START;
+  }
+  seeked = true;
+  v.play().catch(() => {});
+}, { once: true });
 
 v.addEventListener('playing', () => {
   load.classList.add('off');
   if (!cues.length) fetchSubs();
-}, { once: true });
+});
+v.addEventListener('waiting', () => load.classList.remove('off'));
 
 v.addEventListener('error', () => {
-  if (node < NODES.length - 1) {
-    node++;
-    placed = false;
-    boot();
-  } else {
-    load.textContent = 'no se pudo cargar';
-  }
+  if (node < NODES.length - 1) { node++; boot(); }
+  else load.textContent = 'no se pudo cargar';
 });
 
 boot();
 
-document.getElementById('rew').onclick = () => { v.currentTime = START; v.play().catch(() => {}); };
+/* ---------- controles ---------- */
+document.getElementById('rew').onclick = () => {
+  v.currentTime = START;
+  v.play().catch(() => {});
+};
+
 document.getElementById('snd').onclick = e => {
   v.muted = false; v.volume = 1;
   e.currentTarget.classList.add('hide');
   v.play().catch(() => {});
 };
+
+/* pantalla completa real del navegador */
+fsBtn.onclick = () => {
+  const el = document.getElementById('wrap');
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+  } else {
+    const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+    if (ex) ex.call(document);
+  }
+};
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev =>
+  document.addEventListener(ev, () => {
+    const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    fsBtn.textContent = on ? '⤡ salir' : '⤢ pantalla completa';
+  })
+);
 
 const pad = n => String(n).padStart(2, '0');
 const hms = s => `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(Math.floor(s) % 60)}`;
@@ -116,6 +134,7 @@ v.addEventListener('timeupdate', () => {
   clk.textContent = hms(v.currentTime) + ' / ' + (isFinite(v.duration) ? hms(v.duration) : '--:--:--');
 });
 
+/* ---------- subtítulos ---------- */
 let cues = [], last = null;
 
 const t2ms = s => {
@@ -168,6 +187,7 @@ addEventListener('keydown', e => {
   if (e.code === 'ArrowRight') { e.preventDefault(); v.currentTime += 10; }
   if (e.code === 'ArrowLeft')  { e.preventDefault(); v.currentTime -= 10; }
   if (e.code === 'KeyR') v.currentTime = START;
+  if (e.code === 'KeyF') fsBtn.click();
 });
 </script>
 </body>
